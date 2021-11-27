@@ -20,14 +20,14 @@ interface IERC1155 {
 
 contract MultiSender {
     
-    function transferERC20(address _tokenAddress, address[] memory _recipients, uint[] memory _amounts) public {
+    function transferERC20(address _tokenAddress, address[] memory _recipients, uint[] memory _amounts) external {
         require(_recipients.length == _amounts.length, "number of recipients and amounts should be same");
         for(uint i=0; i<_recipients.length; i++) {
             IERC20(_tokenAddress).transferFrom(msg.sender, _recipients[i], _amounts[i]);
         }
     }
     
-    function transferERC721(address _tokenAddress, address[] memory _recipients, uint[] memory _tokenIds) public {
+    function transferERC721(address _tokenAddress, address[] memory _recipients, uint[] memory _tokenIds) external {
         require(_recipients.length == _tokenIds.length, "number of recipients and tokenIds should be same");
         for(uint i=0; i<_recipients.length; i++) {
             IERC721(_tokenAddress).safeTransferFrom(msg.sender, _recipients[i], _tokenIds[i]);
@@ -35,7 +35,7 @@ contract MultiSender {
     }
     
     bytes defaultData0;
-    function transferERC1155(address _tokenAddress, address[] memory _recipients, uint[] memory _tokenIds, uint[] memory _amounts) public {
+    function transferERC1155(address _tokenAddress, address[] memory _recipients, uint[] memory _tokenIds, uint[] memory _amounts) external {
         require(_recipients.length == _tokenIds.length, "number of recipients and tokenIds should be same");
         require(_recipients.length == _amounts.length, "number of recipients and amounts should be same");
         for(uint i=0; i<_recipients.length; i++) {
