@@ -2,7 +2,7 @@ import { ethers } from "ethers"
 import { getMultiSenderAddress, getMultiSenderContract, getSigner } from "./web3Provider"
 
 const erc20Abi = [
-	'function approve(address spender, uint256 amount) external returns (bool);',
+	'function approve(address spender, uint256 amount) external returns (bool)',
 	'function decimals() public view virtual override returns (uint8)'
 ]
 
@@ -18,14 +18,14 @@ export const convertAmountsToWei = async (signer: ethers.Signer, tokenAddr: stri
 		for (let i = 0; i < amountsArr.length; i++) {
 			amountsInWeiArr[i] = ethers.utils.parseUnits(amountsArr[i], decimals)
 		}
-		return amountsInWeiArr
+		return { amountsInWeiArr }
 	} catch (err) {
 		console.log(err)
-		return []
+		return null
 	}
 }
 
-export const getApproval = async (signer: ethers.Signer, tokenAddr: string, amountsInWeiArr: string[]) => {
+export const getErc20Approval = async (signer: ethers.Signer, tokenAddr: string, amountsInWeiArr: string[]) => {
 	try {
 		const currChain = await signer.getChainId()
 		const erc20Contract = getErc20Contract(tokenAddr, signer)
@@ -34,6 +34,7 @@ export const getApproval = async (signer: ethers.Signer, tokenAddr: string, amou
 		for (let i = 0; i < amountsInWeiArr.length; i++) {
 			totalAmountInWei = totalAmountInWei.add(amountsInWeiArr[i])
 		}
+		console.log(multiSenderAddr, totalAmountInWei)
 		await erc20Contract.approve(multiSenderAddr, totalAmountInWei)
 		return true
 	} catch (err) {
@@ -49,10 +50,10 @@ export const transferErc20 = async (tokenAddr: string, recipientsArr: string[], 
 		const multiSenderContract = getMultiSenderContract(signer, currChain)
 		const txn = await multiSenderContract.transferERC20(tokenAddr, recipientsArr, amountsInWeiArr)
 		await txn.wait()
-		return true
+		return { isTransferred: true, hash: txn.hash }
 	} catch (err) {
 		console.log(err)
-		return false
+		return { isTransferred: false, hash: '' }
 	}
 }
 
