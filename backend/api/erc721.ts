@@ -2,15 +2,15 @@ import { ethers } from "ethers"
 import { getMultiSenderAddress, getMultiSenderContract } from "./web3Provider"
 
 const erc721Abi = [
-	'function isApprovedForAll(address owner, address operator) external view returns (bool);',
-	'function setApprovalForAll(address operator, bool _approved) external;'
+	'function isApprovedForAll(address owner, address operator) external view returns (bool)',
+	'function setApprovalForAll(address operator, bool _approved) external'
 ]
 
 export const getErc721Contract = (tokenAddr, signer) => {
 	return new ethers.Contract(tokenAddr, erc721Abi, signer)
 }
 
-export const getApproval = async (signer: ethers.Signer, tokenAddr: string) => {
+export const getErc721Approval = async (signer: ethers.Signer, tokenAddr: string) => {
 	try {
 		const currUser = await signer.getAddress()
 		const currChain = await signer.getChainId()
@@ -26,16 +26,16 @@ export const getApproval = async (signer: ethers.Signer, tokenAddr: string) => {
 	}
 }
 
-export const transferErc721 = async (signer, tokenAddr, recipientsArr, amountsArr) => {
+export const transferErc721 = async (signer: ethers.Signer, tokenAddr: string, recipientsArr: string[], tokenIdsArr: string[]) => {
 	try {
 		const currChain = await signer.getChainId()
 		const multiSenderContract = getMultiSenderContract(signer, currChain)
-		const txn = await multiSenderContract.transferERC721(tokenAddr, recipientsArr, amountsArr)
+		const txn = await multiSenderContract.transferERC721(tokenAddr, recipientsArr, tokenIdsArr)
 		await txn.wait()
-		return true
+		return { isTransferred: true, hash: txn.hash }
 	} catch (err) {
 		console.log(err)
-		return false
+		return { isTransferred: false, hash: '' }
 	}
 }
 

@@ -2,15 +2,15 @@ import { ethers } from "ethers"
 import { getMultiSenderAddress, getMultiSenderContract } from "./web3Provider"
 
 const erc1155Abi = [
-	'function isApprovedForAll(address account, address operator) external view returns (bool);',
-	'function setApprovalForAll(address operator, bool approved) external;'
+	'function isApprovedForAll(address account, address operator) external view returns (bool)',
+	'function setApprovalForAll(address operator, bool approved) external'
 ]
 
 export const getErc1155Contract = (tokenAddr: string, signer: ethers.Signer) => {
 	return new ethers.Contract(tokenAddr, erc1155Abi, signer)
 }
 
-export const getApproval = async (signer: ethers.Signer, tokenAddr: string) => {
+export const getErc1155Approval = async (signer: ethers.Signer, tokenAddr: string) => {
 	try {
 		const currUser = await signer.getAddress()
 		const currChain = await signer.getChainId()
@@ -32,10 +32,10 @@ export const transferErc1155 = async (signer: ethers.Signer, tokenAddr: string, 
 		const multiSenderContract = getMultiSenderContract(signer, currChain)
 		const txn = await multiSenderContract.transferERC1155(tokenAddr, recipientsArr, tokenIdsArr, amountsArr)
 		await txn.wait()
-		return true
+		return { isTransferred: true, hash: txn.hash }
 	} catch (err) {
 		console.log(err)
-		return false
+		return { isTransferred: false, hash: '' }
 	}
 }
 
