@@ -182,7 +182,7 @@ export default function Home() {
     <div>
       <Head>
         <title>Multi Sender </title>
-        < meta name="description" content="Send ERC20, ERC721, ERC1155 in batch" />
+        < meta name="description" content="Send, Transfer ERC20, ERC721, ERC1155 tokens in batch" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 

@@ -9,7 +9,8 @@ export const messagesTable = {
 export const btnTextTable = {
 	SEND: 'Send',
 	APPROVING: 'Approving...',
-	SENDING: 'Sending...'
+	SENDING: 'Sending...',
+	LOCK: 'Lock'
 }
 
 export const processRecipientData = (recipientData: string, tokenType: string) => {
