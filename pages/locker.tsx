@@ -6,7 +6,7 @@ import {
 	Radio, RadioGroup, FormControlLabel,
 	Button, Stack, LinearProgress
 } from '@mui/material'
-import { getMultiSenderAddress, getSigner } from '../backend/api/web3Provider'
+import { getLockerContractAddr, getMultiSenderAddress, getSigner } from '../backend/api/web3Provider'
 import { btnTextTable, messagesTable, processRecipientData } from '../backend/api/utils'
 import { Send as SendIcon } from '@mui/icons-material'
 import { useEffect, useState } from 'react'
@@ -17,6 +17,7 @@ import { getErc1155Approval, transferErc1155 } from '../backend/api/erc1155'
 import DateTimePicker from '@mui/lab/DateTimePicker';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import { approveErc20ForLocker, lockErc20Tokens } from '../backend/locker/erc20Lock'
 
 
 export default function Home() {
@@ -31,7 +32,6 @@ export default function Home() {
 	const [btnText, setBtnText] = useState(btnTextTable.LOCK)
 
 	const [currChain, setCurrChain] = useState(-1)
-	const [isNetworkSupported, setIsNetworkSupported] = useState(false)
 	const [message1, setMessage1] = useState('')
 	const [txnHash, setTxnHash] = useState('')
 
@@ -47,19 +47,59 @@ export default function Home() {
 
 			const signer = getSigner()
 			const chainId = await signer.getChainId()
-			if (!getMultiSenderAddress(chainId)) {
+			if (getLockerContractAddr(chainId) === '') {
 				setMessage1(messagesTable.NOT_SUPPORTED)
 				return
 			}
 
-			setIsNetworkSupported(true)
 			setCurrChain(chainId)
 		}
 		loadWeb3()
 
 	}, [])
 
+	const handleLocking = () => {
+		if (tokenType === 'erc20') {
+			handleErc20Lock()
+		}
+	}
 
+	const handleErc20Lock = async () => {
+		setMessage1('')
+		try {
+			const { amountsInWeiArr } = await convertAmountsToWei(tokenAddress, [lockAmount])
+			if (amountsInWeiArr.length === 0) {
+				setMessage1(messagesTable.INVALID_DATA)
+				setBtnText(btnTextTable.LOCK)
+				return
+			}
+			const amountInWei = amountsInWeiArr[0].toString()
+
+			setBtnText(btnTextTable.APPROVING)
+			const isApproved = await approveErc20ForLocker(tokenAddress, amountsInWeiArr[0])
+			if (!isApproved) {
+				setMessage1(messagesTable.APPROVAL_PROBLEM)
+				setBtnText(btnTextTable.LOCK)
+				return
+			}
+
+			setBtnText(btnTextTable.LOCKING)
+			const unlockTime = Math.floor(unlockDate.getTime() / 1000).toString()
+			const { isLocked, hash } = await lockErc20Tokens(tokenType, tokenAddress, '0', amountInWei, unlockTime)
+			if (!isLocked) {
+				setMessage1(messagesTable.LOCK_PROBLEM)
+				setBtnText(btnTextTable.LOCK)
+				return
+			}
+			setTxnHash(hash)
+			setBtnText(btnTextTable.LOCK)
+			setMessage1('')
+		} catch (err) {
+			console.log(err)
+			setMessage1(messagesTable.LOCK_PROBLEM)
+			setBtnText(btnTextTable.LOCK)
+		}
+	}
 
 	return (
 		<div>
@@ -118,11 +158,11 @@ export default function Home() {
 						</LocalizationProvider>
 					</FormControl>
 
-					<Button
+					<Button onClick={handleLocking}
 						disabled={(
-							!isNetworkSupported
+							currChain === -1
 							|| btnText === btnTextTable.APPROVING
-							|| btnText === btnTextTable.SENDING
+							|| btnText === btnTextTable.LOCKING
 						)}
 						variant="contained" endIcon={<SendIcon />}>
 						{btnText}

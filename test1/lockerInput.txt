@@ -1,0 +1,4 @@
+fantom-testnet
+
+usdt: 0xD7fe786F7aDCeF5DEB4b73bC62468757800e9eFa
+amount: 15.5

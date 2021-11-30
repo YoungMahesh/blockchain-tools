@@ -1,5 +1,6 @@
 - Rules:
 	- Add events to contracts whenever necessary
+	- Add testing with hardhat for contracts
 	- Verify contracts on Sourcify
 
 - Extra

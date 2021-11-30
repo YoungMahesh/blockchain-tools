@@ -80,14 +80,14 @@ export default function Home() {
 
       setBtnText(btnTextTable.APPROVING)
       const { recipients, tokenAmounts } = data1
-      const data2 = await convertAmountsToWei(signer, tokenAddress, tokenAmounts)
-      if (data2 === null) {
+      const data2 = await convertAmountsToWei(tokenAddress, tokenAmounts)
+      const { amountsInWeiArr } = data2
+      if (amountsInWeiArr.length === 0) {
         setMessage1(messagesTable.INVALID_DATA)
         setBtnText(btnTextTable.SEND)
         return
       }
-      const { amountsInWeiArr } = data2
-      const isApproved = await getErc20Approval(signer, tokenAddress, amountsInWeiArr)
+      const isApproved = await getErc20Approval(tokenAddress, amountsInWeiArr)
       if (!isApproved) {
         setMessage1(messagesTable.APPROVAL_PROBLEM)
         setBtnText(btnTextTable.SEND)

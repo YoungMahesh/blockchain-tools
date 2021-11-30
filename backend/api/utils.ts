@@ -3,14 +3,16 @@ export const messagesTable = {
 	NOT_INSTALLED: 'Metamask is not Installed',
 	TRANSFER_PROBLEM: 'Problem occurred while transferring tokens',
 	INVALID_DATA: 'Invalid data provided',
-	APPROVAL_PROBLEM: 'Problem occurred while approval'
+	APPROVAL_PROBLEM: 'Problem occurred while approval',
+	LOCK_PROBLEM: 'Problem occurred while locking tokens'
 }
 
 export const btnTextTable = {
 	SEND: 'Send',
 	APPROVING: 'Approving...',
 	SENDING: 'Sending...',
-	LOCK: 'Lock'
+	LOCK: 'Lock',
+	LOCKING: 'Locking...'
 }
 
 export const processRecipientData = (recipientData: string, tokenType: string) => {

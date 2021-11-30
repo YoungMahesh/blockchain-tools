@@ -10,8 +10,9 @@ export const getErc20Contract = (tokenAddr: string, signer: ethers.Signer) => {
 	return new ethers.Contract(tokenAddr, erc20Abi, signer)
 }
 
-export const convertAmountsToWei = async (signer: ethers.Signer, tokenAddr: string, amountsArr: string[]) => {
+export const convertAmountsToWei = async (tokenAddr: string, amountsArr: string[]) => {
 	try {
+		const signer = getSigner()
 		const erc20Contract = getErc20Contract(tokenAddr, signer)
 		const decimals = await erc20Contract.decimals()
 		const amountsInWeiArr = []
@@ -21,12 +22,13 @@ export const convertAmountsToWei = async (signer: ethers.Signer, tokenAddr: stri
 		return { amountsInWeiArr }
 	} catch (err) {
 		console.log(err)
-		return null
+		return { amountsInWeiArr: [] }
 	}
 }
 
-export const getErc20Approval = async (signer: ethers.Signer, tokenAddr: string, amountsInWeiArr: string[]) => {
+export const getErc20Approval = async (tokenAddr: string, amountsInWeiArr: string[]) => {
 	try {
+		const signer = getSigner()
 		const currChain = await signer.getChainId()
 		const erc20Contract = getErc20Contract(tokenAddr, signer)
 		const multiSenderAddr = getMultiSenderAddress(currChain)
