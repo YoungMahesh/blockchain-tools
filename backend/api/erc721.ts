@@ -2,11 +2,13 @@ import { ethers } from "ethers"
 import { getMultiSenderAddress, getMultiSenderContract } from "./web3Provider"
 
 const erc721Abi = [
+	'function name() public view virtual override returns (string memory)',
+	'function symbol() public view virtual override returns (string memory)',
 	'function isApprovedForAll(address owner, address operator) external view returns (bool)',
 	'function setApprovalForAll(address operator, bool _approved) external'
 ]
 
-export const getErc721Contract = (tokenAddr, signer) => {
+export const getErc721Contract = (tokenAddr: string, signer: ethers.Signer) => {
 	return new ethers.Contract(tokenAddr, erc721Abi, signer)
 }
 

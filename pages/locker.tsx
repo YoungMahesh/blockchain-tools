@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import {
 	TextField, Box, FormControl, FormLabel,
 	Radio, RadioGroup, FormControlLabel,
-	Button, Stack, LinearProgress
+	Button, Stack, LinearProgress, Typography
 } from '@mui/material'
 import { getLockerContractAddr, getMultiSenderAddress, getSigner } from '../backend/api/web3Provider'
 import { btnTextTable, messagesTable, processRecipientData } from '../backend/api/utils'
@@ -17,7 +17,8 @@ import { getErc1155Approval, transferErc1155 } from '../backend/api/erc1155'
 import DateTimePicker from '@mui/lab/DateTimePicker';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import { approveErc20ForLocker, lockErc20Tokens } from '../backend/locker/erc20Lock'
+import { approveErc20ForLocker, getUserLockers, lockErc20Tokens, LockerInfo, LockerInfo2 } from '../backend/locker/erc20Lock'
+import MyLocks from '../components/MyLocks'
 
 
 export default function Home() {
@@ -28,9 +29,9 @@ export default function Home() {
 	const [tokenAddress, setTokenAddress] = useState('')
 	const [lockAmount, setLockAmount] = useState('')
 	const [unlockDate, setUnlockDate] = useState(new Date())
+	const [userLocks, setUserLocks] = useState<LockerInfo2[]>([])
 
 	const [btnText, setBtnText] = useState(btnTextTable.LOCK)
-
 	const [currChain, setCurrChain] = useState(-1)
 	const [message1, setMessage1] = useState('')
 	const [txnHash, setTxnHash] = useState('')
@@ -53,6 +54,12 @@ export default function Home() {
 			}
 
 			setCurrChain(chainId)
+
+
+			const { fetchedLockers, userLockersInfoArr } = await getUserLockers()
+			if (fetchedLockers) {
+				setUserLocks(userLockersInfoArr)
+			}
 		}
 		loadWeb3()
 
@@ -182,6 +189,9 @@ export default function Home() {
 						/>
 					}
 				</Stack>
+
+
+				<MyLocks userLocks={userLocks} />
 			</Box>
 		</div>
 	)

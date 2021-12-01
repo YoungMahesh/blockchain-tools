@@ -5,6 +5,7 @@
 
 - Extra
 	- Add option to transfer Eth in multi-sender
+	- Add option to lock ether in multi-sender
 	- Add clone of https://chainlist.org/
 	- Add page for finding NFT owners
 	- Metamask should show name of function user is executing

@@ -44,8 +44,8 @@ export default function SideNavigation(props: Props) {
 			<Divider />
 			<List>
 				{[{ title: 'MultiSender', path: '/' }, { title: 'Locker', path: '/locker' }].map((obj1, index) => (
-					<Link href={obj1.path}>
-						<ListItem button key={obj1.title}>
+					<Link href={obj1.path} key={obj1.title}>
+						<ListItem button>
 							<ListItemIcon>
 								{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
 							</ListItemIcon>

@@ -2,6 +2,9 @@ import { ethers } from "ethers"
 import { getMultiSenderAddress, getMultiSenderContract, getSigner } from "./web3Provider"
 
 const erc20Abi = [
+	'function name() public view virtual override returns (string memory)',
+	'function symbol() public view virtual override returns (string memory)',
+	'function decimals() public view virtual override returns (uint8)',
 	'function approve(address spender, uint256 amount) external returns (bool)',
 	'function decimals() public view virtual override returns (uint8)'
 ]
