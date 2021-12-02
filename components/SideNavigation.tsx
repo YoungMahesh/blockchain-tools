@@ -12,6 +12,8 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import MailIcon from '@mui/icons-material/Mail';
 import MenuIcon from '@mui/icons-material/Menu';
+import LockIcon from '@mui/icons-material/Lock';
+import SendIcon from '@mui/icons-material/Send';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import type { ReactElement, ReactNode } from 'react'
@@ -43,11 +45,13 @@ export default function SideNavigation(props: Props) {
 			<Toolbar />
 			<Divider />
 			<List>
-				{[{ title: 'MultiSender', path: '/' }, { title: 'Locker', path: '/locker' }].map((obj1, index) => (
+				{[{ title: 'MultiSender', path: '/', icon: 'sendIcon' }, { title: 'Locker', path: '/locker', icon: 'lockIcon' }].map((obj1, index) => (
 					<Link href={obj1.path} key={obj1.title}>
 						<ListItem button>
 							<ListItemIcon>
-								{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+								{/* {index % 2 === 0 ? <InboxIcon /> : <MailIcon />} */}
+								{obj1.icon === 'lockIcon' && <LockIcon />}
+								{obj1.icon === 'sendIcon' && <SendIcon />}
 							</ListItemIcon>
 							<ListItemText primary={obj1.title} />
 						</ListItem>
