@@ -1,7 +1,7 @@
 {
   "_format": "hh-sol-artifact-1",
   "contractName": "IERC20",
-  "sourceName": "contracts/LockerV0.sol",
+  "sourceName": "contracts/Locker/LockerV1.sol",
   "abi": [
     {
       "inputs": [

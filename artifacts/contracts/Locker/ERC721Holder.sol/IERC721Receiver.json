@@ -1,28 +1,39 @@
 {
   "_format": "hh-sol-artifact-1",
-  "contractName": "IERC721",
-  "sourceName": "contracts/LockerV0.sol",
+  "contractName": "IERC721Receiver",
+  "sourceName": "contracts/Locker/ERC721Holder.sol",
   "abi": [
     {
       "inputs": [
+        {
+          "internalType": "address",
+          "name": "operator",
+          "type": "address"
+        },
         {
           "internalType": "address",
           "name": "from",
           "type": "address"
         },
         {
-          "internalType": "address",
-          "name": "to",
-          "type": "address"
-        },
-        {
           "internalType": "uint256",
           "name": "tokenId",
           "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "data",
+          "type": "bytes"
         }
       ],
-      "name": "transferFrom",
-      "outputs": [],
+      "name": "onERC721Received",
+      "outputs": [
+        {
+          "internalType": "bytes4",
+          "name": "",
+          "type": "bytes4"
+        }
+      ],
       "stateMutability": "nonpayable",
       "type": "function"
     }

@@ -191,7 +191,7 @@ export default function Home() {
 				</Stack>
 
 
-				<MyLocks userLocks={userLocks} />
+				<MyLocks userLocks={userLocks} setMessage1={setMessage1} />
 			</Box>
 		</div>
 	)

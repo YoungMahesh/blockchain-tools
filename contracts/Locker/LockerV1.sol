@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.2;
+pragma solidity 0.8.2;
 
-import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
-import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
+import "./ERC721Holder.sol";
+import "./ERC1155Holder.sol";
 
 interface IERC20 {
     function transferFrom(
@@ -21,7 +21,7 @@ interface IERC1155 {
     ) external;
 }
 
-contract LockerV0 {
+contract LockerV1 {
     uint currLockerId;
     
     struct LockerInfo {
@@ -76,7 +76,7 @@ contract LockerV0 {
 
     function destroyLocker(uint _lockerId) external {
         require(lockerInfoTable[_lockerId].tokenOwner == msg.sender, "Only Owner can destory lock");
-        require(lockerInfoTable[_lockerId].unlockTime >= block.timestamp, "Unlock time is still in future");
+        require(lockerInfoTable[_lockerId].unlockTime <= block.timestamp, "Unlock time is still in future");
         require(lockerInfoTable[_lockerId].isWithdrawn == false, "Token is already withdrawn");
 
         string memory tokenType = lockerInfoTable[_lockerId].tokenType;

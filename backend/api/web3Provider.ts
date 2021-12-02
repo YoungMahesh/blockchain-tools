@@ -1,7 +1,7 @@
 import { ethers } from 'ethers'
 import { Signer } from 'ethers/src.ts'
 import MultiSenderMetadata from '../../artifacts/contracts/MultiSender.sol/MultiSender.json'
-import LockerMetadata from '../../artifacts/contracts/LockerV0.sol/LockerV0.json'
+import LockerMetadata from '../../artifacts/contracts/Locker/LockerV1.sol/LockerV1.json'
 
 declare global {
 	interface Window {
@@ -22,7 +22,7 @@ export const getMultiSenderAddress = (_chainId: number) => {
 	return null
 }
 export const getLockerContractAddr = (_chainId: number) => {
-	if (_chainId === 4002) return '0xeAA919a670D4fd210C1eeeeceDbf6021b9FD73d0'
+	if (_chainId === 4002) return '0x427467DE1899ccacdF048dE760e1BeD99D017506'
 	return ''
 }
 export const getExplorerUrls = (_chainId: number) => {

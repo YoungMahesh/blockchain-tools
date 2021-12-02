@@ -82,6 +82,7 @@ export interface LockerInfo {
 }
 
 export interface LockerInfo2 {
+	lockerId: ethers.BigNumber
 	tokenOwner: string
 	tokenType: string
 	tokenAddress: string
@@ -95,6 +96,7 @@ export interface LockerInfo2 {
 	tokenSymbol: string
 	tokenAmount2: ethers.BigNumber
 }
+
 export const getUserLockers = async () => {
 	try {
 		const signer = getSigner()
@@ -119,10 +121,10 @@ export const getUserLockers = async () => {
 
 		const userLockersInfoArr2: LockerInfo2[] = []
 		for (let i = 0; i < userLockersInfoArr.length; i++) {
-			const currLockObj = { ...userLockersInfoArr[i], ...tokenInfoArr[i] }
+			const currLockObj = { ...userLockersInfoArr[i], ...tokenInfoArr[i], lockerId: lockerIdsArr[i] }
 			userLockersInfoArr2.push(currLockObj)
 		}
-
+		console.log(userLockersInfoArr2)
 		return { fetchedLockers: true, userLockersInfoArr: userLockersInfoArr2 }
 	} catch (err) {
 		console.log(err)
