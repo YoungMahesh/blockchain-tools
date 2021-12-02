@@ -72,47 +72,19 @@ export default function MyLocks({ userLocks, setMessage1 }: ListProps) {
 					userLocks.filter(obj => !obj.isWithdrawn && obj.tokenType === 'erc721').map(({ tokenOwner, tokenType,
 						tokenAddress, tokenId, tokenAmount,
 						lockTime, unlockTime, isWithdrawn,
-						tokenName, tokenSymbol, tokenAmount2
+						tokenName, tokenSymbol, tokenAmount2, lockerId
 					}, idx) => (
 						<Box key={idx} display='flex' flexDirection='row'
 							justifyContent='space-between' flexWrap='wrap'
 						>
 							<Box>
-								<p>{tokenName} - Id: {tokenId} Symbol: {tokenSymbol}</p>
-								<p>Locked {getDate(lockTime)} . Unlocks {getDate(unlockTime)}</p>
-							</Box>
-
-							<Box>
-								<Button variant='contained' disabled={Date.now() < (unlockTime.toNumber() * 1000)}>
-									Withdraw
-								</Button>
-							</Box>
-						</Box>
-					))
-				}
-			</Box>
-			<Box>
-				<Typography variant='h6'>
-					ERC1155 Tokens
-				</Typography>
-				{
-					userLocks.filter(obj => !obj.isWithdrawn && obj.tokenType === 'erc1155').map(({ tokenOwner, tokenType,
-						tokenAddress, tokenId, tokenAmount,
-						lockTime, unlockTime, isWithdrawn,
-						tokenName, tokenSymbol, tokenAmount2
-					}, idx) => (
-						<Box key={idx} display='flex' flexDirection='row'
-							justifyContent='space-between' flexWrap='wrap'
-						>
-							<Box>
-								<p>{tokenName} - Id: {tokenId} Amount: {tokenAmount2}</p>
-								<p>TokenAddress: {tokenAddress}</p>
+								<p>{tokenName} - Id: {tokenId.toString()} Symbol: {tokenSymbol}</p>
 								<p>Locked {getDate(lockTime)} . Unlocks {getDate(unlockTime)}</p>
 							</Box>
 
 							<Box>
 								<Button variant='contained'
-
+									onClick={() => withdrawTokens(lockerId)}
 									disabled={Date.now() < (unlockTime.toNumber() * 1000)}>
 									Withdraw
 								</Button>
@@ -121,6 +93,36 @@ export default function MyLocks({ userLocks, setMessage1 }: ListProps) {
 					))
 				}
 			</Box>
+			{/* <Box>
+				<Typography variant='h6'>
+					ERC1155 Tokens
+				</Typography>
+				{
+					userLocks.filter(obj => !obj.isWithdrawn && obj.tokenType === 'erc1155').map(({ tokenOwner, tokenType,
+						tokenAddress, tokenId, tokenAmount,
+						lockTime, unlockTime, isWithdrawn,
+						tokenName, tokenSymbol, tokenAmount2, lockerId
+					}, idx) => (
+						<Box key={idx} display='flex' flexDirection='row'
+							justifyContent='space-between' flexWrap='wrap'
+						>
+							<Box>
+								<p>{tokenName} - Id: {tokenId.toString()} Amount: {tokenAmount2}</p>
+								<p>TokenAddress: {tokenAddress}</p>
+								<p>Locked {getDate(lockTime)} . Unlocks {getDate(unlockTime)}</p>
+							</Box>
+
+							<Box>
+								<Button variant='contained'
+									onClick={() => withdrawTokens(lockerId)}
+									disabled={Date.now() < (unlockTime.toNumber() * 1000)}>
+									Withdraw
+								</Button>
+							</Box>
+						</Box>
+					))
+				}
+			</Box> */}
 		</Stack>
 	)
 }

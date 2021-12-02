@@ -19,6 +19,9 @@ import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import { approveErc20ForLocker, getUserLockers, lockErc20Tokens, LockerInfo, LockerInfo2 } from '../backend/locker/erc20Lock'
 import MyLocks from '../components/MyLocks'
+import { approveErc721ForLocker, transferErc721ToLocker } from '../backend/common/erc721'
+import { approveErc1155ForLocker } from '../backend/common/erc1155'
+import { transferTokensToLocker } from '../backend/locker/lockerWeb3'
 
 
 export default function Home() {
@@ -27,6 +30,7 @@ export default function Home() {
 
 	const [tokenType, setTokenType] = useState('erc20')
 	const [tokenAddress, setTokenAddress] = useState('')
+	const [tokenId, setTokenId] = useState('')
 	const [lockAmount, setLockAmount] = useState('')
 	const [unlockDate, setUnlockDate] = useState(new Date())
 	const [userLocks, setUserLocks] = useState<LockerInfo2[]>([])
@@ -69,6 +73,12 @@ export default function Home() {
 		if (tokenType === 'erc20') {
 			handleErc20Lock()
 		}
+		else if (tokenType === 'erc721') {
+			handleErc721Lock()
+		}
+		else if (tokenType === 'erc1155') {
+			handleErc1155Lock()
+		}
 	}
 
 	const handleErc20Lock = async () => {
@@ -108,6 +118,70 @@ export default function Home() {
 		}
 	}
 
+	const handleErc721Lock = async () => {
+		setMessage1('')
+		try {
+
+			setBtnText(btnTextTable.APPROVING)
+			const isApproved = await approveErc721ForLocker(tokenAddress)
+			if (!isApproved) {
+				setMessage1(messagesTable.APPROVAL_PROBLEM)
+				setBtnText(btnTextTable.LOCK)
+				return
+			}
+
+			setBtnText(btnTextTable.LOCKING)
+			const unlockTime = Math.floor(unlockDate.getTime() / 1000).toString()
+			const { isLocked, hash } = await transferErc721ToLocker('erc721', tokenAddress, tokenId, '1', unlockTime)
+			if (!isLocked) {
+				setMessage1(messagesTable.LOCK_PROBLEM)
+				setBtnText(btnTextTable.LOCK)
+				return
+			}
+			setTxnHash(hash)
+			setBtnText(btnTextTable.LOCK)
+			setMessage1('')
+		} catch (err) {
+			console.log(err)
+			setMessage1(messagesTable.LOCK_PROBLEM)
+			setBtnText(btnTextTable.LOCK)
+		}
+	}
+
+	const handleErc1155Lock = async () => {
+		setMessage1('')
+		try {
+
+			setBtnText(btnTextTable.APPROVING)
+			const isApproved = await approveErc1155ForLocker(tokenAddress)
+			if (!isApproved) {
+				setMessage1(messagesTable.APPROVAL_PROBLEM)
+				setBtnText(btnTextTable.LOCK)
+				return
+			}
+
+			setBtnText(btnTextTable.LOCKING)
+			const unlockTime = Math.floor(unlockDate.getTime() / 1000).toString()
+			const { isLocked, hash } = await transferTokensToLocker(
+				'erc1155', tokenAddress, tokenId, lockAmount, unlockTime
+			)
+			if (!isLocked) {
+				setMessage1(messagesTable.LOCK_PROBLEM)
+				setBtnText(btnTextTable.LOCK)
+				return
+			}
+			setTxnHash(hash)
+			setBtnText(btnTextTable.LOCK)
+			setMessage1('')
+		} catch (err) {
+			console.log(err)
+			setMessage1(messagesTable.LOCK_PROBLEM)
+			setBtnText(btnTextTable.LOCK)
+		}
+	}
+
+
+
 	return (
 		<div>
 			<Head>
@@ -130,7 +204,7 @@ export default function Home() {
 						>
 							<FormControlLabel value="erc20" control={<Radio />} label="ERC20" />
 							<FormControlLabel value="erc721" control={<Radio />} label="ERC721" />
-							<FormControlLabel value="erc1155" control={<Radio />} label="ERC1155" />
+							{/* <FormControlLabel value="erc1155" control={<Radio />} label="ERC1155" /> */}
 						</RadioGroup>
 					</FormControl>
 
@@ -144,14 +218,28 @@ export default function Home() {
 						onChange={e => setTokenAddress(e.target.value)}
 					/>
 
-					<TextField
-						id="standard-basic"
-						label="Lock Amount"
-						variant="standard"
-						value={lockAmount}
-						onChange={e => setLockAmount(e.target.value)}
-					/>
 
+					{
+						(tokenType === 'erc721' || tokenType === 'erc1155') &&
+						<TextField
+							id="standard-basic"
+							label="Token Id"
+							variant="standard"
+							value={tokenId}
+							onChange={e => setTokenId(e.target.value)}
+						/>
+					}
+
+					{
+						(tokenType === 'erc20' || tokenType === 'erc1155') &&
+						<TextField
+							id="standard-basic"
+							label="Lock Amount"
+							variant="standard"
+							value={lockAmount}
+							onChange={e => setLockAmount(e.target.value)}
+						/>
+					}
 
 					<FormControl component="fieldset">
 

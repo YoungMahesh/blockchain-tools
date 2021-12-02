@@ -9,6 +9,7 @@ const erc721Abi = [
 ]
 
 export const getErc721Contract = (tokenAddr: string, signer: ethers.Signer) => {
+	console.log(tokenAddr)
 	return new ethers.Contract(tokenAddr, erc721Abi, signer)
 }
 

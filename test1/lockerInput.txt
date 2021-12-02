@@ -1,4 +1,11 @@
 fantom-testnet
+	erc20: 0xD7fe786F7aDCeF5DEB4b73bC62468757800e9eFa
+	amount: 15.5
 
-usdt: 0xD7fe786F7aDCeF5DEB4b73bC62468757800e9eFa
-amount: 15.5
+	erc721: 0x7c7a553Ea3Cd7C191c51d93e518BA8591dbf87e9
+	tokenId: 1
+
+	erc1155: 0xC439EAC576ace7b53a1B636064aA18298903239C
+	tokenId: 2
+	tokenAmount: 4
+

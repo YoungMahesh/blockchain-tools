@@ -11,3 +11,7 @@
 	- Add clone of https://abi.hashex.org/
 	- Add page for finding NFT owners
 	- Metamask should show name of function user is executing
+
+- Problems
+	- Locker
+		- ERC1155 locking not working on blockchain
