@@ -35,7 +35,7 @@ export default function Faucet() {
 			const signer = getSigner()
 			const chainId = await signer.getChainId()
 			const faucetContract = getFaucetContract(signer, chainId)
-			const txn = await faucetContract.get1000Tokens()
+			const txn = await faucetContract.get1000Erc20Tokens()
 			await txn.wait()
 			setTxnHash(txn.hash)
 			setBtnText(btnTextTable.GET_1000)

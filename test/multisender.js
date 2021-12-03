@@ -1,0 +1,97 @@
+const { BigNumber } = require('@ethersproject/bignumber')
+const { expect } = require('chai')
+const { ethers } = require('hardhat')
+const BN = BigNumber.from
+
+describe('MultiSender Contract', function () {
+
+	let multiSenderContract, tron, devyani, penguins;
+	let user0, user1, user2;
+
+	it('Set User Addresses', async function () {
+		const [owner, addr1, addr2] = await ethers.getSigners();
+		user0 = await owner.getAddress()
+		user1 = await addr1.getAddress()
+		user2 = await addr2.getAddress()
+	})
+
+	it('Deploy MultiSender Contract', async function () {
+		const MultiSenderContractFactory = await ethers.getContractFactory('MultiSender')
+		multiSenderContract = await MultiSenderContractFactory.deploy()
+		await multiSenderContract.deployed()
+	})
+
+
+	// ERC20 Transfers
+	it('Deploy Tron Contract', async function () {
+		const TronFactory = await ethers.getContractFactory('Tron')
+		tron = await TronFactory.deploy()
+		await tron.deployed()
+
+		expect(await tron.name()).to.equal('Tron')
+		expect(await tron.symbol()).to.equal('TRX')
+		expect(await tron.decimals()).to.equal(18)
+	})
+	it('Send ERC20 tokens to User1 and User2', async function () {
+		expect(await tron.balanceOf(user1)).to.equal('0')
+		expect(await tron.balanceOf(user2)).to.equal('0')
+
+		const amount1 = BN('10').mul(BN('10').pow('18'))
+		const amount2 = BN('13').mul(BN('10').pow('18'))
+		await tron.approve(multiSenderContract.address, amount1.add(amount2))
+		await multiSenderContract.transferERC20(tron.address, [user1, user2], [amount1, amount2])
+		expect(await tron.balanceOf(user1)).to.equal(amount1)
+		expect(await tron.balanceOf(user2)).to.equal(amount2)
+	})
+
+
+	// ERC721 Transfers
+	it('Deploy Devyani(ERC721) Contract', async function () {
+		const Devyani = await ethers.getContractFactory('Devyani')
+		devyani = await Devyani.deploy()
+		await devyani.deployed()
+
+		expect(await devyani.name()).to.equal('Devyani')
+		expect(await devyani.symbol()).to.equal('DV')
+	})
+	it('Mint ERC721 Tokens', async function () {
+		await devyani.safeMint(user0, 1)
+		await devyani.safeMint(user0, 2)
+		expect(await devyani.ownerOf(1)).to.equal(user0)
+		expect(await devyani.ownerOf(2)).to.equal(user0)
+	})
+	it('Send ERC721 to User1 and User2', async function () {
+		expect(await devyani.ownerOf(1)).to.not.equal(user1)
+		expect(await devyani.ownerOf(2)).to.not.equal(user2)
+
+		await devyani.setApprovalForAll(multiSenderContract.address, true)
+		await multiSenderContract.transferERC721(devyani.address, [user1, user2], [1, 2])
+
+		expect(await devyani.ownerOf(1)).to.equal(user1)
+		expect(await devyani.ownerOf(2)).to.equal(user2)
+	})
+
+
+	// ERC1155 Transfers
+	it('Deploy Penguins(ERC1155) Contract', async function () {
+		const Penguins = await ethers.getContractFactory('Penguins')
+		penguins = await Penguins.deploy()
+		await penguins.deployed()
+	})
+	it('Mint ERC1155 Tokens', async function () {
+		await penguins.mintBatch(user0, [1, 2], [20, 20], '0x')
+		expect(await penguins.balanceOf(user0, 1)).to.equal(20)
+		expect(await penguins.balanceOf(user0, 2)).to.equal(20)
+	})
+	it('Send ERC1155 Tokens to User1 and User2', async function () {
+		expect(await penguins.balanceOf(user1, 1)).to.not.equal(4)
+		expect(await penguins.balanceOf(user2, 2)).to.not.equal(4)
+
+		await penguins.setApprovalForAll(multiSenderContract.address, true)
+		await multiSenderContract.transferERC1155(penguins.address, [user1, user2], [1, 2], [4, 4])
+
+		expect(await penguins.balanceOf(user1, 1)).to.equal(4)
+		expect(await penguins.balanceOf(user2, 2)).to.equal(4)
+	})
+})
+

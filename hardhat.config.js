@@ -18,7 +18,6 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 task('deploy', 'Deploy Contract')
   .addParam('name', 'Contract Name')
   .setAction(async (taskArgs, hre) => {
-    const [signer1] = await hre.ethers.getSigners()
     const Contract = await hre.ethers.getContractFactory(taskArgs.name)
     const contract = await Contract.deploy()
     await contract.deployed();
