@@ -5,7 +5,7 @@ const BN = BigNumber.from
 
 describe('MultiSender Contract', function () {
 
-	let multiSenderContract, tron, devyani, penguins;
+	let multiSender, tron, devyani, penguins;
 	let user0, user1, user2;
 
 	it('Set User Addresses', async function () {
@@ -16,14 +16,14 @@ describe('MultiSender Contract', function () {
 	})
 
 	it('Deploy MultiSender Contract', async function () {
-		const MultiSenderContractFactory = await ethers.getContractFactory('MultiSender')
-		multiSenderContract = await MultiSenderContractFactory.deploy()
-		await multiSenderContract.deployed()
+		const MultiSender = await ethers.getContractFactory('MultiSender')
+		multiSender = await MultiSender.deploy()
+		await multiSender.deployed()
 	})
 
 
 	// ERC20 Transfers
-	it('Deploy Tron Contract', async function () {
+	it('Deploy Tron(ERC20) Contract', async function () {
 		const TronFactory = await ethers.getContractFactory('Tron')
 		tron = await TronFactory.deploy()
 		await tron.deployed()
@@ -38,8 +38,8 @@ describe('MultiSender Contract', function () {
 
 		const amount1 = BN('10').mul(BN('10').pow('18'))
 		const amount2 = BN('13').mul(BN('10').pow('18'))
-		await tron.approve(multiSenderContract.address, amount1.add(amount2))
-		await multiSenderContract.transferERC20(tron.address, [user1, user2], [amount1, amount2])
+		await tron.approve(multiSender.address, amount1.add(amount2))
+		await multiSender.transferERC20(tron.address, [user1, user2], [amount1, amount2])
 		expect(await tron.balanceOf(user1)).to.equal(amount1)
 		expect(await tron.balanceOf(user2)).to.equal(amount2)
 	})
@@ -64,8 +64,8 @@ describe('MultiSender Contract', function () {
 		expect(await devyani.ownerOf(1)).to.not.equal(user1)
 		expect(await devyani.ownerOf(2)).to.not.equal(user2)
 
-		await devyani.setApprovalForAll(multiSenderContract.address, true)
-		await multiSenderContract.transferERC721(devyani.address, [user1, user2], [1, 2])
+		await devyani.setApprovalForAll(multiSender.address, true)
+		await multiSender.transferERC721(devyani.address, [user1, user2], [1, 2])
 
 		expect(await devyani.ownerOf(1)).to.equal(user1)
 		expect(await devyani.ownerOf(2)).to.equal(user2)
@@ -87,8 +87,8 @@ describe('MultiSender Contract', function () {
 		expect(await penguins.balanceOf(user1, 1)).to.not.equal(4)
 		expect(await penguins.balanceOf(user2, 2)).to.not.equal(4)
 
-		await penguins.setApprovalForAll(multiSenderContract.address, true)
-		await multiSenderContract.transferERC1155(penguins.address, [user1, user2], [1, 2], [4, 4])
+		await penguins.setApprovalForAll(multiSender.address, true)
+		await multiSender.transferERC1155(penguins.address, [user1, user2], [1, 2], [4, 4])
 
 		expect(await penguins.balanceOf(user1, 1)).to.equal(4)
 		expect(await penguins.balanceOf(user2, 2)).to.equal(4)
