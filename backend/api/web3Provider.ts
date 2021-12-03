@@ -1,7 +1,7 @@
 import { ethers } from 'ethers'
 import { Signer } from 'ethers/src.ts'
-import MultiSenderMetadata from '../../artifacts/contracts/MultiSender.sol/MultiSender.json'
-import LockerMetadata from '../../artifacts/contracts/Locker/LockerV1.sol/LockerV1.json'
+import MultiSenderMetadata from '../../artifacts/contracts/multisender/MultiSender.sol/MultiSender.json'
+import LockerMetadata from '../../artifacts/contracts/locker/LockerV1.sol/LockerV1.json'
 import FaucetMetadata from '../../artifacts/contracts/faucet/FaucetV0.sol/FaucetV0.json'
 import { messagesTable } from './utils'
 
