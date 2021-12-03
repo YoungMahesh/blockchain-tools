@@ -1,6 +1,7 @@
 export const messagesTable = {
 	NOT_SUPPORTED: 'Current Network is not supported.',
 	NOT_INSTALLED: 'Metamask is not Installed',
+	METAMASK_LOCKED: 'Metamask is Locked',
 	TRANSFER_PROBLEM: 'Problem occurred while transferring tokens',
 	INVALID_DATA: 'Invalid data provided',
 	APPROVAL_PROBLEM: 'Problem occurred while approval',

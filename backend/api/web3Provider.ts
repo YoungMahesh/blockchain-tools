@@ -3,11 +3,48 @@ import { Signer } from 'ethers/src.ts'
 import MultiSenderMetadata from '../../artifacts/contracts/MultiSender.sol/MultiSender.json'
 import LockerMetadata from '../../artifacts/contracts/Locker/LockerV1.sol/LockerV1.json'
 import FaucetMetadata from '../../artifacts/contracts/faucet/FaucetV0.sol/FaucetV0.json'
+import { messagesTable } from './utils'
 
 declare global {
 	interface Window {
 		ethereum: any
+		signer: ethers.Signer
+		chainId: number
+		wallet: string
 	}
+}
+
+export const loadWeb3 = async (setWallet: Function, setChainId: Function,
+	setMessage1: Function, getContractAddr: Function) => {
+	if (!window.ethereum) {
+		window.signer = null
+		window.chainId = -1
+		window.wallet = ''
+		setMessage1(messagesTable.NOT_INSTALLED)
+	} else {
+		window.signer = getSigner()
+		window.chainId = await window.signer.getChainId()
+		const accounts = await window.ethereum.request({ method: 'eth_accounts' })
+		handleAccountChanged(accounts, setWallet, setMessage1)
+		window.ethereum.on('chainChanged', () => window.location.reload())
+		window.ethereum.on('accountsChanged', (accounts: string[]) => handleAccountChanged(accounts, setWallet, setMessage1))
+	}
+	setWallet(window.wallet)
+	setChainId(window.chainId)
+	if (getContractAddr(window.chainId) === '')
+		setMessage1(messagesTable.NOT_SUPPORTED)
+}
+
+const handleAccountChanged = (accounts: string[], setWallet: Function, setMessage1: Function) => {
+	if (accounts.length > 0) {
+		window.wallet = accounts[0]
+		setMessage1('')
+	}
+	else {
+		window.wallet = ''
+		setMessage1(messagesTable.METAMASK_LOCKED)
+	}
+	setWallet(window.wallet)
 }
 
 export const getSigner = () => {

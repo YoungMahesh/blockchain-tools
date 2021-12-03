@@ -1,52 +1,33 @@
 import Head from 'next/head'
-import { useRouter } from 'next/router'
 import {
 	Box, FormControl, FormLabel,
 	Radio, RadioGroup, FormControlLabel,
 	Button, Stack, LinearProgress, Typography
 } from '@mui/material'
-import { getFaucetContract, getLockerContractAddr, getSigner } from '../backend/api/web3Provider'
+import { getFaucetAddress, getFaucetContract, getSigner, loadWeb3 } from '../backend/api/web3Provider'
 import { btnTextTable, messagesTable } from '../backend/api/utils'
 import { useEffect, useState } from 'react'
 import TxnLink from '../components/TxnLink'
 
 
-export default function Home() {
+export default function Faucet() {
 
-	const router = useRouter()
+	const [wallet, setWallet] = useState('')
+	const [chainId, setChainId] = useState(-1)
+	const [message1, setMessage1] = useState('')
 
-	const [walletAddress, setWalletAddress] = useState('')
-	const [currChain, setCurrChain] = useState(-1)
 	const [tokenType, setTokenType] = useState('erc20')
 
 	const [btnText, setBtnText] = useState(btnTextTable.GET_1000)
-	const [message1, setMessage1] = useState('')
 	const [txnHash, setTxnHash] = useState('')
 
 
 	useEffect(() => {
-		async function loadWeb3() {
-			if (!window.ethereum) {
-				setMessage1(messagesTable.NOT_INSTALLED)
-				return
-			}
-
-			window.ethereum.on('chainChanged', () => router.reload())
-
-			const signer = getSigner()
-			const chainId = await signer.getChainId()
-			const currWallet = await signer.getAddress()
-			setWalletAddress(currWallet)
-			if (getLockerContractAddr(chainId) === '') {
-				setMessage1(messagesTable.NOT_SUPPORTED)
-				return
-			}
-			setCurrChain(chainId)
+		async function loadData() {
+			await loadWeb3(setWallet, setChainId, setMessage1, getFaucetAddress)
 		}
-		loadWeb3()
-
+		loadData()
 	}, [])
-
 
 	const get1000USDT = async () => {
 		try {
@@ -66,7 +47,6 @@ export default function Home() {
 	}
 
 
-
 	return (
 		<div>
 			<Head>
@@ -79,7 +59,7 @@ export default function Home() {
 				<Stack mx='auto' spacing={3}
 					maxWidth='400px'>
 
-					<FormControl component="fieldset">
+					{/* <FormControl component="fieldset">
 						<FormLabel component="legend">Token Type: </FormLabel>
 						<RadioGroup
 							row aria-label="gender"
@@ -88,21 +68,22 @@ export default function Home() {
 							onChange={e => setTokenType(e.target.value)}
 						>
 							<FormControlLabel value="erc20" control={<Radio />} label="ERC20" />
-							{/* <FormControlLabel value="erc721" control={<Radio />} label="ERC721" /> */}
-							{/* <FormControlLabel value="erc1155" control={<Radio />} label="ERC1155" /> */}
+							<FormControlLabel value="erc721" control={<Radio />} label="ERC721" />
+							<FormControlLabel value="erc1155" control={<Radio />} label="ERC1155" />
 						</RadioGroup>
-					</FormControl>
+					</FormControl> */}
 
 
-					<Typography>Your Address: {walletAddress}</Typography>
-					<Typography>Current ChainId: {currChain}</Typography>
+					<Typography>Your Address: {wallet}</Typography>
+					<Typography>Current ChainId: {chainId}</Typography>
 
 					<Typography>Token Name: USD Tether</Typography>
 					<Typography>Token Symbol: USDT</Typography>
 					<Typography>Token Decimals: 6</Typography>
 					<Button
 						disabled={(
-							currChain === -1
+							message1 === messagesTable.NOT_SUPPORTED
+							|| message1 === messagesTable.METAMASK_LOCKED
 							|| btnText === btnTextTable.SENDING
 						)}
 						variant='contained'
@@ -119,7 +100,7 @@ export default function Home() {
 					{
 						(txnHash.length > 0) &&
 						<TxnLink
-							chainId={currChain}
+							chainId={window.chainId}
 							txnHash={txnHash}
 						/>
 					}

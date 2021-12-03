@@ -1,12 +1,10 @@
 import Head from 'next/head'
-// import Image from 'next/image'
-import { useRouter } from 'next/router'
 import {
 	TextField, Box, FormControl, FormLabel,
 	Radio, RadioGroup, FormControlLabel,
-	Button, Stack, LinearProgress, Typography
+	Button, Stack, LinearProgress
 } from '@mui/material'
-import { getLockerContractAddr, getSigner } from '../backend/api/web3Provider'
+import { getLockerContractAddr, loadWeb3 } from '../backend/api/web3Provider'
 import { btnTextTable, messagesTable } from '../backend/api/utils'
 import { Send as SendIcon } from '@mui/icons-material'
 import { useEffect, useState } from 'react'
@@ -22,9 +20,11 @@ import { approveErc1155ForLocker } from '../backend/common/erc1155'
 import { transferTokensToLocker } from '../backend/locker/lockerWeb3'
 
 
-export default function Home() {
+export default function Locker() {
 
-	const router = useRouter()
+	const [wallet, setWallet] = useState('')
+	const [chainId, setChainId] = useState(-1)
+	const [message1, setMessage1] = useState('')
 
 	const [tokenType, setTokenType] = useState('erc20')
 	const [tokenAddress, setTokenAddress] = useState('')
@@ -34,38 +34,26 @@ export default function Home() {
 	const [userLocks, setUserLocks] = useState<LockerInfo2[]>([])
 
 	const [btnText, setBtnText] = useState(btnTextTable.LOCK)
-	const [currChain, setCurrChain] = useState(-1)
-	const [message1, setMessage1] = useState('')
 	const [txnHash, setTxnHash] = useState('')
 
+	useEffect(() => {
+		async function loadData() {
+			await loadWeb3(setWallet, setChainId, setMessage1, getLockerContractAddr)
+		}
+		loadData()
+	}, [])
 
 	useEffect(() => {
-		async function loadWeb3() {
-			if (!window.ethereum) {
-				setMessage1(messagesTable.NOT_INSTALLED)
-				return
-			}
-
-			window.ethereum.on('chainChanged', () => router.reload())
-
-			const signer = getSigner()
-			const chainId = await signer.getChainId()
-			if (getLockerContractAddr(chainId) === '') {
-				setMessage1(messagesTable.NOT_SUPPORTED)
-				return
-			}
-
-			setCurrChain(chainId)
-
-
-			const { fetchedLockers, userLockersInfoArr } = await getUserLockers()
-			if (fetchedLockers) {
-				setUserLocks(userLockersInfoArr)
+		async function loadLockers() {
+			if (window.ethereum) {
+				const { fetchedLockers, userLockersInfoArr } = await getUserLockers()
+				if (fetchedLockers) {
+					setUserLocks(userLockersInfoArr)
+				}
 			}
 		}
-		loadWeb3()
-
-	}, [])
+		loadLockers()
+	}, [chainId, wallet])
 
 	const handleLocking = () => {
 		if (tokenType === 'erc20') {
@@ -253,7 +241,8 @@ export default function Home() {
 
 					<Button onClick={handleLocking}
 						disabled={(
-							currChain === -1
+							message1 === messagesTable.NOT_SUPPORTED
+							|| message1 === messagesTable.METAMASK_LOCKED
 							|| btnText === btnTextTable.APPROVING
 							|| btnText === btnTextTable.LOCKING
 						)}
@@ -270,7 +259,7 @@ export default function Home() {
 					{
 						(txnHash.length > 0) &&
 						<TxnLink
-							chainId={currChain}
+							chainId={chainId}
 							txnHash={txnHash}
 						/>
 					}

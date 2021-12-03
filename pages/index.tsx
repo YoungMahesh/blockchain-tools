@@ -1,55 +1,37 @@
 import Head from 'next/head'
-import { useRouter } from 'next/router'
 import {
   TextField, Box, FormControl, FormLabel,
   Radio, RadioGroup, FormControlLabel,
   Button, Stack, LinearProgress
 } from '@mui/material'
-import { getMultiSenderAddress, getSigner } from '../backend/api/web3Provider'
+import { getMultiSenderAddress, getSigner, loadWeb3 } from '../backend/api/web3Provider'
 import { btnTextTable, messagesTable, processRecipientData } from '../backend/api/utils'
 import { Send as SendIcon } from '@mui/icons-material'
 import { useEffect, useState } from 'react'
-import { convertAmountsToWei, getErc20Approval, getErc20Contract, transferErc20 } from '../backend/api/erc20'
+import { convertAmountsToWei, getErc20Approval, transferErc20 } from '../backend/api/erc20'
 import TxnLink from '../components/TxnLink'
 import { getErc721Approval, transferErc721 } from '../backend/api/erc721'
 import { getErc1155Approval, transferErc1155 } from '../backend/api/erc1155'
 
 export default function Home() {
 
-  const router = useRouter()
+  const [wallet, setWallet] = useState('')
+  const [chainId, setChainId] = useState(-1)
+  const [message1, setMessage1] = useState('')
 
   const [tokenType, setTokenType] = useState('erc20')
   const [tokenAddress, setTokenAddress] = useState('')
   const [recipientData, setRecipientData] = useState('')
   const [btnText, setBtnText] = useState(btnTextTable.SEND)
 
-  const [currChain, setCurrChain] = useState(-1)
-  const [isNetworkSupported, setIsNetworkSupported] = useState(false)
-  const [message1, setMessage1] = useState('')
   const [txnHash, setTxnHash] = useState('')
 
 
   useEffect(() => {
-    async function loadWeb3() {
-      if (!window.ethereum) {
-        setMessage1(messagesTable.NOT_INSTALLED)
-        return
-      }
-
-      window.ethereum.on('chainChanged', () => router.reload())
-
-      const signer = getSigner()
-      const chainId = await signer.getChainId()
-      if (!getMultiSenderAddress(chainId)) {
-        setMessage1(messagesTable.NOT_SUPPORTED)
-        return
-      }
-
-      setIsNetworkSupported(true)
-      setCurrChain(chainId)
+    async function loadData() {
+      await loadWeb3(setWallet, setChainId, setMessage1, getMultiSenderAddress)
     }
-    loadWeb3()
-
+    loadData()
   }, [])
 
 
@@ -227,7 +209,8 @@ export default function Home() {
 
           <Button onClick={handleTokenTransfer}
             disabled={(
-              !isNetworkSupported
+              message1 === messagesTable.NOT_SUPPORTED
+              || message1 === messagesTable.METAMASK_LOCKED
               || btnText === btnTextTable.APPROVING
               || btnText === btnTextTable.SENDING
             )}
@@ -244,7 +227,7 @@ export default function Home() {
           {
             (txnHash.length > 0) &&
             <TxnLink
-              chainId={currChain}
+              chainId={chainId}
               txnHash={txnHash}
             />
           }
