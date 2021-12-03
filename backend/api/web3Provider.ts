@@ -2,6 +2,7 @@ import { ethers } from 'ethers'
 import { Signer } from 'ethers/src.ts'
 import MultiSenderMetadata from '../../artifacts/contracts/MultiSender.sol/MultiSender.json'
 import LockerMetadata from '../../artifacts/contracts/Locker/LockerV1.sol/LockerV1.json'
+import FaucetMetadata from '../../artifacts/contracts/faucet/FaucetV0.sol/FaucetV0.json'
 
 declare global {
 	interface Window {
@@ -25,9 +26,14 @@ export const getLockerContractAddr = (_chainId: number) => {
 	if (_chainId === 4002) return '0x427467DE1899ccacdF048dE760e1BeD99D017506'
 	return ''
 }
+export const getFaucetAddress = (_chainId: number) => {
+	if (_chainId === 4002) return '0xEBcaAFCA017d915eA430E900e5d9B95298b6296d'
+	return ''
+}
 export const getExplorerUrls = (_chainId: number) => {
 	if (_chainId === 4002) return 'https://testnet.ftmscan.com/tx/'
 	if (_chainId === 4) return 'https://rinkeby.etherscan.io/tx/'
+	return ''
 }
 
 export const getMultiSenderContract = (signer: Signer, currChain: number) => {
@@ -37,4 +43,8 @@ export const getMultiSenderContract = (signer: Signer, currChain: number) => {
 export const getLockerContract = (signer: Signer, _chainId: number) => {
 	const lockerAddress = getLockerContractAddr(_chainId)
 	return new ethers.Contract(lockerAddress, LockerMetadata.abi, signer)
+}
+export const getFaucetContract = (signer: Signer, _chainId: number) => {
+	const faucetContractAddr = getFaucetAddress(_chainId)
+	return new ethers.Contract(faucetContractAddr, FaucetMetadata.abi, signer)
 }

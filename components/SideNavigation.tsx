@@ -10,7 +10,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import MailIcon from '@mui/icons-material/Mail';
+import DiamondIcon from '@mui/icons-material/Diamond';
 import MenuIcon from '@mui/icons-material/Menu';
 import LockIcon from '@mui/icons-material/Lock';
 import SendIcon from '@mui/icons-material/Send';
@@ -45,13 +45,18 @@ export default function SideNavigation(props: Props) {
 			<Toolbar />
 			<Divider />
 			<List>
-				{[{ title: 'MultiSender', path: '/', icon: 'sendIcon' }, { title: 'Locker', path: '/locker', icon: 'lockIcon' }].map((obj1, index) => (
+				{[
+					{ title: 'MultiSender', path: '/', icon: 'sendIcon' },
+					{ title: 'Locker', path: '/locker', icon: 'lockIcon' },
+					{ title: 'Faucet', path: '/faucet', icon: 'diamondIcon' }
+				].map((obj1, index) => (
 					<Link href={obj1.path} key={obj1.title}>
 						<ListItem button>
 							<ListItemIcon>
 								{/* {index % 2 === 0 ? <InboxIcon /> : <MailIcon />} */}
 								{obj1.icon === 'lockIcon' && <LockIcon />}
 								{obj1.icon === 'sendIcon' && <SendIcon />}
+								{obj1.icon === 'diamondIcon' && <DiamondIcon />}
 							</ListItemIcon>
 							<ListItemText primary={obj1.title} />
 						</ListItem>

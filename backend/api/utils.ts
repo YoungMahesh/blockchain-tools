@@ -4,7 +4,8 @@ export const messagesTable = {
 	TRANSFER_PROBLEM: 'Problem occurred while transferring tokens',
 	INVALID_DATA: 'Invalid data provided',
 	APPROVAL_PROBLEM: 'Problem occurred while approval',
-	LOCK_PROBLEM: 'Problem occurred while locking tokens'
+	LOCK_PROBLEM: 'Problem occurred while locking tokens',
+	FAUCET_PROBLEM: 'Error occurred while sending tokens'
 }
 
 export const btnTextTable = {
@@ -12,7 +13,8 @@ export const btnTextTable = {
 	APPROVING: 'Approving...',
 	SENDING: 'Sending...',
 	LOCK: 'Lock',
-	LOCKING: 'Locking...'
+	LOCKING: 'Locking...',
+	GET_1000: 'Get 1000 Tokens'
 }
 
 export const processRecipientData = (recipientData: string, tokenType: string) => {
