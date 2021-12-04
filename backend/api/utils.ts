@@ -15,7 +15,9 @@ export const btnTextTable = {
 	SENDING: 'Sending...',
 	LOCK: 'Lock',
 	LOCKING: 'Locking...',
-	GET_1000: 'Get 1000 Tokens'
+	GET_ERC20: 'Get 300 Tokens',
+	GET_ERC721: 'Get 3 Tokens',
+	GET_ERC1155: 'Get 1000 Tokens'
 }
 
 export const processRecipientData = (recipientData: string, tokenType: string) => {

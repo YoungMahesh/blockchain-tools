@@ -24,6 +24,7 @@ task('deploy', 'Deploy Contract')
     console.log("Contract deployed to:", contract.address);
   })
 
+// npx hardhat flatten ./contracts/tokens/Devyani.sol > ./contracts/Devyani.sol
 
 module.exports = {
   networks: {

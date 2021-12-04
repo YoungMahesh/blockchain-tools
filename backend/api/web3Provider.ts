@@ -2,7 +2,7 @@ import { ethers } from 'ethers'
 import { Signer } from 'ethers/src.ts'
 import MultiSenderMetadata from '../../artifacts/contracts/multisender/MultiSender.sol/MultiSender.json'
 import LockerMetadata from '../../artifacts/contracts/locker/LockerV2.sol/LockerV2.json'
-import FaucetMetadata from '../../artifacts/contracts/faucet/FaucetV1.sol/FaucetV1.json'
+import FaucetMetadata from '../../artifacts/contracts/faucet/FaucetV2.sol/FaucetV2.json'
 import { messagesTable } from './utils'
 
 declare global {
@@ -64,7 +64,7 @@ export const getLockerContractAddr = (_chainId: number) => {
 	return ''
 }
 export const getFaucetAddress = (_chainId: number) => {
-	if (_chainId === 4002) return '0x3281208CC7Cad5C398B8046Cbcd8B6a8E4802166'
+	if (_chainId === 4002) return '0xf399c967BC29110E469661c7d7C2C2F0B1Fe69A1'
 	return ''
 }
 export const getExplorerUrls = (_chainId: number) => {

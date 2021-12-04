@@ -18,7 +18,7 @@ export default function Faucet() {
 
 	const [tokenType, setTokenType] = useState('erc20')
 
-	const [btnText, setBtnText] = useState(btnTextTable.GET_1000)
+	const [btnText, setBtnText] = useState(btnTextTable.GET_ERC20)
 	const [txnHash, setTxnHash] = useState('')
 
 
@@ -29,20 +29,20 @@ export default function Faucet() {
 		loadData()
 	}, [])
 
-	const get1000USDT = async () => {
+	const get300RA = async () => {
 		try {
 			setBtnText(btnTextTable.SENDING)
 			const signer = getSigner()
 			const chainId = await signer.getChainId()
 			const faucetContract = getFaucetContract(signer, chainId)
-			const txn = await faucetContract.get1000Erc20Tokens()
+			const txn = await faucetContract.get300Erc20Tokens()
 			await txn.wait()
 			setTxnHash(txn.hash)
-			setBtnText(btnTextTable.GET_1000)
+			setBtnText(btnTextTable.GET_ERC20)
 		} catch (err) {
 			console.log(err)
 			setMessage1(messagesTable.FAUCET_PROBLEM)
-			setBtnText(btnTextTable.GET_1000)
+			setBtnText(btnTextTable.GET_ERC20)
 		}
 	}
 
@@ -77,9 +77,9 @@ export default function Faucet() {
 					<Typography>Your Address: {wallet}</Typography>
 					<Typography>Current ChainId: {chainId}</Typography>
 
-					<Typography>Token Name: USD Tether</Typography>
-					<Typography>Token Symbol: USDT</Typography>
-					<Typography>Token Decimals: 6</Typography>
+					<Typography>Token Name: Ramanujan</Typography>
+					<Typography>Token Symbol: RA</Typography>
+					<Typography>Token Decimals: 18</Typography>
 					<Button
 						disabled={(
 							message1 === messagesTable.NOT_SUPPORTED
@@ -87,7 +87,7 @@ export default function Faucet() {
 							|| btnText === btnTextTable.SENDING
 						)}
 						variant='contained'
-						onClick={get1000USDT}
+						onClick={get300RA}
 					>{btnText}</Button>
 
 					{
