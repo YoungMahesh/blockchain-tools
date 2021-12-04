@@ -18,6 +18,7 @@ import MyLocks from '../components/MyLocks'
 import { approveErc721ForLocker, transferErc721ToLocker } from '../backend/common/erc721'
 import { approveErc1155ForLocker } from '../backend/common/erc1155'
 import { transferTokensToLocker } from '../backend/locker/lockerWeb3'
+import TokenTypeSelector from '../components/TokenTypeSelector'
 
 
 export default function Locker() {
@@ -180,20 +181,9 @@ export default function Locker() {
 				<Stack mx='auto' spacing={3}
 					maxWidth='400px'>
 
-					<FormControl component="fieldset">
-						<FormLabel component="legend">Token Type: </FormLabel>
-						<RadioGroup
-							row aria-label="gender"
-							name="row-radio-buttons-group"
-							value={tokenType}
-							onChange={e => setTokenType(e.target.value)}
-						>
-							<FormControlLabel value="erc20" control={<Radio />} label="ERC20" />
-							<FormControlLabel value="erc721" control={<Radio />} label="ERC721" />
-							<FormControlLabel value="erc1155" control={<Radio />} label="ERC1155" />
-						</RadioGroup>
-					</FormControl>
-
+					<TokenTypeSelector
+						tokenType={tokenType} setTokenType={setTokenType}
+					/>
 
 					<TextField
 						fullWidth

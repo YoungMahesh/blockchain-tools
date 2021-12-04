@@ -1,7 +1,6 @@
 import Head from 'next/head'
 import {
-  TextField, Box, FormControl, FormLabel,
-  Radio, RadioGroup, FormControlLabel,
+  TextField, Box,
   Button, Stack, LinearProgress
 } from '@mui/material'
 import { getMultiSenderAddress, getSigner, loadWeb3 } from '../backend/api/web3Provider'
@@ -12,6 +11,7 @@ import { convertAmountsToWei, getErc20Approval, transferErc20 } from '../backend
 import TxnLink from '../components/TxnLink'
 import { getErc721Approval, transferErc721 } from '../backend/api/erc721'
 import { getErc1155Approval, transferErc1155 } from '../backend/api/erc1155'
+import TokenTypeSelector from '../components/TokenTypeSelector'
 
 export default function Home() {
 
@@ -169,21 +169,11 @@ export default function Home() {
 
       <Box>
         <Stack mx='auto' spacing={3}
-          maxWidth='400px' marginTop='150px'>
+          maxWidth='400px'>
 
-          <FormControl component="fieldset">
-            <FormLabel component="legend">Token Type: </FormLabel>
-            <RadioGroup
-              row aria-label="gender"
-              name="row-radio-buttons-group"
-              value={tokenType}
-              onChange={e => setTokenType(e.target.value)}
-            >
-              <FormControlLabel value="erc20" control={<Radio />} label="ERC20" />
-              <FormControlLabel value="erc721" control={<Radio />} label="ERC721" />
-              <FormControlLabel value="erc1155" control={<Radio />} label="ERC1155" />
-            </RadioGroup>
-          </FormControl>
+          <TokenTypeSelector
+            tokenType={tokenType} setTokenType={setTokenType}
+          />
 
 
           <TextField

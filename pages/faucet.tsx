@@ -10,6 +10,7 @@ import { btnTextTable, messagesTable } from '../backend/api/utils'
 import { useEffect, useState } from 'react'
 import TxnLink from '../components/TxnLink'
 import FaucetToken from '../components/FaucetToken'
+import TokenTypeSelector from '../components/TokenTypeSelector'
 
 
 
@@ -42,25 +43,17 @@ export default function Faucet() {
 				<Stack mx='auto' spacing={3}
 					maxWidth='400px'>
 
-					<FormControl component="fieldset">
-						<FormLabel component="legend">Token Type: </FormLabel>
-						<RadioGroup
-							row aria-label="gender"
-							name="row-radio-buttons-group"
-							value={tokenType}
-							onChange={e => setTokenType(e.target.value)}
-						>
-							<FormControlLabel value="erc20" control={<Radio />} label="ERC20" />
-							<FormControlLabel value="erc721" control={<Radio />} label="ERC721" />
-							<FormControlLabel value="erc1155" control={<Radio />} label="ERC1155" />
-						</RadioGroup>
-					</FormControl>
 
-					<Typography>Your Address: {wallet}</Typography>
-					<Typography>Current ChainId: {chainId}</Typography>
 					{
-						chainId !== -1 &&
-						<FaucetToken chainId={chainId} tokenType={tokenType} />
+						(message1 !== messagesTable.NOT_SUPPORTED && message1 !== messagesTable.NOT_INSTALLED) &&
+						<>
+							<TokenTypeSelector
+								tokenType={tokenType} setTokenType={setTokenType}
+							/>
+							<Typography>Your Address: {wallet}</Typography>
+							<Typography>Current ChainId: {chainId}</Typography>
+							<FaucetToken chainId={chainId} tokenType={tokenType} />
+						</>
 					}
 
 					<Typography>{message1}</Typography>
