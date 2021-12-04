@@ -19,6 +19,7 @@ import Typography from '@mui/material/Typography';
 import type { ReactElement, ReactNode } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router';
+import NetworkList from './NetworkList';
 
 const drawerWidth = 240;
 
@@ -141,8 +142,14 @@ export default function SideNavigation(props: Props) {
 				sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
 			>
 				<Toolbar />
-				{props.children}
+				<Box sx={{ display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap' }}>
+					{props.children}
+					<NetworkList />
+				</Box>
+
 			</Box>
 		</Box>
-	);
+	)
 }
+
+

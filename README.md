@@ -4,7 +4,7 @@
 	- Verify contracts on Sourcify
 
 - Extra
-	- Faucet of test tokens
+	- Add ERC20, ERC721 and ERC1155 Generator and Minter
 	- Add option to transfer Eth in multi-sender
 	- Add option to lock ether in Locker
 	- Add clone of https://chainlist.org/
