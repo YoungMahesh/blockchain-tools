@@ -93,7 +93,7 @@ export default function MyLocks({ userLocks, setMessage1 }: ListProps) {
 					))
 				}
 			</Box>
-			{/* <Box>
+			<Box>
 				<Typography variant='h6'>
 					ERC1155 Tokens
 				</Typography>
@@ -107,7 +107,7 @@ export default function MyLocks({ userLocks, setMessage1 }: ListProps) {
 							justifyContent='space-between' flexWrap='wrap'
 						>
 							<Box>
-								<p>{tokenName} - Id: {tokenId.toString()} Amount: {tokenAmount2}</p>
+								<p>{tokenName} - Id: {tokenId.toString()} Amount: {tokenAmount2.toString()}</p>
 								<p>TokenAddress: {tokenAddress}</p>
 								<p>Locked {getDate(lockTime)} . Unlocks {getDate(unlockTime)}</p>
 							</Box>
@@ -122,7 +122,7 @@ export default function MyLocks({ userLocks, setMessage1 }: ListProps) {
 						</Box>
 					))
 				}
-			</Box> */}
+			</Box>
 		</Stack>
 	)
 }

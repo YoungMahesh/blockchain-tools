@@ -2,12 +2,16 @@ import Head from 'next/head'
 import {
 	Box, FormControl, FormLabel,
 	Radio, RadioGroup, FormControlLabel,
-	Button, Stack, LinearProgress, Typography
+	Button, Stack, LinearProgress, Typography,
+	Card,
 } from '@mui/material'
 import { getFaucetAddress, getFaucetContract, getSigner, loadWeb3 } from '../backend/api/web3Provider'
 import { btnTextTable, messagesTable } from '../backend/api/utils'
 import { useEffect, useState } from 'react'
 import TxnLink from '../components/TxnLink'
+import FaucetToken from '../components/FaucetToken'
+
+
 
 
 export default function Faucet() {
@@ -18,9 +22,6 @@ export default function Faucet() {
 
 	const [tokenType, setTokenType] = useState('erc20')
 
-	const [btnText, setBtnText] = useState(btnTextTable.GET_ERC20)
-	const [txnHash, setTxnHash] = useState('')
-
 
 	useEffect(() => {
 		async function loadData() {
@@ -28,24 +29,6 @@ export default function Faucet() {
 		}
 		loadData()
 	}, [])
-
-	const get300RA = async () => {
-		try {
-			setBtnText(btnTextTable.SENDING)
-			const signer = getSigner()
-			const chainId = await signer.getChainId()
-			const faucetContract = getFaucetContract(signer, chainId)
-			const txn = await faucetContract.get300Erc20Tokens()
-			await txn.wait()
-			setTxnHash(txn.hash)
-			setBtnText(btnTextTable.GET_ERC20)
-		} catch (err) {
-			console.log(err)
-			setMessage1(messagesTable.FAUCET_PROBLEM)
-			setBtnText(btnTextTable.GET_ERC20)
-		}
-	}
-
 
 	return (
 		<div>
@@ -59,7 +42,7 @@ export default function Faucet() {
 				<Stack mx='auto' spacing={3}
 					maxWidth='400px'>
 
-					{/* <FormControl component="fieldset">
+					<FormControl component="fieldset">
 						<FormLabel component="legend">Token Type: </FormLabel>
 						<RadioGroup
 							row aria-label="gender"
@@ -71,39 +54,17 @@ export default function Faucet() {
 							<FormControlLabel value="erc721" control={<Radio />} label="ERC721" />
 							<FormControlLabel value="erc1155" control={<Radio />} label="ERC1155" />
 						</RadioGroup>
-					</FormControl> */}
-
+					</FormControl>
 
 					<Typography>Your Address: {wallet}</Typography>
 					<Typography>Current ChainId: {chainId}</Typography>
-
-					<Typography>Token Name: Ramanujan</Typography>
-					<Typography>Token Symbol: RA</Typography>
-					<Typography>Token Decimals: 18</Typography>
-					<Button
-						disabled={(
-							message1 === messagesTable.NOT_SUPPORTED
-							|| message1 === messagesTable.METAMASK_LOCKED
-							|| btnText === btnTextTable.SENDING
-						)}
-						variant='contained'
-						onClick={get300RA}
-					>{btnText}</Button>
-
 					{
-						(btnText === btnTextTable.SENDING) &&
-						<LinearProgress />
+						chainId !== -1 &&
+						<FaucetToken chainId={chainId} tokenType={tokenType} />
 					}
 
-					<p>{message1}</p>
+					<Typography>{message1}</Typography>
 
-					{
-						(txnHash.length > 0) &&
-						<TxnLink
-							chainId={window.chainId}
-							txnHash={txnHash}
-						/>
-					}
 				</Stack>
 
 			</Box>

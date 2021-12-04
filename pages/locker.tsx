@@ -190,7 +190,7 @@ export default function Locker() {
 						>
 							<FormControlLabel value="erc20" control={<Radio />} label="ERC20" />
 							<FormControlLabel value="erc721" control={<Radio />} label="ERC721" />
-							{/* <FormControlLabel value="erc1155" control={<Radio />} label="ERC1155" /> */}
+							<FormControlLabel value="erc1155" control={<Radio />} label="ERC1155" />
 						</RadioGroup>
 					</FormControl>
 
@@ -264,7 +264,6 @@ export default function Locker() {
 						/>
 					}
 				</Stack>
-
 
 				<MyLocks userLocks={userLocks} setMessage1={setMessage1} />
 			</Box>

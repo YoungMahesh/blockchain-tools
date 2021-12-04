@@ -63,13 +63,36 @@ export const getLockerContractAddr = (_chainId: number) => {
 	if (_chainId === 4002) return '0xa0f15ba75b2205BD0908a862EF4eA00051fBDD31'
 	return ''
 }
+
+
 export const getFaucetAddress = (_chainId: number) => {
 	if (_chainId === 4002) return '0xf399c967BC29110E469661c7d7C2C2F0B1Fe69A1'
 	return ''
 }
+export const getFaucetTokensAddr = (_chainId: number) => {
+	if (_chainId === 4002) return {
+		erc20: '0x4d5d37cf79aebab14805ce6d90d69bfbd5d8ffae',
+		erc721: '0x95247e4f50ad7c19c2c0d5e20e067b3d4cf7c917',
+		erc1155: '0xd3877b669c8afe57503fc7db8b01e910e7ed8d7c'
+	}
+	return { erc20: '', erc721: '', erc1155: '' }
+}
+export const getFaucetErc20Details = (_chainId: number) => {
+	if (_chainId === 4002) return { name: 'Ramanujan', symbol: 'RA', decimals: '18' }
+	return { name: '', symbol: '', decimals: '' }
+}
+export const getFaucetErc721Details = (_chainId: number) => {
+	if (_chainId === 4002) return { name: 'Sanaya', symbol: 'SY' }
+	return { name: '', symbol: '' }
+}
+
 export const getExplorerUrls = (_chainId: number) => {
 	if (_chainId === 4002) return 'https://testnet.ftmscan.com/tx/'
 	if (_chainId === 4) return 'https://rinkeby.etherscan.io/tx/'
+	return ''
+}
+export const getTokenUrlPrefix = (_chainId: number) => {
+	if (_chainId === 4002) return 'https://testnet.ftmscan.com/token/'
 	return ''
 }
 
