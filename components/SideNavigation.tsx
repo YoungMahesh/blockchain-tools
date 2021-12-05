@@ -40,7 +40,7 @@ export default function SideNavigation(props: Props) {
 					{ title: 'Locker', path: '/locker', icon: 'lockIcon' },
 					{ title: 'Faucet', path: '/faucet', icon: 'diamondIcon' }
 				].map((obj1, index) => (
-					<Link href={obj1.path} key={obj1.title}>
+					<Link href={obj1.path} key={obj1.title} passHref>
 						<ListItem button selected={router.pathname === obj1.path}>
 							<ListItemIcon>
 								{/* {index % 2 === 0 ? <InboxIcon /> : <MailIcon />} */}
