@@ -1,0 +1,56 @@
+diff --git a/node_modules/ethers/src.ts/ethers.ts b/node_modules/ethers/src.ts/ethers.ts
+index f192c6d..899f802 100644
+--- a/node_modules/ethers/src.ts/ethers.ts
++++ b/node_modules/ethers/src.ts/ethers.ts
+@@ -12,7 +12,7 @@ import * as constants from "@ethersproject/constants";
+ import * as providers from "@ethersproject/providers";
+ import { getDefaultProvider } from "@ethersproject/providers";
+ 
+-import { Wordlist, wordlists} from "@ethersproject/wordlists";
++import { Wordlist, wordlists } from "@ethersproject/wordlists";
+ 
+ import * as utils from "./utils";
+ 
+@@ -58,7 +58,7 @@ import {
+ ////////////////////////
+ // Exports
+ 
+-export {
++export type {
+     Signer,
+ 
+     Wallet,
+diff --git a/node_modules/ethers/src.ts/index.ts b/node_modules/ethers/src.ts/index.ts
+index b1071dd..1622084 100644
+--- a/node_modules/ethers/src.ts/index.ts
++++ b/node_modules/ethers/src.ts/index.ts
+@@ -14,7 +14,7 @@ try {
+ 
+ export { ethers };
+ 
+-export {
++export type {
+     Signer,
+ 
+     Wallet,
+diff --git a/node_modules/ethers/src.ts/utils.ts b/node_modules/ethers/src.ts/utils.ts
+index 7a4de87..e8f32e4 100644
+--- a/node_modules/ethers/src.ts/utils.ts
++++ b/node_modules/ethers/src.ts/utils.ts
+@@ -1,6 +1,6 @@
+ "use strict";
+ 
+-import { AbiCoder, checkResultErrors, ConstructorFragment, defaultAbiCoder, ErrorFragment, EventFragment, FormatTypes, Fragment, FunctionFragment, Indexed, Interface, LogDescription, ParamType, Result, TransactionDescription }from "@ethersproject/abi";
++import { AbiCoder, checkResultErrors, ConstructorFragment, defaultAbiCoder, ErrorFragment, EventFragment, FormatTypes, Fragment, FunctionFragment, Indexed, Interface, LogDescription, ParamType, Result, TransactionDescription } from "@ethersproject/abi";
+ import { getAddress, getCreate2Address, getContractAddress, getIcapAddress, isAddress } from "@ethersproject/address";
+ import * as base64 from "@ethersproject/base64";
+ import { Base58 as base58 } from "@ethersproject/basex";
+@@ -44,7 +44,7 @@ import { ConnectionInfo, FetchJsonResponse, OnceBlockable, OncePollable, PollOpt
+ ////////////////////////
+ // Exports
+ 
+-export {
++export type {
+     AbiCoder,
+     defaultAbiCoder,
+ 
