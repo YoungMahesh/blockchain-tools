@@ -6,24 +6,43 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
 import InboxIcon from '@mui/icons-material/Inbox';
-import DraftsIcon from '@mui/icons-material/Drafts';
+
+
 
 export default function SelectedListItem() {
-	const [selectedIndex, setSelectedIndex] = React.useState(1);
+	const [selectedIndex, setSelectedIndex] = React.useState('0x4');
 
-	const handleListItemClick = (
+	React.useEffect(() => {
+		async function loadWeb3() {
+			const chainId = await window.ethereum.request({ method: 'eth_chainId' })
+			if (chainId) setSelectedIndex(chainId)
+		}
+		loadWeb3()
+	}, [])
+
+	const handleListItemClick = async (
 		event: React.MouseEvent<HTMLDivElement, MouseEvent>,
 		index: number,
+		chainId: string
 	) => {
-		setSelectedIndex(index);
+		await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId }] })
 	};
 
 	return (
 		<Box sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
 			<List component="nav" aria-label="main mailbox folders">
 				<ListItemButton
-					selected={selectedIndex === 0}
-					onClick={(event) => handleListItemClick(event, 0)}
+					selected={selectedIndex === '0x89'}
+					onClick={(event) => handleListItemClick(event, 0, '0x89')}
+				>
+					<ListItemIcon>
+						<InboxIcon />
+					</ListItemIcon>
+					<ListItemText primary="Polygon Mainnet" />
+				</ListItemButton>
+				<ListItemButton
+					selected={selectedIndex === '0x63564c40'}
+					onClick={(event) => handleListItemClick(event, 0, '0x63564c40')}
 				>
 					<ListItemIcon>
 						<InboxIcon />
@@ -31,11 +50,11 @@ export default function SelectedListItem() {
 					<ListItemText primary="Harmony One" />
 				</ListItemButton>
 				<ListItemButton
-					selected={selectedIndex === 1}
-					onClick={(event) => handleListItemClick(event, 1)}
+					selected={selectedIndex === '0xfa'}
+					onClick={(event) => handleListItemClick(event, 1, '0xfa')}
 				>
 					<ListItemIcon>
-						<DraftsIcon />
+						<InboxIcon />
 					</ListItemIcon>
 					<ListItemText primary="Fantom Opera" />
 				</ListItemButton>
@@ -43,20 +62,29 @@ export default function SelectedListItem() {
 			<Divider />
 			<List component="nav" aria-label="secondary mailbox folder">
 				<ListItemButton
-					selected={selectedIndex === 2}
-					onClick={(event) => handleListItemClick(event, 2)}
+					selected={selectedIndex === '0x13881'}
+					onClick={(event) => handleListItemClick(event, 2, '0x13881')}
 				>
 					<ListItemIcon>
-						<DraftsIcon />
+						<InboxIcon />
+					</ListItemIcon>
+					<ListItemText primary="Polygon Testnet" />
+				</ListItemButton>
+				<ListItemButton
+					selected={selectedIndex === '0x6357d2e0'}
+					onClick={(event) => handleListItemClick(event, 2, '0x6357d2e0')}
+				>
+					<ListItemIcon>
+						<InboxIcon />
 					</ListItemIcon>
 					<ListItemText primary="Harmony Testnet" />
 				</ListItemButton>
 				<ListItemButton
-					selected={selectedIndex === 3}
-					onClick={(event) => handleListItemClick(event, 3)}
+					selected={selectedIndex === '0xfa2'}
+					onClick={(event) => handleListItemClick(event, 3, '0xfa2')}
 				>
 					<ListItemIcon>
-						<DraftsIcon />
+						<InboxIcon />
 					</ListItemIcon>
 					<ListItemText primary="Fantom Testnet" />
 				</ListItemButton>

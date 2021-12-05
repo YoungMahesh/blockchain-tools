@@ -1,21 +1,10 @@
 import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import CssBaseline from '@mui/material/CssBaseline';
-import Divider from '@mui/material/Divider';
-import Drawer from '@mui/material/Drawer';
-import IconButton from '@mui/material/IconButton';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import DiamondIcon from '@mui/icons-material/Diamond';
-import MenuIcon from '@mui/icons-material/Menu';
-import LockIcon from '@mui/icons-material/Lock';
-import SendIcon from '@mui/icons-material/Send';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
+import {
+	AppBar, Box, CssBaseline, Divider, Drawer,
+	IconButton, List, ListItem, ListItemIcon, ListItemText,
+	Toolbar, Typography
+} from '@mui/material'
+import { Diamond as DiamondIcon, Menu as MenuIcon, Lock as LockIcon, Send as SendIcon } from '@mui/icons-material'
 import type { ReactElement, ReactNode } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router';
@@ -38,8 +27,8 @@ export default function SideNavigation(props: Props) {
 	const [mobileOpen, setMobileOpen] = React.useState(false);
 
 	const handleDrawerToggle = () => {
-		setMobileOpen(!mobileOpen);
-	};
+		setMobileOpen(!mobileOpen)
+	}
 
 	const drawer = (
 		<div>
@@ -52,7 +41,7 @@ export default function SideNavigation(props: Props) {
 					{ title: 'Faucet', path: '/faucet', icon: 'diamondIcon' }
 				].map((obj1, index) => (
 					<Link href={obj1.path} key={obj1.title}>
-						<ListItem button>
+						<ListItem button selected={router.pathname === obj1.path}>
 							<ListItemIcon>
 								{/* {index % 2 === 0 ? <InboxIcon /> : <MailIcon />} */}
 								{obj1.icon === 'lockIcon' && <LockIcon />}
@@ -101,7 +90,7 @@ export default function SideNavigation(props: Props) {
 						<MenuIcon />
 					</IconButton>
 					<Typography variant="h6" noWrap component="div">
-						ETH-Tools
+						BlockChain Tools (Beta)
 					</Typography>
 				</Toolbar>
 			</AppBar>

@@ -40,7 +40,7 @@ export default function FaucetToken({ chainId, tokenType }) {
 			setTokenAddress(faucetAddr.erc1155)
 			setBtnText(btnTextTable.GET_ERC1155)
 		}
-	}, [tokenType])
+	}, [tokenType, chainId])
 
 
 

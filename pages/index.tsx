@@ -28,12 +28,8 @@ export default function Home() {
 
 
   useEffect(() => {
-    async function loadData() {
-      await loadWeb3(setWallet, setChainId, setMessage1, getMultiSenderAddress)
-    }
-    loadData()
+    loadWeb3(setWallet, setChainId, setMessage1, getMultiSenderAddress)
   }, [])
-
 
 
   const handleTokenTransfer = () => {

@@ -25,10 +25,7 @@ export default function Faucet() {
 
 
 	useEffect(() => {
-		async function loadData() {
-			await loadWeb3(setWallet, setChainId, setMessage1, getFaucetAddress)
-		}
-		loadData()
+		loadWeb3(setWallet, setChainId, setMessage1, getFaucetAddress)
 	}, [])
 
 	return (

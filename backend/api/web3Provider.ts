@@ -57,7 +57,7 @@ export const getMultiSenderAddress = (_chainId: number) => {
 	// '0xfa2' === 4002  fantom-testnet
 	if (_chainId === 4) return '0x9c61cdd6436599F089b4AdA60EF433be31553a8c'
 	// '0x4' === 4              verified on sourcify.dev
-	return null
+	return ''
 }
 export const getLockerContractAddr = (_chainId: number) => {
 	if (_chainId === 4002) return '0xa0f15ba75b2205BD0908a862EF4eA00051fBDD31'

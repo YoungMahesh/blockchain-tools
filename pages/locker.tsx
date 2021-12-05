@@ -38,10 +38,7 @@ export default function Locker() {
 	const [txnHash, setTxnHash] = useState('')
 
 	useEffect(() => {
-		async function loadData() {
-			await loadWeb3(setWallet, setChainId, setMessage1, getLockerContractAddr)
-		}
-		loadData()
+		loadWeb3(setWallet, setChainId, setMessage1, getLockerContractAddr)
 	}, [])
 
 	useEffect(() => {
