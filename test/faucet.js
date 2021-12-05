@@ -1,7 +1,8 @@
-const { BigNumber } = require('@ethersproject/bignumber')
 const { expect } = require('chai')
 const { ethers } = require('hardhat')
-const BN = BigNumber.from
+const BN = ethers.BigNumber.from
+
+
 
 describe('Faucet Contract', function () {
 
@@ -56,4 +57,3 @@ describe('Faucet Contract', function () {
 		expect(await kuber.balanceOf(user0, 0)).to.equal(1000)
 	})
 })
-

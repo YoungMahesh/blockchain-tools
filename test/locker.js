@@ -1,7 +1,7 @@
-const { BigNumber } = require('@ethersproject/bignumber')
+// const { BigNumber } = require('@ethersproject/bignumber')
 const { expect } = require('chai')
 const { ethers } = require('hardhat')
-const BN = BigNumber.from
+const BN = ethers.BigNumber.from
 
 describe('Locker Contract', function () {
 
