@@ -6,19 +6,17 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
 import InboxIcon from '@mui/icons-material/Inbox';
-
+import useStore from '../backend/zustand/store'
 
 
 export default function SelectedListItem() {
 	const [selectedIndex, setSelectedIndex] = React.useState('0x4');
+	const chainId = useStore(state => state.chainId)
 
 	React.useEffect(() => {
-		async function loadWeb3() {
-			const chainId = await window.ethereum.request({ method: 'eth_chainId' })
-			if (chainId) setSelectedIndex(chainId)
-		}
-		loadWeb3()
-	}, [])
+		const currChain = '0x' + chainId.toString(16)
+		setSelectedIndex(currChain)
+	}, [chainId])
 
 	const handleListItemClick = async (
 		event: React.MouseEvent<HTMLDivElement, MouseEvent>,

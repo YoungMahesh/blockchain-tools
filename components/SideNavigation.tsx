@@ -1,34 +1,53 @@
-import * as React from 'react';
 import {
 	AppBar, Box, CssBaseline, Divider, Drawer,
 	IconButton, List, ListItem, ListItemIcon, ListItemText,
-	Toolbar, Typography
+	Toolbar, Typography, Button
 } from '@mui/material'
 import { Diamond as DiamondIcon, Menu as MenuIcon, Lock as LockIcon, Send as SendIcon } from '@mui/icons-material'
-import type { ReactElement, ReactNode } from 'react'
+import { ReactElement, ReactNode, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router';
 import NetworkList from './NetworkList';
+import useStore from '../backend/zustand/store'
+import { getSigner, loadWeb32 } from '../backend/api/web3Provider';
 
 const drawerWidth = 240;
 
 interface Props {
-	/**
-	 * Injected by the documentation to work in an iframe.
-	 * You won't need it on your project.
-	 */
-	window?: () => Window;
 	children?: (page: ReactElement) => ReactNode
 }
 
 export default function SideNavigation(props: Props) {
-	const { window } = props;
 	const router = useRouter()
-	const [mobileOpen, setMobileOpen] = React.useState(false);
+	const [mobileOpen, setMobileOpen] = useState(false)
+	const [wallet2, setWallet2] = useState('Connect Wallet')
+
+	const setChainId = useStore(state => state.setChainId)
+	const setChainIdMsg = useStore(state => state.setChainIdMsg)
+
+	const wallet = useStore(state => state.wallet)
+	const setWallet = useStore(state => state.setWallet)
+	const setWalletMsg = useStore(state => state.setWalletMsg)
+
+	useEffect(() => {
+		loadWeb32(setWallet, setChainId, setChainIdMsg, setWalletMsg)
+	}, [])
 
 	const handleDrawerToggle = () => {
 		setMobileOpen(!mobileOpen)
 	}
+
+	const connectToWallet = async () => {
+		if (window.ethereum)
+			await window.ethereum.request({ method: 'eth_requestAccounts' })
+		else
+			window.open('https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en')
+	}
+
+	useEffect(() => {
+		if (wallet.length > 0) setWallet2(`${wallet.slice(0, 5)}...${wallet.slice(38, 42)}`)
+		else setWallet2('Connect Wallet')
+	}, [wallet])
 
 	const drawer = (
 		<div>
@@ -53,21 +72,8 @@ export default function SideNavigation(props: Props) {
 					</Link>
 				))}
 			</List>
-			{/* <Divider />
-			<List>
-				{['All mail', 'Trash', 'Spam'].map((text, index) => (
-					<ListItem button key={text}>
-						<ListItemIcon>
-							{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-						</ListItemIcon>
-						<ListItemText primary={text} />
-					</ListItem>
-				))}
-			</List> */}
 		</div>
-	);
-
-	const container = window !== undefined ? () => window().document.body : undefined;
+	)
 
 	return (
 		<Box sx={{ display: 'flex' }}>
@@ -89,9 +95,14 @@ export default function SideNavigation(props: Props) {
 					>
 						<MenuIcon />
 					</IconButton>
-					<Typography variant="h6" noWrap component="div">
-						BlockChain Tools (Beta)
-					</Typography>
+					<Box sx={{ display: 'flex', width: '100%', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+						<Typography variant="h6" noWrap component="div">
+							BlockChain Tools (Beta)
+						</Typography>
+						<Button onClick={connectToWallet} variant="contained" sx={{ background: '#293241' }}>
+							{wallet2}
+						</Button>
+					</Box>
 				</Toolbar>
 			</AppBar>
 			<Box
@@ -99,9 +110,7 @@ export default function SideNavigation(props: Props) {
 				sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
 				aria-label="mailbox folders"
 			>
-				{/* The implementation can be swapped with js to avoid SEO duplication of links. */}
 				<Drawer
-					container={container}
 					variant="temporary"
 					open={mobileOpen}
 					onClose={handleDrawerToggle}

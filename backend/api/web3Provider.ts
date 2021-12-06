@@ -14,12 +14,45 @@ declare global {
 	}
 }
 
+export const getSigner = () => {
+	const provider = new ethers.providers.Web3Provider(window.ethereum)
+	return provider.getSigner()
+}
+
+
+export const loadWeb32 = async (setWallet: Function, setChainId: Function, setChainIdMsg: Function, setWalletMsg: Function) => {
+	if (!window.ethereum) {
+		setChainIdMsg(messagesTable.NOT_INSTALLED)
+	} else {
+		const signer = getSigner()
+		const chainId = await signer.getChainId()
+		setChainId(chainId)
+		const accounts = await window.ethereum.request({ method: 'eth_accounts' })
+		handleAccountChanged2(accounts, setWallet, setWalletMsg)
+		window.ethereum.on('chainChanged', () => window.location.reload())
+		window.ethereum.on('accountsChanged', (accounts: string[]) => handleAccountChanged(accounts, setWallet, setWalletMsg))
+	}
+}
+
+export const handleAccountChanged2 = (accounts: string[],
+	setWallet: Function, setWalletMsg: Function,) => {
+	if (accounts.length > 0) {
+		setWallet(accounts[0])
+		setWalletMsg('')
+	}
+	else {
+		setWallet('')
+		setWalletMsg(messagesTable.METAMASK_LOCKED)
+	}
+}
+
+
 export const loadWeb3 = async (setWallet: Function, setChainId: Function,
 	setMessage1: Function, getContractAddr: Function) => {
+	window.signer = null
+	window.chainId = -1
+	window.wallet = ''
 	if (!window.ethereum) {
-		window.signer = null
-		window.chainId = -1
-		window.wallet = ''
 		setMessage1(messagesTable.NOT_INSTALLED)
 	} else {
 		window.signer = getSigner()
@@ -35,7 +68,8 @@ export const loadWeb3 = async (setWallet: Function, setChainId: Function,
 		setMessage1(messagesTable.NOT_SUPPORTED)
 }
 
-const handleAccountChanged = (accounts: string[], setWallet: Function, setMessage1: Function) => {
+
+export const handleAccountChanged = (accounts: string[], setWallet: Function, setMessage1: Function) => {
 	if (accounts.length > 0) {
 		window.wallet = accounts[0]
 		setMessage1('')
@@ -47,10 +81,6 @@ const handleAccountChanged = (accounts: string[], setWallet: Function, setMessag
 	setWallet(window.wallet)
 }
 
-export const getSigner = () => {
-	const provider = new ethers.providers.Web3Provider(window.ethereum)
-	return provider.getSigner()
-}
 
 export const getMultiSenderAddress = (_chainId: number) => {
 	if (_chainId === 4002) return '0x845E5C70AaAddb44522fd98Ce78743176b4715c6'

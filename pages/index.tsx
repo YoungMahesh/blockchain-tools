@@ -3,7 +3,7 @@ import {
   TextField, Box,
   Button, Stack, LinearProgress
 } from '@mui/material'
-import { getMultiSenderAddress, getSigner, loadWeb3 } from '../backend/api/web3Provider'
+import { getMultiSenderAddress, getMultiSenderContract, getSigner, handleAccountChanged, loadWeb3 } from '../backend/api/web3Provider'
 import { btnTextTable, messagesTable, processRecipientData } from '../backend/api/utils'
 import { Send as SendIcon } from '@mui/icons-material'
 import { useEffect, useState } from 'react'
@@ -12,24 +12,29 @@ import TxnLink from '../components/TxnLink'
 import { getErc721Approval, transferErc721 } from '../backend/api/erc721'
 import { getErc1155Approval, transferErc1155 } from '../backend/api/erc1155'
 import TokenTypeSelector from '../components/TokenTypeSelector'
+import useStore from '../backend/zustand/store'
 
 export default function Home() {
 
-  const [wallet, setWallet] = useState('')
-  const [chainId, setChainId] = useState(-1)
-  const [message1, setMessage1] = useState('')
+  const chainId = useStore(state => state.chainId)
+  const chainIdMsg = useStore(state => state.chainIdMsg)
+  const setChainIdMsg = useStore(state => state.setChainIdMsg)
+
+  const walletMsg = useStore(state => state.walletMsg)
 
   const [tokenType, setTokenType] = useState('erc20')
   const [tokenAddress, setTokenAddress] = useState('')
   const [recipientData, setRecipientData] = useState('')
   const [btnText, setBtnText] = useState(btnTextTable.SEND)
 
+  const [message1, setMessage1] = useState('')
   const [txnHash, setTxnHash] = useState('')
 
 
   useEffect(() => {
-    loadWeb3(setWallet, setChainId, setMessage1, getMultiSenderAddress)
-  }, [])
+    if (getMultiSenderAddress(chainId) === '') setChainIdMsg(messagesTable.NOT_SUPPORTED)
+    else setChainIdMsg('')
+  }, [chainId])
 
 
   const handleTokenTransfer = () => {
@@ -195,8 +200,8 @@ export default function Home() {
 
           <Button onClick={handleTokenTransfer}
             disabled={(
-              message1 === messagesTable.NOT_SUPPORTED
-              || message1 === messagesTable.METAMASK_LOCKED
+              chainIdMsg === messagesTable.NOT_SUPPORTED
+              || walletMsg === messagesTable.METAMASK_LOCKED
               || btnText === btnTextTable.APPROVING
               || btnText === btnTextTable.SENDING
             )}
@@ -208,7 +213,9 @@ export default function Home() {
             <LinearProgress />
           }
 
-          <p>{message1}</p>
+          {message1.length > 0 && <p>{message1}</p>}
+          {chainIdMsg.length > 0 && <p>{chainIdMsg}</p>}
+          {walletMsg.length > 0 && <p>{walletMsg}</p>}
 
           {
             (txnHash.length > 0) &&

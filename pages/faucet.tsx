@@ -1,18 +1,12 @@
 import Head from 'next/head'
 import {
-	Box, FormControl, FormLabel,
-	Radio, RadioGroup, FormControlLabel,
-	Button, Stack, LinearProgress, Typography,
-	Card,
+	Box, Stack, Typography,
 } from '@mui/material'
-import { getFaucetAddress, getFaucetContract, getSigner, loadWeb3 } from '../backend/api/web3Provider'
-import { btnTextTable, messagesTable } from '../backend/api/utils'
+import { getFaucetAddress, loadWeb3 } from '../backend/api/web3Provider'
+import { messagesTable } from '../backend/api/utils'
 import { useEffect, useState } from 'react'
-import TxnLink from '../components/TxnLink'
 import FaucetToken from '../components/FaucetToken'
 import TokenTypeSelector from '../components/TokenTypeSelector'
-
-
 
 
 export default function Faucet() {
