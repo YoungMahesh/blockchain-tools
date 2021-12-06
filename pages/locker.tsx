@@ -13,16 +13,17 @@ import DateTimePicker from '@mui/lab/DateTimePicker';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import { approveErc20ForLocker, getUserLockers, lockErc20Tokens, LockerInfo, LockerInfo2 } from '../backend/locker/erc20Lock'
-import MyLocks from '../components/MyLocks'
 import { approveErc721ForLocker, transferErc721ToLocker } from '../backend/common/erc721'
 import { approveErc1155ForLocker } from '../backend/common/erc1155'
 import { transferTokensToLocker } from '../backend/locker/lockerWeb3'
 import TokenTypeSelector from '../components/TokenTypeSelector'
 import AlertMessages from '../components/AlertMessages'
 import useStore from '../backend/zustand/store'
+import { useRouter } from 'next/router'
 
 
 export default function Locker() {
+	const router = useRouter()
 
 	const chainId = useStore(state => state.chainId)
 	const chainIdMsg = useStore(state => state.chainIdMsg)
@@ -36,7 +37,6 @@ export default function Locker() {
 	const [tokenId, setTokenId] = useState('')
 	const [lockAmount, setLockAmount] = useState('')
 	const [unlockDate, setUnlockDate] = useState(new Date())
-	const [userLocks, setUserLocks] = useState<LockerInfo2[]>([])
 
 	const [btnText, setBtnText] = useState(btnTextTable.LOCK)
 	const [txnHash, setTxnHash] = useState('')
@@ -47,17 +47,7 @@ export default function Locker() {
 		else setChainIdMsg('')
 	}, [chainId])
 
-	useEffect(() => {
-		async function loadLockers() {
-			if (window.ethereum) {
-				const { fetchedLockers, userLockersInfoArr } = await getUserLockers()
-				if (fetchedLockers) {
-					setUserLocks(userLockersInfoArr)
-				}
-			}
-		}
-		loadLockers()
-	}, [chainId, wallet])
+
 
 	const handleLocking = () => {
 		if (tokenType === 'erc20') {
@@ -98,9 +88,10 @@ export default function Locker() {
 				setBtnText(btnTextTable.LOCK)
 				return
 			}
-			setTxnHash(hash)
-			setBtnText(btnTextTable.LOCK)
-			setMessage1('')
+			// setTxnHash(hash)
+			// setBtnText(btnTextTable.LOCK)
+			// setMessage1('')
+			router.push('/mylocks')
 		} catch (err) {
 			console.log(err)
 			setMessage1(messagesTable.LOCK_PROBLEM)
@@ -128,9 +119,10 @@ export default function Locker() {
 				setBtnText(btnTextTable.LOCK)
 				return
 			}
-			setTxnHash(hash)
-			setBtnText(btnTextTable.LOCK)
-			setMessage1('')
+			// setTxnHash(hash)
+			// setBtnText(btnTextTable.LOCK)
+			// setMessage1('')
+			router.push('/mylocks')
 		} catch (err) {
 			console.log(err)
 			setMessage1(messagesTable.LOCK_PROBLEM)
@@ -160,9 +152,10 @@ export default function Locker() {
 				setBtnText(btnTextTable.LOCK)
 				return
 			}
-			setTxnHash(hash)
-			setBtnText(btnTextTable.LOCK)
-			setMessage1('')
+			// setTxnHash(hash)
+			// setBtnText(btnTextTable.LOCK)
+			// setMessage1('')
+			router.push('/mylocks')
 		} catch (err) {
 			console.log(err)
 			setMessage1(messagesTable.LOCK_PROBLEM)
@@ -259,7 +252,6 @@ export default function Locker() {
 					}
 				</Stack>
 
-				<MyLocks userLocks={userLocks} setMessage1={setMessage1} />
 			</Box>
 		</div>
 	)

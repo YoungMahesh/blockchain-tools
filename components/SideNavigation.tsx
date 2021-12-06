@@ -57,6 +57,7 @@ export default function SideNavigation(props: Props) {
 				{[
 					{ title: 'MultiSender', path: '/', icon: 'sendIcon' },
 					{ title: 'Locker', path: '/locker', icon: 'lockIcon' },
+					{ title: 'My Locks', path: '/mylocks', icon: 'lockIcon' },
 					{ title: 'Faucet', path: '/faucet', icon: 'diamondIcon' }
 				].map((obj1, index) => (
 					<Link href={obj1.path} key={obj1.title} passHref>

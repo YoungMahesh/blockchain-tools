@@ -1,14 +1,42 @@
-import { Stack, Typography, Box, Button } from '@mui/material'
+import { Stack, Typography, Box, Button, CircularProgress } from '@mui/material'
 import { ethers } from 'ethers'
+import { useEffect, useState } from 'react'
 import { getLockerContract, getSigner } from '../backend/api/web3Provider'
-import { LockerInfo2 } from '../backend/locker/erc20Lock'
+import { getUserLockers, LockerInfo2 } from '../backend/locker/erc20Lock'
+import useStore from '../backend/zustand/store'
+import AlertMessages from '../components/AlertMessages'
 
-interface ListProps {
-	userLocks: LockerInfo2[]
-	setMessage1: Function
-}
 
-export default function MyLocks({ userLocks, setMessage1 }: ListProps) {
+export default function MyLocks() {
+
+	const chainId = useStore(state => state.chainId)
+	const wallet = useStore(state => state.wallet)
+
+	const [message1, setMessage1] = useState('')
+
+	const [isFetching, setIsFetching] = useState(false)
+	const [erc20Locks, setErc20Locks] = useState<LockerInfo2[]>([])
+	const [erc721Locks, setErc721Locks] = useState<LockerInfo2[]>([])
+	const [erc1155Locks, setErc1155Locks] = useState<LockerInfo2[]>([])
+
+	useEffect(() => {
+		async function loadLockers() {
+			if (window.ethereum) {
+				setIsFetching(true)
+				const { fetchedLockers, userLockersInfoArr } = await getUserLockers()
+				if (fetchedLockers) {
+					const erc20Locks1 = userLockersInfoArr.filter(obj => !obj.isWithdrawn && obj.tokenType === 'erc20')
+					setErc20Locks(erc20Locks1)
+					const erc721Locks1 = userLockersInfoArr.filter(obj => !obj.isWithdrawn && obj.tokenType === 'erc721')
+					setErc721Locks(erc721Locks1)
+					const erc1155Locks1 = userLockersInfoArr.filter(obj => !obj.isWithdrawn && obj.tokenType === 'erc1155')
+					setErc1155Locks(erc1155Locks1)
+				}
+				setIsFetching(false)
+			}
+		}
+		loadLockers()
+	}, [chainId, wallet])
 
 	const getDate = (timeInSeconds: ethers.BigNumber) => {
 		const timeInMilliSeconds = timeInSeconds.toNumber() * 1000
@@ -18,29 +46,24 @@ export default function MyLocks({ userLocks, setMessage1 }: ListProps) {
 	}
 
 	const withdrawTokens = async (_lockerId: ethers.BigNumber) => {
+		setMessage1('')
 		try {
 			const signer = getSigner()
 			const chainId = await signer.getChainId()
 			const lockerContract = getLockerContract(signer, chainId)
 			const txn = await lockerContract.destroyLocker(_lockerId)
 			await txn.wait()
-
 		} catch (err) {
 			console.log(err)
 			setMessage1('Problem occurred while unlocking tokens.')
 		}
 	}
 
-	return (
-
-		<Stack mb={4}>
-			<Typography variant='h5' mt={4}>My Locks</Typography>
-			<Box>
-				<Typography variant='h6'>
-					ERC20 Tokens
-				</Typography>
+	const ERC20Locks = () => {
+		return (
+			<>
 				{
-					userLocks.filter(obj => !obj.isWithdrawn && obj.tokenType === 'erc20').map(({ tokenOwner, tokenType,
+					erc20Locks.map(({ tokenOwner, tokenType,
 						tokenAddress, tokenId, tokenAmount,
 						lockTime, unlockTime, isWithdrawn,
 						tokenName, tokenSymbol, tokenAmount2, lockerId
@@ -63,13 +86,15 @@ export default function MyLocks({ userLocks, setMessage1 }: ListProps) {
 						</Box>
 					))
 				}
-			</Box>
-			<Box>
-				<Typography variant='h6'>
-					ERC721 Tokens
-				</Typography>
+			</>
+		)
+	}
+
+	const ERC721Locks = () => {
+		return (
+			<>
 				{
-					userLocks.filter(obj => !obj.isWithdrawn && obj.tokenType === 'erc721').map(({ tokenOwner, tokenType,
+					erc721Locks.map(({ tokenOwner, tokenType,
 						tokenAddress, tokenId, tokenAmount,
 						lockTime, unlockTime, isWithdrawn,
 						tokenName, tokenSymbol, tokenAmount2, lockerId
@@ -92,13 +117,15 @@ export default function MyLocks({ userLocks, setMessage1 }: ListProps) {
 						</Box>
 					))
 				}
-			</Box>
-			<Box>
-				<Typography variant='h6'>
-					ERC1155 Tokens
-				</Typography>
+			</>
+		)
+	}
+
+	const ERC1155Locks = () => {
+		return (
+			<>
 				{
-					userLocks.filter(obj => !obj.isWithdrawn && obj.tokenType === 'erc1155').map(({ tokenOwner, tokenType,
+					erc1155Locks.map(({ tokenOwner, tokenType,
 						tokenAddress, tokenId, tokenAmount,
 						lockTime, unlockTime, isWithdrawn,
 						tokenName, tokenSymbol, tokenAmount2, lockerId
@@ -122,7 +149,38 @@ export default function MyLocks({ userLocks, setMessage1 }: ListProps) {
 						</Box>
 					))
 				}
+			</>
+		)
+	}
+
+
+	return (
+
+
+		<Stack mb={4}>
+
+			<AlertMessages message1={message1} />
+
+			<Typography variant='h5' mt={4}>My Locks</Typography>
+			<Box>
+				<Typography variant='h6'>
+					ERC20 Tokens
+				</Typography>
+				{isFetching ? <CircularProgress /> : <ERC20Locks />}
+			</Box>
+			<Box>
+				<Typography variant='h6'>
+					ERC721 Tokens
+				</Typography>
+				{isFetching ? <CircularProgress /> : <ERC721Locks />}
+			</Box>
+			<Box>
+				<Typography variant='h6'>
+					ERC1155 Tokens
+				</Typography>
+				{isFetching ? <CircularProgress /> : <ERC1155Locks />}
 			</Box>
 		</Stack>
+
 	)
 }
