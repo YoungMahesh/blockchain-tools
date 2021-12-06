@@ -20,7 +20,7 @@ export const getSigner = () => {
 }
 
 
-export const loadWeb32 = async (setWallet: Function, setChainId: Function, setChainIdMsg: Function, setWalletMsg: Function) => {
+export const loadWeb3 = async (setWallet: Function, setChainId: Function, setChainIdMsg: Function, setWalletMsg: Function) => {
 	if (!window.ethereum) {
 		setChainIdMsg(messagesTable.NOT_INSTALLED)
 	} else {
@@ -28,13 +28,13 @@ export const loadWeb32 = async (setWallet: Function, setChainId: Function, setCh
 		const chainId = await signer.getChainId()
 		setChainId(chainId)
 		const accounts = await window.ethereum.request({ method: 'eth_accounts' })
-		handleAccountChanged2(accounts, setWallet, setWalletMsg)
+		handleAccountChanged(accounts, setWallet, setWalletMsg)
 		window.ethereum.on('chainChanged', () => window.location.reload())
 		window.ethereum.on('accountsChanged', (accounts: string[]) => handleAccountChanged(accounts, setWallet, setWalletMsg))
 	}
 }
 
-export const handleAccountChanged2 = (accounts: string[],
+export const handleAccountChanged = (accounts: string[],
 	setWallet: Function, setWalletMsg: Function,) => {
 	if (accounts.length > 0) {
 		setWallet(accounts[0])
@@ -44,41 +44,6 @@ export const handleAccountChanged2 = (accounts: string[],
 		setWallet('')
 		setWalletMsg(messagesTable.METAMASK_LOCKED)
 	}
-}
-
-
-export const loadWeb3 = async (setWallet: Function, setChainId: Function,
-	setMessage1: Function, getContractAddr: Function) => {
-	window.signer = null
-	window.chainId = -1
-	window.wallet = ''
-	if (!window.ethereum) {
-		setMessage1(messagesTable.NOT_INSTALLED)
-	} else {
-		window.signer = getSigner()
-		window.chainId = await window.signer.getChainId()
-		const accounts = await window.ethereum.request({ method: 'eth_accounts' })
-		handleAccountChanged(accounts, setWallet, setMessage1)
-		window.ethereum.on('chainChanged', () => window.location.reload())
-		window.ethereum.on('accountsChanged', (accounts: string[]) => handleAccountChanged(accounts, setWallet, setMessage1))
-	}
-	setWallet(window.wallet)
-	setChainId(window.chainId)
-	if (getContractAddr(window.chainId) === '')
-		setMessage1(messagesTable.NOT_SUPPORTED)
-}
-
-
-export const handleAccountChanged = (accounts: string[], setWallet: Function, setMessage1: Function) => {
-	if (accounts.length > 0) {
-		window.wallet = accounts[0]
-		setMessage1('')
-	}
-	else {
-		window.wallet = ''
-		setMessage1(messagesTable.METAMASK_LOCKED)
-	}
-	setWallet(window.wallet)
 }
 
 

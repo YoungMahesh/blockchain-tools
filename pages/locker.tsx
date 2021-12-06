@@ -1,10 +1,9 @@
 import Head from 'next/head'
 import {
 	TextField, Box, FormControl, FormLabel,
-	Radio, RadioGroup, FormControlLabel,
 	Button, Stack, LinearProgress
 } from '@mui/material'
-import { getLockerContractAddr, loadWeb3 } from '../backend/api/web3Provider'
+import { getLockerContractAddr } from '../backend/api/web3Provider'
 import { btnTextTable, messagesTable } from '../backend/api/utils'
 import { Send as SendIcon } from '@mui/icons-material'
 import { useEffect, useState } from 'react'
@@ -19,13 +18,18 @@ import { approveErc721ForLocker, transferErc721ToLocker } from '../backend/commo
 import { approveErc1155ForLocker } from '../backend/common/erc1155'
 import { transferTokensToLocker } from '../backend/locker/lockerWeb3'
 import TokenTypeSelector from '../components/TokenTypeSelector'
+import AlertMessages from '../components/AlertMessages'
+import useStore from '../backend/zustand/store'
 
 
 export default function Locker() {
 
-	const [wallet, setWallet] = useState('')
-	const [chainId, setChainId] = useState(-1)
-	const [message1, setMessage1] = useState('')
+	const chainId = useStore(state => state.chainId)
+	const chainIdMsg = useStore(state => state.chainIdMsg)
+	const setChainIdMsg = useStore(state => state.setChainIdMsg)
+
+	const wallet = useStore(state => state.wallet)
+	const walletMsg = useStore(state => state.walletMsg)
 
 	const [tokenType, setTokenType] = useState('erc20')
 	const [tokenAddress, setTokenAddress] = useState('')
@@ -36,10 +40,12 @@ export default function Locker() {
 
 	const [btnText, setBtnText] = useState(btnTextTable.LOCK)
 	const [txnHash, setTxnHash] = useState('')
+	const [message1, setMessage1] = useState('')
 
 	useEffect(() => {
-		loadWeb3(setWallet, setChainId, setMessage1, getLockerContractAddr)
-	}, [])
+		if (getLockerContractAddr(chainId) === '') setChainIdMsg(messagesTable.NOT_SUPPORTED)
+		else setChainIdMsg('')
+	}, [chainId])
 
 	useEffect(() => {
 		async function loadLockers() {
@@ -228,8 +234,9 @@ export default function Locker() {
 
 					<Button onClick={handleLocking}
 						disabled={(
-							message1 === messagesTable.NOT_SUPPORTED
-							|| message1 === messagesTable.METAMASK_LOCKED
+							chainIdMsg === messagesTable.NOT_INSTALLED
+							|| chainIdMsg === messagesTable.NOT_SUPPORTED
+							|| walletMsg === messagesTable.METAMASK_LOCKED
 							|| btnText === btnTextTable.APPROVING
 							|| btnText === btnTextTable.LOCKING
 						)}
@@ -241,7 +248,7 @@ export default function Locker() {
 						<LinearProgress />
 					}
 
-					<p>{message1}</p>
+					<AlertMessages message1={message1} />
 
 					{
 						(txnHash.length > 0) &&

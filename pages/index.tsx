@@ -3,7 +3,7 @@ import {
   TextField, Box,
   Button, Stack, LinearProgress
 } from '@mui/material'
-import { getMultiSenderAddress, getMultiSenderContract, getSigner, handleAccountChanged, loadWeb3 } from '../backend/api/web3Provider'
+import { getMultiSenderAddress, getSigner } from '../backend/api/web3Provider'
 import { btnTextTable, messagesTable, processRecipientData } from '../backend/api/utils'
 import { Send as SendIcon } from '@mui/icons-material'
 import { useEffect, useState } from 'react'
@@ -13,6 +13,7 @@ import { getErc721Approval, transferErc721 } from '../backend/api/erc721'
 import { getErc1155Approval, transferErc1155 } from '../backend/api/erc1155'
 import TokenTypeSelector from '../components/TokenTypeSelector'
 import useStore from '../backend/zustand/store'
+import AlertMessages from '../components/AlertMessages'
 
 export default function Home() {
 
@@ -53,7 +54,6 @@ export default function Home() {
 
   const handleErc20Transfer = async () => {
     try {
-      const signer = getSigner()
       const data1 = processRecipientData(recipientData, 'erc20')
       if (data1 === null) {
         setMessage1(messagesTable.INVALID_DATA)
@@ -200,7 +200,8 @@ export default function Home() {
 
           <Button onClick={handleTokenTransfer}
             disabled={(
-              chainIdMsg === messagesTable.NOT_SUPPORTED
+              chainIdMsg === messagesTable.NOT_INSTALLED
+              || chainIdMsg === messagesTable.NOT_SUPPORTED
               || walletMsg === messagesTable.METAMASK_LOCKED
               || btnText === btnTextTable.APPROVING
               || btnText === btnTextTable.SENDING
@@ -213,9 +214,7 @@ export default function Home() {
             <LinearProgress />
           }
 
-          {message1.length > 0 && <p>{message1}</p>}
-          {chainIdMsg.length > 0 && <p>{chainIdMsg}</p>}
-          {walletMsg.length > 0 && <p>{walletMsg}</p>}
+          <AlertMessages message1={message1} />
 
           {
             (txnHash.length > 0) &&

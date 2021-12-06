@@ -9,7 +9,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router';
 import NetworkList from './NetworkList';
 import useStore from '../backend/zustand/store'
-import { getSigner, loadWeb32 } from '../backend/api/web3Provider';
+import { loadWeb3 } from '../backend/api/web3Provider';
 
 const drawerWidth = 240;
 
@@ -30,7 +30,7 @@ export default function SideNavigation(props: Props) {
 	const setWalletMsg = useStore(state => state.setWalletMsg)
 
 	useEffect(() => {
-		loadWeb32(setWallet, setChainId, setChainIdMsg, setWalletMsg)
+		loadWeb3(setWallet, setChainId, setChainIdMsg, setWalletMsg)
 	}, [])
 
 	const handleDrawerToggle = () => {

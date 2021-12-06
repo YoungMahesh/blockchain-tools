@@ -2,25 +2,32 @@ import Head from 'next/head'
 import {
 	Box, Stack, Typography,
 } from '@mui/material'
-import { getFaucetAddress, loadWeb3 } from '../backend/api/web3Provider'
+import { getFaucetAddress } from '../backend/api/web3Provider'
 import { messagesTable } from '../backend/api/utils'
 import { useEffect, useState } from 'react'
 import FaucetToken from '../components/FaucetToken'
 import TokenTypeSelector from '../components/TokenTypeSelector'
+import useStore from '../backend/zustand/store'
+import AlertMessages from '../components/AlertMessages'
 
 
 export default function Faucet() {
 
-	const [wallet, setWallet] = useState('')
-	const [chainId, setChainId] = useState(-1)
-	const [message1, setMessage1] = useState('')
+	const chainId = useStore(state => state.chainId)
+	const chainIdMsg = useStore(state => state.chainIdMsg)
+	const setChainIdMsg = useStore(state => state.setChainIdMsg)
+
+	const wallet = useStore(state => state.wallet)
+	const walletMsg = useStore(state => state.walletMsg)
 
 	const [tokenType, setTokenType] = useState('erc20')
 
 
 	useEffect(() => {
-		loadWeb3(setWallet, setChainId, setMessage1, getFaucetAddress)
-	}, [])
+		if (getFaucetAddress(chainId) === '') setChainIdMsg(messagesTable.NOT_SUPPORTED)
+		else setChainIdMsg('')
+	}, [chainId])
+
 
 	return (
 		<div>
@@ -34,9 +41,11 @@ export default function Faucet() {
 				<Stack mx='auto' spacing={3}
 					maxWidth='400px'>
 
-
 					{
-						(message1 !== messagesTable.NOT_SUPPORTED && message1 !== messagesTable.NOT_INSTALLED) &&
+						!(chainIdMsg === messagesTable.NOT_INSTALLED
+							|| chainIdMsg === messagesTable.NOT_SUPPORTED
+							|| walletMsg === messagesTable.METAMASK_LOCKED
+						) &&
 						<>
 							<TokenTypeSelector
 								tokenType={tokenType} setTokenType={setTokenType}
@@ -47,7 +56,7 @@ export default function Faucet() {
 						</>
 					}
 
-					<Typography>{message1}</Typography>
+					<AlertMessages message1='' />
 
 				</Stack>
 
