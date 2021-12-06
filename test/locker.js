@@ -6,23 +6,21 @@ const BN = ethers.BigNumber.from
 describe('Locker Contract', function () {
 
 	let locker, tron, devyani, penguins;
-	let user0, signer1, user1, user2;
-	let lockerId1, lockerId2;
+	let user0, signer1;
+	const currTime = Math.floor(Date.now() / 1000)
+	const oneHourLater = currTime + 3600
 
 	it('Set User Addresses', async function () {
-		const [owner, addr1, addr2] = await ethers.getSigners();
+		const [owner, addr1] = await ethers.getSigners();
 		user0 = await owner.getAddress()
 		signer1 = addr1
-		user1 = await addr1.getAddress()
-		user2 = await addr2.getAddress()
 	})
 
 	it('Deploy Locker Contract', async function () {
-		const Locker = await ethers.getContractFactory('LockerV2')
+		const Locker = await ethers.getContractFactory('LockerV3')
 		locker = await Locker.deploy()
 		await locker.deployed()
 	})
-
 
 	// ERC20 Lock and Unlock
 	it('ERC20: Deploy Tron Contract', async function () {
@@ -39,31 +37,34 @@ describe('Locker Contract', function () {
 
 		await tron.approve(locker.address, amount1.mul(2))
 
-		// time in past
-		await locker.createLocker('erc20', tron.address, 0, amount1, 10000)
-
-		// time in future
-		const oneHourLater = Math.floor(Date.now() / 1000) + 3600
+		// lock with unlock-time in past and unlock-time in future
+		await locker.createLocker('erc20', tron.address, 0, amount1, currTime)
 		await locker.createLocker('erc20', tron.address, 0, amount1, oneHourLater)
 
 		expect(await tron.balanceOf(locker.address)).to.equal(amount1.mul(2))
 
-		const [id1, id2] = await locker.getLockersOfUser(user0)
-		lockerId1 = id1.toString()
-		lockerId2 = id2.toString()
-		// console.log('LockerIds created: ', lockerId1, lockerId2)
+		locksArr = await locker.getLockersOfUser(user0)
+
+		expect(locksArr.length).to.equal(2)
 	})
 	it('ERC20: Non owner could not unlock', async function () {
-		await expect(locker.connect(signer1).destroyLocker(lockerId1)).to.be.revertedWith('02')
+		await expect(locker.connect(signer1).destroyLocker(locksArr[0])).to.be.revertedWith('02')
 	})
+
+	let locksArr = []
 	it('ERC20: Owner can unlock', async function () {
-		await locker.destroyLocker(lockerId1)
+		locksArr = await locker.getLockersOfUser(user0)
+		await locker.destroyLocker(locksArr[0])
+	})
+	it('ERC20: Cannot withdraw from destroyed lock', async function () {
+		await expect(locker.destroyLocker(locksArr[0])).to.be.revertedWith('04')
 	})
 	it('ERC20: Cannot unlock if unlocktime in future', async function () {
-		await expect(locker.destroyLocker(lockerId2)).to.be.revertedWith('03')
+		await expect(locker.destroyLocker(locksArr[1])).to.be.revertedWith('03')
 	})
-	it('ERC20: Cannot unlock if already unlocked', async function () {
-		await expect(locker.destroyLocker(lockerId1)).to.be.revertedWith('04')
+	it('ERC20: user locksArray size reduced after withdrawl', async function () {
+		locksArr = await locker.getLockersOfUser(user0)
+		expect(locksArr.length).to.equal(1)
 	})
 
 
@@ -87,28 +88,35 @@ describe('Locker Contract', function () {
 		expect(await devyani.ownerOf(2)).to.not.equal(locker.address)
 
 		await devyani.setApprovalForAll(locker.address, true)
-		// time in past
-		await locker.createLocker('erc721', devyani.address, 1, 1, 10000)
 
-		// time in future
-		const oneHourLater = Math.floor(Date.now() / 1000) + 3600
+		// lock with unlock-time in past and unlock-time in future
+		await locker.createLocker('erc721', devyani.address, 1, 1, currTime)
 		await locker.createLocker('erc721', devyani.address, 2, 1, oneHourLater)
 
-		const [id1, id2, id3, id4] = await locker.getLockersOfUser(user0)
-		// id1, id2 are created at the time of erc20 lock
-		lockerId1 = id3.toString()
-		lockerId2 = id4.toString()
-		// console.log('LockerIds created: ', lockerId1, lockerId2)
+		locksArr = await locker.getLockersOfUser(user0)
+		expect(locksArr.length).to.equal(3)
+		// index0 is created at the time of erc20 lock, while index1 and index2 are erc721 lock 
+
 	})
 	it('ERC721: Unlock Tokens', async function () {
 		expect(await devyani.ownerOf(1)).to.equal(locker.address)
 		expect(await devyani.ownerOf(1)).to.not.equal(user0)
 
-		await locker.destroyLocker(lockerId1)
+		await locker.destroyLocker(locksArr[1])
+		// index0 is erc20 lock, index1 and index2 are erc721 lock
 
 		expect(await devyani.ownerOf(1)).to.not.equal(locker.address)
 		expect(await devyani.ownerOf(1)).to.equal(user0)
 	})
+	it('ERC721: Cannot withdraw from destroyed lock', async function () {
+		await expect(locker.destroyLocker(locksArr[1])).to.be.revertedWith('04')
+	})
+	it('ERC721: lockArr size reduced after withdrawal', async function () {
+		locksArr = await locker.getLockersOfUser(user0)
+		expect(locksArr.length).to.equal(2)
+		// index 0 is erc20 lock, index1 is erc721 lock
+	})
+
 
 	// ERC1155 Transfers
 	it('ERC1155: Deploy Penguins Contract', async function () {
@@ -127,28 +135,55 @@ describe('Locker Contract', function () {
 
 		await penguins.setApprovalForAll(locker.address, true)
 		expect(await penguins.isApprovedForAll(user0, locker.address)).to.equal(true)
-		// time in past
-		await locker.createLocker('erc1155', penguins.address, 1, 4, 10000)
 
-		// // time in future
-		const oneHourLater = Math.floor(Date.now() / 1000) + 3600
+		// lock with unlock-time in past and unlock-time in future
+		await locker.createLocker('erc1155', penguins.address, 1, 4, currTime)
 		await locker.createLocker('erc1155', penguins.address, 2, 4, oneHourLater)
 
-		const [id1, id2, id3, id4, id5, id6] = await locker.getLockersOfUser(user0)
-		// id1, id2 are created at the time of erc20 lock
+		locksArr = await locker.getLockersOfUser(user0)
+		// index0 is erc20, index1 is erc721
 		// id3, id4 are created at the time of erc721 lock
-		lockerId1 = id5.toString()
-		lockerId2 = id6.toString()
-		// console.log('LockerIds created: ', lockerId1, lockerId2)
+		expect(locksArr.length).to.equal(4)
 	})
 	it('ERC1155: Unlock Tokens', async function () {
 		expect(await penguins.balanceOf(locker.address, 1)).to.equal(4)
 		expect(await penguins.balanceOf(user0, 1)).to.not.equal(20)
 
-		await locker.destroyLocker(lockerId1)
+		await locker.destroyLocker(locksArr[2])
 
 		expect(await penguins.balanceOf(locker.address, 1)).to.not.equal(4)
 		expect(await penguins.balanceOf(user0, 1)).to.equal(20)
 	})
+	it('ERC1155: Cannot withdraw from destroyed lock', async function () {
+		await expect(locker.destroyLocker(locksArr[2])).to.be.revertedWith('04')
+	})
+
+
+	const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
+	const ethInWei = '15000'
+	it('Lock ETH', async function () {
+		await locker.createLocker('eth', ZERO_ADDRESS, 0, ethInWei, currTime, { value: ethInWei })
+		await locker.createLocker('eth', ZERO_ADDRESS, 0, ethInWei, oneHourLater, { value: ethInWei })
+		const balance1 = await signer1.getBalance(locker.address)
+		console.log(locker.address, balance1)
+
+		locksArr = await locker.getLockersOfUser(user0)
+		expect(locksArr.length).to.equal(5)
+	})
+	// it('Unlock ETH', async function () {
+	// 	// console.log(locksArr)
+	// 	await locker.destroyLocker(locksArr[3])
+	// 	// check ethereum balance of ether
+	// 	// locksArr = await locker.getLockersOfUser(user0)
+	// 	// expect(locksArr.length).to.equal(4)
+	// })
+	// it('4 Locks remaining', async function () {
+	// 	locksArr = await locker.getLockersOfUser(user0)
+	// 	expect(locksArr.length).to.equal(4)
+	// 	expect(locksArr[0]).to.equal(2)
+	// 	expect(locksArr[1]).to.equal(4)
+	// 	expect(locksArr[2]).to.equal(6)
+	// 	expect(locksArr[3]).to.equal(8)
+	// })
 })
 

@@ -20,11 +20,11 @@ interface IERC1155 {
     ) external;
 }
 
-contract LockerV2 is ERC1155Holder {
+contract LockerV3 is ERC1155Holder {
     uint currLockerId;
     
     struct LockerInfo {
-        address tokenOwner;
+        address payable tokenOwner;
         string tokenType;
         address tokenAddress;
         uint tokenId;
@@ -42,10 +42,14 @@ contract LockerV2 is ERC1155Holder {
         return keccak256(bytes(_word1))  == keccak256(bytes(_word2));
     }
 
-    function createLocker(string memory _tokenType, address _tokenAddress, uint _tokenId, uint _tokenAmount, uint _unlockTime) external {
-    
+    function createLocker(string memory _tokenType, address _tokenAddress, uint _tokenId, uint _tokenAmount, uint _unlockTime) external payable {
+        require(_tokenAmount > 0, "05");
+
         address _tokenOwner = msg.sender;
-        if(isEqual(_tokenType, "erc20")) {
+        if(isEqual(_tokenType, "eth")) {
+            require(msg.value == _tokenAmount, "06");
+        }
+        else if(isEqual(_tokenType, "erc20")) {
             IERC20(_tokenAddress).transferFrom(_tokenOwner, address(this), _tokenAmount);
         }
         else if(isEqual(_tokenType, "erc721")) {
@@ -64,7 +68,7 @@ contract LockerV2 is ERC1155Holder {
         currLockerId++;
         locksByUser[_tokenOwner].push(currLockerId);
         lockerInfoTable[currLockerId] = LockerInfo(
-            _tokenOwner, _tokenType, _tokenAddress, _tokenId, _tokenAmount, 
+            payable(_tokenOwner), _tokenType, _tokenAddress, _tokenId, _tokenAmount, 
             block.timestamp, _unlockTime, false
         );
     }
@@ -79,11 +83,14 @@ contract LockerV2 is ERC1155Holder {
         require(lockerInfoTable[_lockerId].isWithdrawn == false, "04");
 
         string memory tokenType = lockerInfoTable[_lockerId].tokenType;
-        address tokenOwner = lockerInfoTable[_lockerId].tokenOwner;
+        address payable tokenOwner = lockerInfoTable[_lockerId].tokenOwner;
         address tokenAddress = lockerInfoTable[_lockerId].tokenAddress;
         uint tokenId = lockerInfoTable[_lockerId].tokenId;
         uint tokenAmount = lockerInfoTable[_lockerId].tokenAmount;
-        if(isEqual(tokenType, "erc20")) {
+        if(isEqual(tokenType, "eth")) {
+            tokenOwner.transfer(tokenAmount);
+        }
+        else if(isEqual(tokenType, "erc20")) {
             IERC20(tokenAddress).transfer(tokenOwner, tokenAmount);
         }
         else if(isEqual(tokenType, "erc721")) {
@@ -96,6 +103,15 @@ contract LockerV2 is ERC1155Holder {
             );
         }
 
+        uint totalLocks = locksByUser[tokenOwner].length;
+        for(uint i=0; i<totalLocks; i++) {
+            if(locksByUser[tokenOwner][i] == _lockerId) {
+                // replace current lockerId with last lockerId
+                locksByUser[tokenOwner][i] = locksByUser[tokenOwner][totalLocks-1];
+                break;
+            }
+        }
+        locksByUser[tokenOwner].pop();   // remove last lockerId
         lockerInfoTable[_lockerId].isWithdrawn = true;
     }
 
