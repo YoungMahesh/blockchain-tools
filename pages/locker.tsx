@@ -10,10 +10,11 @@ import { useEffect, useState } from 'react'
 import { convertAmountsToWei } from '../backend/common/erc20'
 import TxnLink from '../components/TxnLink'
 import DateTimePicker from '@mui/lab/DateTimePicker';
+import MobileDateTimePicker from '@mui/lab/MobileDateTimePicker';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import { approveErc20ForLocker, getUserLockers, lockErc20Tokens, LockerInfo, LockerInfo2 } from '../backend/locker/erc20Lock'
-import { approveErc721ForLocker, transferErc721ToLocker } from '../backend/common/erc721'
+import { approveErc20ForLocker } from '../backend/locker/erc20Lock'
+import { approveErc721ForLocker } from '../backend/common/erc721'
 import { approveErc1155ForLocker } from '../backend/common/erc1155'
 import { transferTokensToLocker } from '../backend/locker/lockerWeb3'
 import TokenTypeSelector from '../components/TokenTypeSelector'
@@ -39,14 +40,12 @@ export default function Locker() {
 	const [unlockDate, setUnlockDate] = useState(new Date())
 
 	const [btnText, setBtnText] = useState(btnTextTable.LOCK)
-	const [txnHash, setTxnHash] = useState('')
 	const [message1, setMessage1] = useState('')
 
 	useEffect(() => {
 		if (getLockerContractAddr(chainId) === '') setChainIdMsg(messagesTable.NOT_SUPPORTED)
 		else setChainIdMsg('')
 	}, [chainId])
-
 
 
 	const handleLocking = () => {
@@ -74,9 +73,6 @@ export default function Locker() {
 				setBtnText(btnTextTable.LOCK)
 				return
 			}
-			// setTxnHash(hash)
-			// setBtnText(btnTextTable.LOCK)
-			// setMessage1('')
 			router.push('/mylocks')
 		} catch (err) {
 			console.log(err)
@@ -113,9 +109,6 @@ export default function Locker() {
 				setBtnText(btnTextTable.LOCK)
 				return
 			}
-			// setTxnHash(hash)
-			// setBtnText(btnTextTable.LOCK)
-			// setMessage1('')
 			router.push('/mylocks')
 		} catch (err) {
 			console.log(err)
@@ -145,9 +138,6 @@ export default function Locker() {
 				setBtnText(btnTextTable.LOCK)
 				return
 			}
-			// setTxnHash(hash)
-			// setBtnText(btnTextTable.LOCK)
-			// setMessage1('')
 			router.push('/mylocks')
 		} catch (err) {
 			console.log(err)
@@ -177,9 +167,6 @@ export default function Locker() {
 				setBtnText(btnTextTable.LOCK)
 				return
 			}
-			// setTxnHash(hash)
-			// setBtnText(btnTextTable.LOCK)
-			// setMessage1('')
 			router.push('/mylocks')
 		} catch (err) {
 			console.log(err)
@@ -243,7 +230,7 @@ export default function Locker() {
 
 						<FormLabel component="legend">Unlock Date: </FormLabel>
 						<LocalizationProvider dateAdapter={AdapterDateFns}>
-							<DateTimePicker
+							<MobileDateTimePicker
 								renderInput={(params) => <TextField {...params} />}
 								value={unlockDate}
 								onChange={setUnlockDate}
@@ -269,13 +256,6 @@ export default function Locker() {
 
 					<AlertMessages message1={message1} />
 
-					{
-						(txnHash.length > 0) &&
-						<TxnLink
-							chainId={chainId}
-							txnHash={txnHash}
-						/>
-					}
 				</Stack>
 
 			</Box>
