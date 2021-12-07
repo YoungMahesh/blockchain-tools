@@ -64,6 +64,13 @@ export const getFaucetAddress = (_chainId: number) => {
 	if (_chainId === 4002) return '0xf399c967BC29110E469661c7d7C2C2F0B1Fe69A1'
 	return ''
 }
+export const getEtherFaucetInfo = (_chainId: number) => {
+	if (_chainId === 4002) return {
+		ethName: 'Fantom',
+		faucetLink: 'https://faucet.fantom.network/'
+	}
+	return { ethName: '', faucetLink: '' }
+}
 export const getFaucetTokensAddr = (_chainId: number) => {
 	if (_chainId === 4002) return {
 		erc20: '0x4d5d37cf79aebab14805ce6d90d69bfbd5d8ffae',

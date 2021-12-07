@@ -49,10 +49,8 @@ export default function Faucet() {
 						) &&
 						<>
 							<TokenTypeSelector
-								tokenType={tokenType} setTokenType={setTokenType} showEth={false}
+								tokenType={tokenType} setTokenType={setTokenType} showEth={true}
 							/>
-							<Typography>Your Address: {wallet}</Typography>
-							<Typography>Current ChainId: {chainId}</Typography>
 							<FaucetToken chainId={chainId} tokenType={tokenType} setMessage1={setMessage1} />
 						</>
 					}

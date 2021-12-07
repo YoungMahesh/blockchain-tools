@@ -4,7 +4,7 @@ import {
 	Card, CardActions, CardContent
 } from '@mui/material'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import { getFaucetContract, getFaucetErc20Details, getFaucetErc721Details, getFaucetTokensAddr, getSigner, getTokenUrlPrefix } from '../backend/common/web3Provider'
+import { getEtherFaucetInfo, getFaucetContract, getFaucetErc20Details, getFaucetErc721Details, getFaucetTokensAddr, getSigner, getTokenUrlPrefix } from '../backend/common/web3Provider'
 import { btnTextTable } from '../backend/api/utils';
 
 export default function FaucetToken({ chainId, tokenType, setMessage1 }) {
@@ -13,11 +13,21 @@ export default function FaucetToken({ chainId, tokenType, setMessage1 }) {
 	const [tokenSymbol, setTokenSymbol] = useState('')
 	const [tokenDecimals, setTokenDecimals] = useState('')
 	const [tokenAddress, setTokenAddress] = useState('')
+	const [faucetLink1, setFaucetLink1] = useState('')
 	const [btnText, setBtnText] = useState('')
 
 	useEffect(() => {
 		const faucetAddr = getFaucetTokensAddr(chainId)
-		if (tokenType === 'erc20') {
+		const { ethName, faucetLink } = getEtherFaucetInfo(chainId)
+		if (tokenType === 'eth') {
+			setTokenName(`${ethName} Faucet`)
+			setTokenSymbol('')
+			setTokenDecimals('')
+			setTokenAddress('')
+			setBtnText(btnTextTable.GET_ERC20)
+			setFaucetLink1(faucetLink)
+		}
+		else if (tokenType === 'erc20') {
 			const erc20Details = getFaucetErc20Details(chainId)
 			setTokenName(erc20Details.name)
 			setTokenSymbol(erc20Details.symbol)
@@ -96,20 +106,34 @@ export default function FaucetToken({ chainId, tokenType, setMessage1 }) {
 						</Typography>
 					}
 					<Box sx={{ display: 'flex', alignItems: 'center' }}>
-						<Typography variant="body2">
-							Address: {tokenAddress}
-						</Typography>
-						<Button sx={{ cursor: 'pointer', color: 'black' }} onClick={() => {
-							navigator.clipboard.writeText(tokenAddress)
-							alert(`Copied: ${tokenAddress}`)
-						}}>
-							<ContentCopyIcon />
-						</Button>
+						{(tokenAddress.length > 0) &&
+							<>
+								<Typography variant="body2">
+									Address: {tokenAddress}
+								</Typography>
+								<Button sx={{ cursor: 'pointer', color: 'black' }} onClick={() => {
+									navigator.clipboard.writeText(tokenAddress)
+									alert(`Copied: ${tokenAddress}`)
+								}}>
+									<ContentCopyIcon />
+								</Button>
+							</>
+						}
+						{(tokenType === 'eth') &&
+							<></>
+						}
 					</Box>
 				</CardContent>
 				<CardActions>
-					<Button onClick={getTokens} size='medium'>{btnText}</Button>
-					<Button onClick={() => window.open(`${getTokenUrlPrefix(chainId)}${tokenAddress}`)} size='medium'>View Details</Button>
+					{(tokenAddress.length > 0) &&
+						<>
+							<Button onClick={getTokens} size='medium'>{btnText}</Button>
+							<Button onClick={() => window.open(`${getTokenUrlPrefix(chainId)}${tokenAddress}`)} size='medium'>View Details</Button>
+						</>
+					}
+					{(tokenType === 'eth') &&
+						<Button onClick={() => window.open(faucetLink1)} size='medium'>VISIT</Button>
+					}
 				</CardActions>
 			</Card>
 		</Box>
