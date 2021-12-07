@@ -26,11 +26,18 @@ task('deploy', 'Deploy Contract')
 
 // npx hardhat flatten ./contracts/tokens/Devyani.sol > ./contracts/Devyani.sol
 
+const accounts = [process.env.PRIVATE_KEY_0]
 module.exports = {
   networks: {
     fantomTestnet: {
       url: `https://rpc.testnet.fantom.network/`,
-      accounts: [process.env.PRIVATE_KEY_0]
+      chainId: 4002,
+      accounts
+    },
+    harmonyTestnet: {
+      url: `https://api.s0.pops.one/`,
+      chainId: 1666700000,
+      accounts
     }
   },
   solidity: '0.8.2',
