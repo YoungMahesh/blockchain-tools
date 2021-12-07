@@ -10,83 +10,59 @@ import useStore from '../backend/zustand/store'
 
 
 export default function SelectedListItem() {
-	const [selectedIndex, setSelectedIndex] = React.useState('0x4');
-	const chainId = useStore(state => state.chainId)
 
-	React.useEffect(() => {
-		const currChain = '0x' + chainId.toString(16)
-		setSelectedIndex(currChain)
-	}, [chainId])
+	const chainId = useStore(state => state.chainId)
 
 	const handleListItemClick = async (
 		event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-		index: number,
-		chainId: string
+		chainId: number
 	) => {
-		await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId }] })
-	};
+		const currChain = '0x' + chainId.toString(16)
+		await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: currChain }] })
+	}
 
 	return (
 		<Box sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
 			<List component="nav" aria-label="main mailbox folders">
-				<ListItemButton
-					selected={selectedIndex === '0x89'}
-					onClick={(event) => handleListItemClick(event, 0, '0x89')}
-				>
-					<ListItemIcon>
-						<InboxIcon />
-					</ListItemIcon>
-					<ListItemText primary="Polygon Mainnet" />
-				</ListItemButton>
-				<ListItemButton
-					selected={selectedIndex === '0x63564c40'}
-					onClick={(event) => handleListItemClick(event, 0, '0x63564c40')}
-				>
-					<ListItemIcon>
-						<InboxIcon />
-					</ListItemIcon>
-					<ListItemText primary="Harmony One" />
-				</ListItemButton>
-				<ListItemButton
-					selected={selectedIndex === '0xfa'}
-					onClick={(event) => handleListItemClick(event, 1, '0xfa')}
-				>
-					<ListItemIcon>
-						<InboxIcon />
-					</ListItemIcon>
-					<ListItemText primary="Fantom Opera" />
-				</ListItemButton>
+				{
+					[
+						{ networkName: 'Polygon Mainnet', networkId: 137 },
+						{ networkName: 'Harmony One', networkId: 1666600000 },
+						{ networkName: 'Fantom Opera', networkId: 250 },
+					].map(obj1 => (
+						<ListItemButton
+							selected={chainId === obj1.networkId}
+							onClick={(event) => handleListItemClick(event, obj1.networkId)}
+						>
+							<ListItemIcon>
+								<InboxIcon />
+							</ListItemIcon>
+							<ListItemText primary={obj1.networkName} />
+						</ListItemButton>
+					))
+				}
 			</List>
 			<Divider />
-			<List component="nav" aria-label="secondary mailbox folder">
-				<ListItemButton
-					selected={selectedIndex === '0x13881'}
-					onClick={(event) => handleListItemClick(event, 2, '0x13881')}
-				>
-					<ListItemIcon>
-						<InboxIcon />
-					</ListItemIcon>
-					<ListItemText primary="Polygon Testnet" />
-				</ListItemButton>
-				<ListItemButton
-					selected={selectedIndex === '0x6357d2e0'}
-					onClick={(event) => handleListItemClick(event, 2, '0x6357d2e0')}
-				>
-					<ListItemIcon>
-						<InboxIcon />
-					</ListItemIcon>
-					<ListItemText primary="Harmony Testnet" />
-				</ListItemButton>
-				<ListItemButton
-					selected={selectedIndex === '0xfa2'}
-					onClick={(event) => handleListItemClick(event, 3, '0xfa2')}
-				>
-					<ListItemIcon>
-						<InboxIcon />
-					</ListItemIcon>
-					<ListItemText primary="Fantom Testnet" />
-				</ListItemButton>
+			<List component="nav" aria-label="main mailbox folders">
+				{
+					[
+						{ networkName: 'Rinkeby Testnet', networkId: 4 },
+						{ networkName: 'Polygon Testnet', networkId: 80001 },
+						{ networkName: 'Harmony Testnet', networkId: 1666700000 },
+						{ networkName: 'Fantom Testnet', networkId: 4002 },
+					].map(obj1 => (
+						<ListItemButton
+							selected={chainId === obj1.networkId}
+							onClick={(event) => handleListItemClick(event, obj1.networkId)}
+						>
+							<ListItemIcon>
+								<InboxIcon />
+							</ListItemIcon>
+							<ListItemText primary={obj1.networkName} />
+						</ListItemButton>
+					))
+				}
 			</List>
 		</Box>
-	);
+	)
 }

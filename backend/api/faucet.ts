@@ -8,6 +8,7 @@ const faucetAbi = [
 	'event TransferSingle(address indexed operator, address indexed from, address indexed to, uint256 id, uint256 value)'
 ]
 export const getFaucetAddress = (_chainId: number) => {
+	if (_chainId === 4) return '0xBEAaaA4C1e57936781ceb1c7c5fC9599D3210C89'
 	if (_chainId === 4002) return '0xf399c967BC29110E469661c7d7C2C2F0B1Fe69A1'
 	if (_chainId === 1666700000) return '0xf4910d212D6d6A5be64806e718dA038BC2392f0b'
 	if (_chainId === 80001) return '0xf4910d212D6d6A5be64806e718dA038BC2392f0b'
@@ -20,6 +21,11 @@ export const getFaucetContract = (signer: ethers.Signer, _chainId: number) => {
 
 
 export const getFaucetTokensAddr = (_chainId: number) => {
+	if (_chainId === 4) return {
+		erc20: '0x3f893e1d1ca9e6b01559fe2621e79b17aa53608c',
+		erc721: '0xc2d0a05e3f4671443ad0d0eaf85cf9a2cf1e2f18',
+		erc1155: '0x248bc25565e42c1c964864d2f38f8634c7fd3f31'
+	}
 	if (_chainId === 4002) return {
 		erc20: '0x4d5d37cf79aebab14805ce6d90d69bfbd5d8ffae',
 		erc721: '0x95247e4f50ad7c19c2c0d5e20e067b3d4cf7c917',
@@ -38,6 +44,10 @@ export const getFaucetTokensAddr = (_chainId: number) => {
 	return { erc20: '', erc721: '', erc1155: '' }
 }
 export const getEtherFaucetInfo = (_chainId: number) => {
+	if (_chainId === 4) return {
+		ethName: 'Ether',
+		faucetLink: 'https://faucet.rinkeby.io/'
+	}
 	if (_chainId === 4002) return {
 		ethName: 'Fantom',
 		faucetLink: 'https://faucet.fantom.network/'
@@ -53,11 +63,11 @@ export const getEtherFaucetInfo = (_chainId: number) => {
 	return { ethName: '', faucetLink: '' }
 }
 export const getFaucetErc20Details = (_chainId: number) => {
-	if (_chainId === 4002 || _chainId === 80001 || _chainId === 1666700000) return { name: 'Ramanujan', symbol: 'RA', decimals: '18' }
+	if (_chainId === 4 || _chainId === 4002 || _chainId === 80001 || _chainId === 1666700000) return { name: 'Ramanujan', symbol: 'RA', decimals: '18' }
 	return { name: '', symbol: '', decimals: '' }
 }
 export const getFaucetErc721Details = (_chainId: number) => {
-	if (_chainId === 4002 || _chainId === 80001 || _chainId === 1666700000) return { name: 'Sanaya', symbol: 'SY' }
+	if (_chainId === 4 || _chainId === 4002 || _chainId === 80001 || _chainId === 1666700000) return { name: 'Sanaya', symbol: 'SY' }
 	return { name: '', symbol: '' }
 }
 

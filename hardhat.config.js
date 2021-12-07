@@ -29,6 +29,11 @@ task('deploy', 'Deploy Contract')
 const accounts = [process.env.PRIVATE_KEY_0]
 module.exports = {
   networks: {
+    rinkeby: {
+      url: 'https://rinkeby-light.eth.linkpool.io/',
+      chainId: 4,
+      accounts
+    },
     fantomTestnet: {
       url: `https://rpc.testnet.fantom.network/`,
       chainId: 4002,
@@ -47,6 +52,6 @@ module.exports = {
   },
   solidity: '0.8.2',
   etherscan: {
-    apiKey: process.env.POLYGONSCAN_API_KEY
+    apiKey: process.env.ETHERSCAN_API_KEY
   }
 }
