@@ -2,7 +2,7 @@ import Head from 'next/head'
 import {
 	Box, Stack, Typography,
 } from '@mui/material'
-import { getFaucetAddress } from '../backend/api/web3Provider'
+import { getFaucetAddress } from '../backend/common/web3Provider'
 import { messagesTable } from '../backend/api/utils'
 import { useEffect, useState } from 'react'
 import FaucetToken from '../components/FaucetToken'
@@ -48,7 +48,7 @@ export default function Faucet() {
 						) &&
 						<>
 							<TokenTypeSelector
-								tokenType={tokenType} setTokenType={setTokenType}
+								tokenType={tokenType} setTokenType={setTokenType} showEth={false}
 							/>
 							<Typography>Your Address: {wallet}</Typography>
 							<Typography>Current ChainId: {chainId}</Typography>

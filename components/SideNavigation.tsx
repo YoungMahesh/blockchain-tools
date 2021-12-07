@@ -9,7 +9,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router';
 import NetworkList from './NetworkList';
 import useStore from '../backend/zustand/store'
-import { loadWeb3 } from '../backend/api/web3Provider';
+import { loadWeb3 } from '../backend/common/web3Provider';
 
 const drawerWidth = 240;
 
@@ -60,16 +60,17 @@ export default function SideNavigation(props: Props) {
 					{ title: 'My Locks', path: '/mylocks', icon: 'lockIcon' },
 					{ title: 'Faucet', path: '/faucet', icon: 'diamondIcon' }
 				].map((obj1, index) => (
-					<Link href={obj1.path} key={obj1.title} passHref>
-						<ListItem button selected={router.pathname === obj1.path}>
-							<ListItemIcon>
-								{/* {index % 2 === 0 ? <InboxIcon /> : <MailIcon />} */}
-								{obj1.icon === 'lockIcon' && <LockIcon />}
-								{obj1.icon === 'sendIcon' && <SendIcon />}
-								{obj1.icon === 'diamondIcon' && <DiamondIcon />}
-							</ListItemIcon>
-							<ListItemText primary={obj1.title} />
-						</ListItem>
+					<Link href={obj1.path} key={obj1.title}>
+						<a>
+							<ListItem button selected={router.pathname === obj1.path}>
+								<ListItemIcon>
+									{obj1.icon === 'lockIcon' && <LockIcon />}
+									{obj1.icon === 'sendIcon' && <SendIcon />}
+									{obj1.icon === 'diamondIcon' && <DiamondIcon />}
+								</ListItemIcon>
+								<ListItemText primary={obj1.title} />
+							</ListItem>
+						</a>
 					</Link>
 				))}
 			</List>

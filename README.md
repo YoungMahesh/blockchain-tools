@@ -5,6 +5,8 @@
 
 - Extra
 	- Add multi-chain support
+	- Add to Metamask buttons for faucet tokens
+	- Frontend Testing library
 	- Add ERC20, ERC721 and ERC1155 Generator and Minter
 	- Add option to transfer Eth in multi-sender
 	- Add option to lock ether in Locker

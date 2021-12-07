@@ -1,12 +1,16 @@
 import { ethers } from "ethers"
-import { getErc20Contract } from "../api/erc20"
+import { getErc20Contract } from "../common/erc20"
 import { getErc721Contract } from "../api/erc721"
-import { getLockerContract, getSigner } from "../api/web3Provider"
+import { getLockerContract, getSigner } from "../common/web3Provider"
 
 export const getTokenInfo = async (_tokenType: string, _tokenAddress: string, _amountInWei: ethers.BigNumber) => {
 	try {
 		const signer = getSigner()
-		if (_tokenType === 'erc20') {
+		if (_tokenType === 'eth') {
+			const tokenAmount2 = ethers.utils.formatUnits(_amountInWei, 18)
+			return { tokenName: '', tokenSymbol: '', tokenAmount2 }
+		}
+		else if (_tokenType === 'erc20') {
 			const erc20Contract = getErc20Contract(_tokenAddress, signer)
 			const promisesArr = [
 				erc20Contract.name(), erc20Contract.symbol(),
@@ -42,7 +46,8 @@ export const approveErc20ForLocker = async (_tokenAddress: string, _amountInWei:
 		const erc20Contract = getErc20Contract(_tokenAddress, signer)
 		const lockerContract = getLockerContract(signer, chainId)
 		const lockerContractAddr = lockerContract.address
-		await erc20Contract.approve(lockerContractAddr, _amountInWei)
+		const txn = await erc20Contract.approve(lockerContractAddr, _amountInWei)
+		await txn.wait(1)
 		return true
 	} catch (err) {
 		console.log(err)
@@ -56,7 +61,6 @@ export const lockErc20Tokens = async (_tokenType: string,
 		const signer = getSigner()
 		const chainId = await signer.getChainId()
 		const lockerContract = getLockerContract(signer, chainId)
-		console.log(lockerContract)
 		console.log(_tokenType, _tokenAddress, _tokenId, _tokenAmountInWei, _unlockTime)
 		const txn = await lockerContract.createLocker(
 			_tokenType, _tokenAddress, _tokenId,

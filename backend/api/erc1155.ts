@@ -1,5 +1,5 @@
 import { ethers } from "ethers"
-import { getMultiSenderAddress, getMultiSenderContract } from "./web3Provider"
+import { getMultiSenderAddress, getMultiSenderContract } from "../common/web3Provider"
 
 const erc1155Abi = [
 	'function isApprovedForAll(address account, address operator) external view returns (bool)',

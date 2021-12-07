@@ -1,18 +1,21 @@
 // const { BigNumber } = require('@ethersproject/bignumber')
 const { expect } = require('chai')
-const { ethers } = require('hardhat')
+const { ethers, waffle } = require('hardhat')
 const BN = ethers.BigNumber.from
 
 describe('Locker Contract', function () {
 
+	const provider = waffle.provider
 	let locker, tron, devyani, penguins;
-	let user0, signer1;
+	let user0, signer0, signer1;
 	const currTime = Math.floor(Date.now() / 1000)
 	const oneHourLater = currTime + 3600
+
 
 	it('Set User Addresses', async function () {
 		const [owner, addr1] = await ethers.getSigners();
 		user0 = await owner.getAddress()
+		signer0 = owner
 		signer1 = addr1
 	})
 
@@ -161,29 +164,33 @@ describe('Locker Contract', function () {
 
 	const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 	const ethInWei = '15000'
-	it('Lock ETH', async function () {
+	it('ETH: Cannot lock less or more ether than tokenAmount', async function () {
+		await expect(locker.createLocker('eth', ZERO_ADDRESS, 0, ethInWei, currTime, { value: '10000' })).to.be.revertedWith('06')
+		await expect(locker.createLocker('eth', ZERO_ADDRESS, 0, ethInWei, currTime, { value: '20000' })).to.be.revertedWith('06')
+	})
+	it('ETH: Lock', async function () {
 		await locker.createLocker('eth', ZERO_ADDRESS, 0, ethInWei, currTime, { value: ethInWei })
 		await locker.createLocker('eth', ZERO_ADDRESS, 0, ethInWei, oneHourLater, { value: ethInWei })
-		const balance1 = await signer1.getBalance(locker.address)
-		console.log(locker.address, balance1)
+		expect(await provider.getBalance(locker.address)).to.equal(30000)
 
 		locksArr = await locker.getLockersOfUser(user0)
 		expect(locksArr.length).to.equal(5)
 	})
-	// it('Unlock ETH', async function () {
-	// 	// console.log(locksArr)
-	// 	await locker.destroyLocker(locksArr[3])
-	// 	// check ethereum balance of ether
-	// 	// locksArr = await locker.getLockersOfUser(user0)
-	// 	// expect(locksArr.length).to.equal(4)
-	// })
-	// it('4 Locks remaining', async function () {
-	// 	locksArr = await locker.getLockersOfUser(user0)
-	// 	expect(locksArr.length).to.equal(4)
-	// 	expect(locksArr[0]).to.equal(2)
-	// 	expect(locksArr[1]).to.equal(4)
-	// 	expect(locksArr[2]).to.equal(6)
-	// 	expect(locksArr[3]).to.equal(8)
-	// })
+	it('ETH: Unlock', async function () {
+		await locker.destroyLocker(locksArr[3])
+
+		expect(await provider.getBalance(locker.address)).to.equal(15000)
+	})
+	it('ETH: Cannot withdrawa from destroyed lock', async function () {
+		await expect(locker.destroyLocker(locksArr[3])).to.be.revertedWith('04')
+	})
+	it('4 Locks remaining', async function () {
+		locksArr = await locker.getLockersOfUser(user0)
+		expect(locksArr.length).to.equal(4)
+		expect(locksArr[0]).to.equal(2)
+		expect(locksArr[1]).to.equal(4)
+		expect(locksArr[2]).to.equal(6)
+		expect(locksArr[3]).to.equal(8)
+	})
 })
 

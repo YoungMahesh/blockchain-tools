@@ -3,11 +3,11 @@ import {
 	TextField, Box, FormControl, FormLabel,
 	Button, Stack, LinearProgress
 } from '@mui/material'
-import { getLockerContractAddr } from '../backend/api/web3Provider'
+import { BN, convertEthToWei, getLockerContractAddr, ZERO_ADDRESS } from '../backend/common/web3Provider'
 import { btnTextTable, messagesTable } from '../backend/api/utils'
 import { Send as SendIcon } from '@mui/icons-material'
 import { useEffect, useState } from 'react'
-import { convertAmountsToWei } from '../backend/api/erc20'
+import { convertAmountsToWei } from '../backend/common/erc20'
 import TxnLink from '../components/TxnLink'
 import DateTimePicker from '@mui/lab/DateTimePicker';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
@@ -50,29 +50,53 @@ export default function Locker() {
 
 
 	const handleLocking = () => {
-		if (tokenType === 'erc20') {
-			handleErc20Lock()
-		}
-		else if (tokenType === 'erc721') {
-			handleErc721Lock()
-		}
-		else if (tokenType === 'erc1155') {
-			handleErc1155Lock()
+		if (tokenType === 'eth') handleEthLock()
+		else if (tokenType === 'erc20') handleErc20Lock()
+		else if (tokenType === 'erc721') handleErc721Lock()
+		else if (tokenType === 'erc1155') handleErc1155Lock()
+	}
+
+	const handleEthLock = async () => {
+		setMessage1('')
+		try {
+			const amountInWei = convertEthToWei(lockAmount)
+			if (amountInWei === BN('0')) {
+				setMessage1(messagesTable.INVALID_DATA)
+				return
+			}
+
+			setBtnText(btnTextTable.LOCKING)
+			const { isLocked, hash } = await transferTokensToLocker(
+				'eth', ZERO_ADDRESS, BN('0'), amountInWei, unlockDate
+			)
+			if (!isLocked) {
+				setMessage1(messagesTable.LOCK_PROBLEM)
+				setBtnText(btnTextTable.LOCK)
+				return
+			}
+			// setTxnHash(hash)
+			// setBtnText(btnTextTable.LOCK)
+			// setMessage1('')
+			router.push('/mylocks')
+		} catch (err) {
+			console.log(err)
+			setMessage1(messagesTable.LOCK_PROBLEM)
+			setBtnText(btnTextTable.LOCK)
 		}
 	}
 
 	const handleErc20Lock = async () => {
 		setMessage1('')
 		try {
+			setBtnText(btnTextTable.APPROVING)
 			const { amountsInWeiArr } = await convertAmountsToWei(tokenAddress, [lockAmount])
 			if (amountsInWeiArr.length === 0) {
 				setMessage1(messagesTable.INVALID_DATA)
 				setBtnText(btnTextTable.LOCK)
 				return
 			}
-			const amountInWei = amountsInWeiArr[0].toString()
+			const amountInWei = amountsInWeiArr[0]
 
-			setBtnText(btnTextTable.APPROVING)
 			const isApproved = await approveErc20ForLocker(tokenAddress, amountsInWeiArr[0])
 			if (!isApproved) {
 				setMessage1(messagesTable.APPROVAL_PROBLEM)
@@ -81,8 +105,9 @@ export default function Locker() {
 			}
 
 			setBtnText(btnTextTable.LOCKING)
-			const unlockTime = Math.floor(unlockDate.getTime() / 1000).toString()
-			const { isLocked, hash } = await lockErc20Tokens(tokenType, tokenAddress, '0', amountInWei, unlockTime)
+			const { isLocked, hash } = await transferTokensToLocker(
+				'erc20', tokenAddress, BN('0'), amountInWei, unlockDate
+			)
 			if (!isLocked) {
 				setMessage1(messagesTable.LOCK_PROBLEM)
 				setBtnText(btnTextTable.LOCK)
@@ -112,8 +137,9 @@ export default function Locker() {
 			}
 
 			setBtnText(btnTextTable.LOCKING)
-			const unlockTime = Math.floor(unlockDate.getTime() / 1000).toString()
-			const { isLocked, hash } = await transferErc721ToLocker('erc721', tokenAddress, tokenId, '1', unlockTime)
+			const { isLocked, hash } = await transferTokensToLocker(
+				'erc721', tokenAddress, BN(tokenId), BN('1'), unlockDate
+			)
 			if (!isLocked) {
 				setMessage1(messagesTable.LOCK_PROBLEM)
 				setBtnText(btnTextTable.LOCK)
@@ -143,9 +169,8 @@ export default function Locker() {
 			}
 
 			setBtnText(btnTextTable.LOCKING)
-			const unlockTime = Math.floor(unlockDate.getTime() / 1000).toString()
 			const { isLocked, hash } = await transferTokensToLocker(
-				'erc1155', tokenAddress, tokenId, lockAmount, unlockTime
+				'erc1155', tokenAddress, BN(tokenId), BN(lockAmount), unlockDate
 			)
 			if (!isLocked) {
 				setMessage1(messagesTable.LOCK_PROBLEM)
@@ -178,18 +203,19 @@ export default function Locker() {
 					maxWidth='400px'>
 
 					<TokenTypeSelector
-						tokenType={tokenType} setTokenType={setTokenType}
+						tokenType={tokenType} setTokenType={setTokenType} showEth={true}
 					/>
-
-					<TextField
-						fullWidth
-						id="standard-basic"
-						label="Token Address"
-						variant="standard"
-						value={tokenAddress}
-						onChange={e => setTokenAddress(e.target.value)}
-					/>
-
+					{
+						(tokenType === 'erc20' || tokenType === 'erc20' || tokenType === 'erc1155') &&
+						<TextField
+							fullWidth
+							id="standard-basic"
+							label="Token Address"
+							variant="standard"
+							value={tokenAddress}
+							onChange={e => setTokenAddress(e.target.value)}
+						/>
+					}
 
 					{
 						(tokenType === 'erc721' || tokenType === 'erc1155') &&
@@ -203,7 +229,7 @@ export default function Locker() {
 					}
 
 					{
-						(tokenType === 'erc20' || tokenType === 'erc1155') &&
+						(tokenType === 'eth' || tokenType === 'erc20' || tokenType === 'erc1155') &&
 						<TextField
 							id="standard-basic"
 							label="Lock Amount"

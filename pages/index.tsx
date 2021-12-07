@@ -3,11 +3,11 @@ import {
   TextField, Box,
   Button, Stack, LinearProgress
 } from '@mui/material'
-import { getMultiSenderAddress, getSigner } from '../backend/api/web3Provider'
+import { getMultiSenderAddress, getSigner } from '../backend/common/web3Provider'
 import { btnTextTable, messagesTable, processRecipientData } from '../backend/api/utils'
 import { Send as SendIcon } from '@mui/icons-material'
 import { useEffect, useState } from 'react'
-import { convertAmountsToWei, getErc20Approval, transferErc20 } from '../backend/api/erc20'
+import { convertAmountsToWei, getErc20Approval, transferErc20 } from '../backend/common/erc20'
 import TxnLink from '../components/TxnLink'
 import { getErc721Approval, transferErc721 } from '../backend/api/erc721'
 import { getErc1155Approval, transferErc1155 } from '../backend/api/erc1155'
@@ -173,7 +173,7 @@ export default function Home() {
           maxWidth='400px'>
 
           <TokenTypeSelector
-            tokenType={tokenType} setTokenType={setTokenType}
+            tokenType={tokenType} setTokenType={setTokenType} showEth={false}
           />
 
 

@@ -1,5 +1,5 @@
 import { ethers } from "ethers"
-import { getMultiSenderAddress, getMultiSenderContract } from "./web3Provider"
+import { getMultiSenderAddress, getMultiSenderContract } from "../common/web3Provider"
 
 const erc721Abi = [
 	'function name() public view virtual override returns (string memory)',

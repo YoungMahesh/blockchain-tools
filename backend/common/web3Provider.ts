@@ -1,9 +1,9 @@
 import { ethers } from 'ethers'
 import { Signer } from 'ethers/src.ts'
 import MultiSenderMetadata from '../../artifacts/contracts/multisender/MultiSender.sol/MultiSender.json'
-import LockerMetadata from '../../artifacts/contracts/locker/LockerV2.sol/LockerV2.json'
+import LockerMetadata from '../../artifacts/contracts/locker/LockerV3.sol/LockerV3.json'
 import FaucetMetadata from '../../artifacts/contracts/faucet/FaucetV2.sol/FaucetV2.json'
-import { messagesTable } from './utils'
+import { messagesTable } from '../api/utils'
 
 declare global {
 	interface Window {
@@ -13,6 +13,9 @@ declare global {
 		wallet: string
 	}
 }
+
+export const BN = ethers.BigNumber.from
+export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'  // '0x' + '0'.repeat(40)
 
 export const getSigner = () => {
 	const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -55,7 +58,7 @@ export const getMultiSenderAddress = (_chainId: number) => {
 	return ''
 }
 export const getLockerContractAddr = (_chainId: number) => {
-	if (_chainId === 4002) return '0xa0f15ba75b2205BD0908a862EF4eA00051fBDD31'
+	if (_chainId === 4002) return '0x9d45e915946C7d1c2061901dbb5A7Cd6d9Db7E00'
 	return ''
 }
 
@@ -102,4 +105,14 @@ export const getLockerContract = (signer: Signer, _chainId: number) => {
 export const getFaucetContract = (signer: Signer, _chainId: number) => {
 	const faucetContractAddr = getFaucetAddress(_chainId)
 	return new ethers.Contract(faucetContractAddr, FaucetMetadata.abi, signer)
+}
+
+
+export const convertEthToWei = (_amountInEth: string): ethers.BigNumber => {
+	try {
+		return ethers.utils.parseEther(_amountInEth)
+	} catch (err) {
+		console.log(err)
+		return BN('0')
+	}
 }

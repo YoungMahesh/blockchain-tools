@@ -1,5 +1,5 @@
 import { getErc1155Contract } from "../api/erc1155"
-import { getLockerContract, getLockerContractAddr, getSigner } from "../api/web3Provider"
+import { getLockerContract, getLockerContractAddr, getSigner } from "./web3Provider"
 
 export const approveErc1155ForLocker = async (tokenAddr: string) => {
 	try {
@@ -11,7 +11,8 @@ export const approveErc1155ForLocker = async (tokenAddr: string) => {
 		// console.log(currUser, lockerAddress)
 		const isAlreadyApproved = await erc1155Contract.isApprovedForAll(currUser, lockerAddress)
 		if (isAlreadyApproved) return true
-		await erc1155Contract.setApprovalForAll(lockerAddress, true)
+		const txn = await erc1155Contract.setApprovalForAll(lockerAddress, true)
+		await txn.wait(1)
 		return true
 	} catch (err) {
 		console.log(err)

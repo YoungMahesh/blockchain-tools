@@ -4,7 +4,7 @@ import {
 	Card, CardActions, CardContent
 } from '@mui/material'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import { getFaucetContract, getFaucetErc20Details, getFaucetErc721Details, getFaucetTokensAddr, getTokenUrlPrefix } from '../backend/api/web3Provider'
+import { getFaucetContract, getFaucetErc20Details, getFaucetErc721Details, getFaucetTokensAddr, getSigner, getTokenUrlPrefix } from '../backend/common/web3Provider'
 import { btnTextTable } from '../backend/api/utils';
 
 export default function FaucetToken({ chainId, tokenType }) {
@@ -46,7 +46,8 @@ export default function FaucetToken({ chainId, tokenType }) {
 
 	const getTokens = () => {
 		try {
-			const faucetContract = getFaucetContract(window.signer, chainId)
+			const signer = getSigner()
+			const faucetContract = getFaucetContract(signer, chainId)
 			if (tokenType === 'erc20') faucetContract.get300Erc20Tokens()
 			else if (tokenType === 'erc721') faucetContract.get3Erc721Tokens()
 			else if (tokenType === 'erc1155') faucetContract.get1000Erc1155Tokens()

@@ -1,4 +1,4 @@
-import { getExplorerUrls } from '../backend/api/web3Provider'
+import { getExplorerUrls } from '../backend/common/web3Provider'
 export default function TxnLink({ chainId, txnHash }) {
 	return (
 		<a style={{ fontSize: '18px', textAlign: 'center', fontWeight: 'bold' }}

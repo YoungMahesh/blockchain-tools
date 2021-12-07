@@ -29,6 +29,8 @@ export const convertAmountsToWei = async (tokenAddr: string, amountsArr: string[
 	}
 }
 
+
+
 export const getErc20Approval = async (tokenAddr: string, amountsInWeiArr: string[]) => {
 	try {
 		const signer = getSigner()
@@ -40,7 +42,8 @@ export const getErc20Approval = async (tokenAddr: string, amountsInWeiArr: strin
 			totalAmountInWei = totalAmountInWei.add(amountsInWeiArr[i])
 		}
 		console.log(multiSenderAddr, totalAmountInWei)
-		await erc20Contract.approve(multiSenderAddr, totalAmountInWei)
+		const txn = await erc20Contract.approve(multiSenderAddr, totalAmountInWei)
+		await txn.wait(1)
 		return true
 	} catch (err) {
 		console.log(err)
