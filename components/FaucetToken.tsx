@@ -4,7 +4,8 @@ import {
 	Card, CardActions, CardContent
 } from '@mui/material'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import { getEtherFaucetInfo, getFaucetContract, getFaucetErc20Details, getFaucetErc721Details, getFaucetTokensAddr, getSigner, getTokenUrlPrefix } from '../backend/common/web3Provider'
+import { getEtherFaucetInfo, getFaucetContract, getFaucetErc20Details, getFaucetErc721Details, getFaucetTokensAddr } from '../backend/api/faucet'
+import { getSigner, getTokenUrlPrefix } from '../backend/common/web3Provider'
 import { btnTextTable } from '../backend/api/utils';
 
 export default function FaucetToken({ chainId, tokenType, setMessage1 }) {
@@ -69,18 +70,26 @@ export default function FaucetToken({ chainId, tokenType, setMessage1 }) {
 			else if (tokenType === 'erc721') {
 				const txn = await faucetContract.get3Erc721Tokens()
 				const txn2 = await txn.wait()
-				// console.log(txn2)
 				// console.log(txn)
+				// console.log(txn2)
 				let tokenIdsTransferred = ''
 				for (let i = 0; i < txn2.events.length; i++) {
-					tokenIdsTransferred += txn2.events[i].args[2].toString() + ' '
+					if (txn2.events[i].event === 'Transfer') {
+						tokenIdsTransferred += txn2.events[i].args[2].toString() + ' '
+					}
 				}
 				setMessage1(`Token Ids Transferred: ${tokenIdsTransferred}`)
 			}
 			else if (tokenType === 'erc1155') {
 				const txn = await faucetContract.get1000Erc1155Tokens()
 				const txn2 = await txn.wait()
-				const tokenIdTransferred = txn2.events[0].args[3].toString()
+
+				let tokenIdTransferred = ''
+				for (let i = 0; i < txn2.events.length; i++) {
+					if (txn2.events[i].event === 'TransferSingle') {
+						tokenIdTransferred += txn2.events[i].args[3].toString() + ' '
+					}
+				}
 				setMessage1(`1000 Tokens of TokenId ${tokenIdTransferred} Transferred`)
 			}
 		} catch (err) {

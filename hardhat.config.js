@@ -38,10 +38,15 @@ module.exports = {
       url: `https://api.s0.pops.one/`,
       chainId: 1666700000,
       accounts
+    },
+    polygonTestnet: {
+      url: `https://rpc-mumbai.maticvigil.com`,
+      chainId: 80001,
+      accounts
     }
   },
   solidity: '0.8.2',
   etherscan: {
-    apiKey: process.env.FANTOM_API_KEY
+    apiKey: process.env.POLYGONSCAN_API_KEY
   }
 }

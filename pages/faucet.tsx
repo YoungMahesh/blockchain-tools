@@ -1,8 +1,8 @@
 import Head from 'next/head'
 import {
-	Box, Stack, Typography,
+	Box, Stack
 } from '@mui/material'
-import { getFaucetAddress } from '../backend/common/web3Provider'
+import { getFaucetAddress } from '../backend/api/faucet'
 import { messagesTable } from '../backend/api/utils'
 import { useEffect, useState } from 'react'
 import FaucetToken from '../components/FaucetToken'
@@ -17,7 +17,6 @@ export default function Faucet() {
 	const chainIdMsg = useStore(state => state.chainIdMsg)
 	const setChainIdMsg = useStore(state => state.setChainIdMsg)
 
-	const wallet = useStore(state => state.wallet)
 	const walletMsg = useStore(state => state.walletMsg)
 
 	const [tokenType, setTokenType] = useState('erc20')
