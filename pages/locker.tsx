@@ -206,7 +206,7 @@ export default function Locker() {
 						tokenType={tokenType} setTokenType={setTokenType} showEth={true}
 					/>
 					{
-						(tokenType === 'erc20' || tokenType === 'erc20' || tokenType === 'erc1155') &&
+						(tokenType === 'erc20' || tokenType === 'erc721' || tokenType === 'erc1155') &&
 						<TextField
 							fullWidth
 							id="standard-basic"

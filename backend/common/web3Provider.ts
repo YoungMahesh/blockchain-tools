@@ -102,9 +102,17 @@ export const getLockerContract = (signer: Signer, _chainId: number) => {
 	const lockerAddress = getLockerContractAddr(_chainId)
 	return new ethers.Contract(lockerAddress, LockerMetadata.abi, signer)
 }
+
+const faucetAbi = [
+	'function get300Erc20Tokens() external',
+	'function get3Erc721Tokens() external',
+	'function get1000Erc1155Tokens() external',
+	'event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)',
+	'event TransferSingle(address indexed operator, address indexed from, address indexed to, uint256 id, uint256 value)'
+]
 export const getFaucetContract = (signer: Signer, _chainId: number) => {
 	const faucetContractAddr = getFaucetAddress(_chainId)
-	return new ethers.Contract(faucetContractAddr, FaucetMetadata.abi, signer)
+	return new ethers.Contract(faucetContractAddr, faucetAbi, signer)
 }
 
 

@@ -7,7 +7,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { getFaucetContract, getFaucetErc20Details, getFaucetErc721Details, getFaucetTokensAddr, getSigner, getTokenUrlPrefix } from '../backend/common/web3Provider'
 import { btnTextTable } from '../backend/api/utils';
 
-export default function FaucetToken({ chainId, tokenType }) {
+export default function FaucetToken({ chainId, tokenType, setMessage1 }) {
 
 	const [tokenName, setTokenName] = useState('')
 	const [tokenSymbol, setTokenSymbol] = useState('')
@@ -42,17 +42,40 @@ export default function FaucetToken({ chainId, tokenType }) {
 		}
 	}, [tokenType, chainId])
 
+	useEffect(() => {
+		setMessage1('')
+	}, [tokenType])
 
 
-	const getTokens = () => {
+
+	const getTokens = async () => {
+		setMessage1('')
 		try {
 			const signer = getSigner()
 			const faucetContract = getFaucetContract(signer, chainId)
-			if (tokenType === 'erc20') faucetContract.get300Erc20Tokens()
-			else if (tokenType === 'erc721') faucetContract.get3Erc721Tokens()
-			else if (tokenType === 'erc1155') faucetContract.get1000Erc1155Tokens()
+			if (tokenType === 'erc20') {
+				faucetContract.get300Erc20Tokens()
+			}
+			else if (tokenType === 'erc721') {
+				const txn = await faucetContract.get3Erc721Tokens()
+				const txn2 = await txn.wait()
+				// console.log(txn2)
+				// console.log(txn)
+				let tokenIdsTransferred = ''
+				for (let i = 0; i < txn2.events.length; i++) {
+					tokenIdsTransferred += txn2.events[i].args[2].toString() + ' '
+				}
+				setMessage1(`Token Ids Transferred: ${tokenIdsTransferred}`)
+			}
+			else if (tokenType === 'erc1155') {
+				const txn = await faucetContract.get1000Erc1155Tokens()
+				const txn2 = await txn.wait()
+				const tokenIdTransferred = txn2.events[0].args[3].toString()
+				setMessage1(`1000 Tokens of TokenId ${tokenIdTransferred} Transferred`)
+			}
 		} catch (err) {
 			console.log(err)
+			setMessage1('Problem occurred while transferring tokens')
 		}
 	}
 

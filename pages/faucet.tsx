@@ -21,6 +21,7 @@ export default function Faucet() {
 	const walletMsg = useStore(state => state.walletMsg)
 
 	const [tokenType, setTokenType] = useState('erc20')
+	const [message1, setMessage1] = useState('')
 
 
 	useEffect(() => {
@@ -52,11 +53,11 @@ export default function Faucet() {
 							/>
 							<Typography>Your Address: {wallet}</Typography>
 							<Typography>Current ChainId: {chainId}</Typography>
-							<FaucetToken chainId={chainId} tokenType={tokenType} />
+							<FaucetToken chainId={chainId} tokenType={tokenType} setMessage1={setMessage1} />
 						</>
 					}
 
-					<AlertMessages message1='' />
+					<AlertMessages message1={message1} />
 
 				</Stack>
 
