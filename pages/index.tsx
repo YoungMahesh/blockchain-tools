@@ -14,6 +14,7 @@ import { getErc1155Approval, transferErc1155 } from '../backend/api/erc1155'
 import TokenTypeSelector from '../components/TokenTypeSelector'
 import useStore from '../backend/zustand/store'
 import AlertMessages from '../components/AlertMessages'
+import { transferToMultiSender } from '../backend/api/multisender'
 
 export default function Home() {
 
@@ -37,18 +38,47 @@ export default function Home() {
     else setChainIdMsg('')
   }, [chainId])
 
+  useEffect(() => { setTxnHash('') }, [tokenType])
 
   const handleTokenTransfer = () => {
     setMessage1('')
     setTxnHash('')
-    if (tokenType === 'erc20') {
-      handleErc20Transfer()
-    }
-    else if (tokenType === 'erc721') {
-      handleErc721Transfer()
-    }
-    else if (tokenType === 'erc1155') {
-      handleErc1155Transfer()
+    if (tokenType === 'eth') handleEthTransfer()
+    else if (tokenType === 'erc20') handleErc20Transfer()
+    else if (tokenType === 'erc721') handleErc721Transfer()
+    else if (tokenType === 'erc1155') handleErc1155Transfer()
+  }
+
+  const handleEthTransfer = async () => {
+    try {
+      const data1 = processRecipientData(recipientData, 'eth')
+      if (data1 === null) {
+        setMessage1(messagesTable.INVALID_DATA)
+        return
+      }
+
+      const { recipients, tokenAmounts } = data1
+      const data2 = await convertAmountsToWei('eth', tokenAddress, tokenAmounts)
+      const { amountsInWeiArr } = data2
+      if (amountsInWeiArr.length === 0) {
+        setMessage1(messagesTable.INVALID_DATA)
+        setBtnText(btnTextTable.SEND)
+        return
+      }
+
+      setBtnText(btnTextTable.SENDING)
+      const { isTransferred, hash } = await transferToMultiSender('eth', '', recipients, [], amountsInWeiArr)
+      if (!isTransferred) {
+        setMessage1(messagesTable.TRANSFER_PROBLEM)
+        setBtnText(btnTextTable.SEND)
+        return
+      }
+      setTxnHash(hash)
+      setBtnText(btnTextTable.SEND)
+    } catch (err) {
+      console.log(err)
+      setMessage1(messagesTable.TRANSFER_PROBLEM)
+      setBtnText(btnTextTable.SEND)
     }
   }
 
@@ -62,7 +92,7 @@ export default function Home() {
 
       setBtnText(btnTextTable.APPROVING)
       const { recipients, tokenAmounts } = data1
-      const data2 = await convertAmountsToWei(tokenAddress, tokenAmounts)
+      const data2 = await convertAmountsToWei('erc20', tokenAddress, tokenAmounts)
       const { amountsInWeiArr } = data2
       if (amountsInWeiArr.length === 0) {
         setMessage1(messagesTable.INVALID_DATA)
@@ -77,7 +107,7 @@ export default function Home() {
       }
 
       setBtnText(btnTextTable.SENDING)
-      const { isTransferred, hash } = await transferErc20(tokenAddress, recipients, amountsInWeiArr)
+      const { isTransferred, hash } = await transferToMultiSender('erc20', tokenAddress, recipients, [], amountsInWeiArr)
       if (!isTransferred) {
         setMessage1(messagesTable.TRANSFER_PROBLEM)
         setBtnText(btnTextTable.SEND)
@@ -173,18 +203,19 @@ export default function Home() {
           maxWidth='400px'>
 
           <TokenTypeSelector
-            tokenType={tokenType} setTokenType={setTokenType} showEth={false}
+            tokenType={tokenType} setTokenType={setTokenType} showEth={true}
           />
 
-
-          <TextField
-            fullWidth
-            id="standard-basic"
-            label="Token Address"
-            variant="standard"
-            value={tokenAddress}
-            onChange={e => setTokenAddress(e.target.value)}
-          />
+          {(tokenType !== 'eth') &&
+            <TextField
+              fullWidth
+              id="standard-basic"
+              label="Token Address"
+              variant="standard"
+              value={tokenAddress}
+              onChange={e => setTokenAddress(e.target.value)}
+            />
+          }
 
           <TextField
             fullWidth

@@ -1,8 +1,7 @@
 import { ethers } from 'ethers'
 import { Signer } from 'ethers/src.ts'
-import MultiSenderMetadata from '../../artifacts/contracts/multisender/MultiSender.sol/MultiSender.json'
+import MultiSenderMetadata from '../../artifacts/contracts/multisender/MultiSenderV2.sol/MultiSenderV2.json'
 import LockerMetadata from '../../artifacts/contracts/locker/LockerV3.sol/LockerV3.json'
-import FaucetMetadata from '../../artifacts/contracts/faucet/FaucetV2.sol/FaucetV2.json'
 import { messagesTable } from '../api/utils'
 
 declare global {
@@ -51,10 +50,8 @@ export const handleAccountChanged = (accounts: string[],
 
 
 export const getMultiSenderAddress = (_chainId: number) => {
-	if (_chainId === 4002) return '0x845E5C70AaAddb44522fd98Ce78743176b4715c6'
+	if (_chainId === 4002) return '0x2d37Fba57dEFe1088cfF56D148E028db5d6c467C'
 	// '0xfa2' === 4002  fantom-testnet
-	if (_chainId === 4) return '0x9c61cdd6436599F089b4AdA60EF433be31553a8c'
-	// '0x4' === 4              verified on sourcify.dev
 	return ''
 }
 export const getLockerContractAddr = (_chainId: number) => {

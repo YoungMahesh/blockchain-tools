@@ -33,7 +33,7 @@ export default function Faucet() {
 	return (
 		<div>
 			<Head>
-				<title>Locker</title>
+				<title>Faucet</title>
 				< meta name="description" content="Lock ERC20, ERC721, ERC1155 Tokens" />
 				<link rel="icon" href="/favicon.ico" />
 			</Head>

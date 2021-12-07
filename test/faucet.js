@@ -3,7 +3,6 @@ const { ethers } = require('hardhat')
 const BN = ethers.BigNumber.from
 
 
-
 describe('Faucet Contract', function () {
 
 	let faucet, ramanujan, sanaya, kuber

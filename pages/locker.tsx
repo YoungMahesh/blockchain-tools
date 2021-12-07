@@ -85,7 +85,7 @@ export default function Locker() {
 		setMessage1('')
 		try {
 			setBtnText(btnTextTable.APPROVING)
-			const { amountsInWeiArr } = await convertAmountsToWei(tokenAddress, [lockAmount])
+			const { amountsInWeiArr } = await convertAmountsToWei('erc20', tokenAddress, [lockAmount])
 			if (amountsInWeiArr.length === 0) {
 				setMessage1(messagesTable.INVALID_DATA)
 				setBtnText(btnTextTable.LOCK)

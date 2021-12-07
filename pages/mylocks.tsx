@@ -6,7 +6,7 @@ import { getLockerContract, getLockerContractAddr, getSigner } from '../backend/
 import { getUserLockers, LockerInfo2 } from '../backend/locker/erc20Lock'
 import useStore from '../backend/zustand/store'
 import AlertMessages from '../components/AlertMessages'
-
+import Head from 'next/head'
 
 export default function MyLocks() {
 
@@ -207,6 +207,11 @@ export default function MyLocks() {
 
 	return (
 		<>
+			<Head>
+				<title>My Locks</title>
+				< meta name="description" content="Lock ERC20, ERC721, ERC1155 Tokens" />
+				<link rel="icon" href="/favicon.ico" />
+			</Head>
 			<AlertMessages message1={message1} />
 
 			{!(chainIdMsg === messagesTable.NOT_INSTALLED

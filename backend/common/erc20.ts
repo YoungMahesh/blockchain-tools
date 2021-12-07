@@ -13,14 +13,21 @@ export const getErc20Contract = (tokenAddr: string, signer: ethers.Signer) => {
 	return new ethers.Contract(tokenAddr, erc20Abi, signer)
 }
 
-export const convertAmountsToWei = async (tokenAddr: string, amountsArr: string[]) => {
+export const convertAmountsToWei = async (tokenType: string, tokenAddr: string, amountsArr: string[]) => {
 	try {
-		const signer = getSigner()
-		const erc20Contract = getErc20Contract(tokenAddr, signer)
-		const decimals = await erc20Contract.decimals()
-		const amountsInWeiArr = []
-		for (let i = 0; i < amountsArr.length; i++) {
-			amountsInWeiArr[i] = ethers.utils.parseUnits(amountsArr[i], decimals)
+		const amountsInWeiArr: ethers.BigNumber[] = []
+		if (tokenType === 'erc20') {
+			const signer = getSigner()
+			const erc20Contract = getErc20Contract(tokenAddr, signer)
+			const decimals = await erc20Contract.decimals()
+			for (let i = 0; i < amountsArr.length; i++) {
+				amountsInWeiArr[i] = ethers.utils.parseUnits(amountsArr[i], decimals)
+			}
+		}
+		else if (tokenType === 'eth') {
+			for (let i = 0; i < amountsArr.length; i++) {
+				amountsInWeiArr[i] = ethers.utils.parseUnits(amountsArr[i], 18)
+			}
 		}
 		return { amountsInWeiArr }
 	} catch (err) {
@@ -31,7 +38,7 @@ export const convertAmountsToWei = async (tokenAddr: string, amountsArr: string[
 
 
 
-export const getErc20Approval = async (tokenAddr: string, amountsInWeiArr: string[]) => {
+export const getErc20Approval = async (tokenAddr: string, amountsInWeiArr: ethers.BigNumber[]) => {
 	try {
 		const signer = getSigner()
 		const currChain = await signer.getChainId()

@@ -27,7 +27,7 @@ export const processRecipientData = (recipientData: string, tokenType: string) =
 		const tokenAmounts = []
 		const recipientDataArr = recipientData.trim().split('\n')
 
-		if (tokenType === 'erc20') {
+		if (tokenType === 'erc20' || tokenType === 'eth') {
 			for (let i = 0; i < recipientDataArr.length; i++) {
 				const [currRecipient, currAmount] = recipientDataArr[i].trim().split(',')
 				recipients.push(currRecipient)

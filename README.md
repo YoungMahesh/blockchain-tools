@@ -8,8 +8,6 @@
 	- Add to Metamask buttons for faucet tokens
 	- Frontend Testing library
 	- Add ERC20, ERC721 and ERC1155 Generator and Minter
-	- Add option to transfer Eth in multi-sender
-	- Add option to lock ether in Locker
 	- Add clone of https://chainlist.org/
 	- Add clone of https://abi.hashex.org/
 	- Add page for finding NFT owners

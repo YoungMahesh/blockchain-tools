@@ -1,4 +1,3 @@
-// const { BigNumber } = require('@ethersproject/bignumber')
 const { expect } = require('chai')
 const { ethers, waffle } = require('hardhat')
 const BN = ethers.BigNumber.from

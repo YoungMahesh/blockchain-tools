@@ -1,12 +1,14 @@
-// const { BigNumber } = require('@ethersproject/bignumber')
 const { expect } = require('chai')
-const { ethers } = require('hardhat')
+const { ethers, waffle } = require('hardhat')
 const BN = ethers.BigNumber.from
 
 describe('MultiSender Contract', function () {
 
 	let multiSender, tron, devyani, penguins;
 	let user0, user1, user2;
+	const user3 = '0x7E85585e3e3f4A1ce734f14bf0C0C951Cd887880'
+	const user4 = '0x9C50dbFB7B65f2d1702496DA48AdfAB3D99A116e'
+	const provider = waffle.provider
 
 	it('Set User Addresses', async function () {
 		const [owner, addr1, addr2] = await ethers.getSigners();
@@ -16,11 +18,23 @@ describe('MultiSender Contract', function () {
 	})
 
 	it('Deploy MultiSender Contract', async function () {
-		const MultiSender = await ethers.getContractFactory('MultiSender')
+		const MultiSender = await ethers.getContractFactory('MultiSenderV2')
 		multiSender = await MultiSender.deploy()
 		await multiSender.deployed()
 	})
 
+	// ETH Transfers
+	it('ETH: msg.value should be equal to totalAmount', async function () {
+		await expect(multiSender.transferETH([user1, user2], [13000, 15000])).to.be.revertedWith('03')
+		await expect(multiSender.transferETH([user1, user2], [13000, 15000], { value: 10000 })).to.be.revertedWith('03')
+		await expect(multiSender.transferETH([user1, user2], [13000, 15000], { value: 50000 })).to.be.revertedWith('03')
+	})
+	it('ETH: send to addresses', async function () {
+		const amount1 = '17000', amount2 = '21000'
+		await multiSender.transferETH([user3, user4], [amount1, amount2], { value: BN(amount1).add(amount2) })
+		expect(await provider.getBalance(user3)).to.equal(amount1)
+		expect(await provider.getBalance(user4)).to.equal(amount2)
+	})
 
 	// ERC20 Transfers
 	it('Deploy Tron(ERC20) Contract', async function () {
