@@ -1,16 +1,26 @@
-import { getErc721Contract } from "../api/erc721"
-import { getLockerContract, getLockerContractAddr, getSigner } from "./web3Provider"
+import { ethers } from "ethers"
+import { getLockerContract, getSigner } from "./web3Provider"
 
-export const approveErc721ForLocker = async (tokenAddr: string) => {
+const erc721Abi = [
+	'function name() public view returns (string memory)',
+	'function symbol() public view returns (string memory)',
+	'function isApprovedForAll(address owner, address operator) external view returns (bool)',
+	'function setApprovalForAll(address operator, bool _approved) external'
+]
+
+export const getErc721Contract = (tokenAddr: string) => {
+	const signer = getSigner()
+	return new ethers.Contract(tokenAddr, erc721Abi, signer)
+}
+
+export const getErc721Approval = async (tokenAddr: string, operator: string) => {
 	try {
 		const signer = getSigner()
 		const currUser = await signer.getAddress()
-		const currChain = await signer.getChainId()
-		const erc721Contract = getErc721Contract(tokenAddr, signer)
-		const lockerAddress = getLockerContractAddr(currChain)
-		const isAlreadyApproved = await erc721Contract.isApprovedForAll(currUser, lockerAddress)
+		const erc721Contract = getErc721Contract(tokenAddr)
+		const isAlreadyApproved = await erc721Contract.isApprovedForAll(currUser, operator)
 		if (isAlreadyApproved) return true
-		const txn = await erc721Contract.setApprovalForAll(lockerAddress, true)
+		const txn = await erc721Contract.setApprovalForAll(operator, true)
 		await txn.wait(1)
 		return true
 	} catch (err) {

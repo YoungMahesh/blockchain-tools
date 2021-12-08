@@ -1,3 +1,6 @@
+import { ethers } from "ethers"
+import { BN } from "../common/web3Provider"
+
 export const messagesTable = {
 	NOT_SUPPORTED: 'Current Network is not supported.',
 	NOT_INSTALLED: 'Metamask is not Installed',
@@ -6,7 +9,8 @@ export const messagesTable = {
 	INVALID_DATA: 'Invalid data provided',
 	APPROVAL_PROBLEM: 'Problem occurred while approval',
 	LOCK_PROBLEM: 'Problem occurred while locking tokens',
-	FAUCET_PROBLEM: 'Error occurred while sending tokens'
+	FAUCET_PROBLEM: 'Error occurred while sending tokens',
+	INVALID_TOKENADDRESS: 'Invalid Token Address'
 }
 
 export const btnTextTable = {
@@ -20,40 +24,40 @@ export const btnTextTable = {
 	GET_ERC1155: 'Get 1000 Tokens'
 }
 
-export const processRecipientData = (recipientData: string, tokenType: string) => {
+export const processRecipientData = (recipientData: string, tokenType: string, decimals: number) => {
+	const recipientsArr: string[] = []
+	const tokenIdsArr: ethers.BigNumber[] = []
+	const tokenAmountsInWeiArr: ethers.BigNumber[] = []
 	try {
-		const recipients = []
-		const tokenIds = []
-		const tokenAmounts = []
 		const recipientDataArr = recipientData.trim().split('\n')
 
 		if (tokenType === 'erc20' || tokenType === 'eth') {
 			for (let i = 0; i < recipientDataArr.length; i++) {
 				const [currRecipient, currAmount] = recipientDataArr[i].trim().split(',')
-				recipients.push(currRecipient)
-				tokenAmounts.push(currAmount)
+				recipientsArr.push(currRecipient)
+				tokenAmountsInWeiArr.push(ethers.utils.parseUnits(currAmount, decimals))
 			}
-			return { recipients, tokenIds, tokenAmounts }
+			return { done: true, recipientsArr, tokenIdsArr, tokenAmountsInWeiArr }
 		}
 		else if (tokenType === 'erc721') {
 			for (let i = 0; i < recipientDataArr.length; i++) {
 				const [currRecipient, currId] = recipientDataArr[i].trim().split(',')
-				recipients.push(currRecipient)
-				tokenIds.push(currId)
+				recipientsArr.push(currRecipient)
+				tokenIdsArr.push(BN(currId))
 			}
-			return { recipients, tokenIds, tokenAmounts }
+			return { done: true, recipientsArr, tokenIdsArr, tokenAmountsInWeiArr }
 		}
 		else if (tokenType === 'erc1155') {
 			for (let i = 0; i < recipientDataArr.length; i++) {
 				const [currRecipient, currId, currAmount] = recipientDataArr[i].trim().split(',')
-				recipients.push(currRecipient)
-				tokenIds.push(currId)
-				tokenAmounts.push(currAmount)
+				recipientsArr.push(currRecipient)
+				tokenIdsArr.push(BN(currId))
+				tokenAmountsInWeiArr.push(BN(currAmount))
 			}
-			return { recipients, tokenIds, tokenAmounts }
+			return { done: true, recipientsArr, tokenIdsArr, tokenAmountsInWeiArr }
 		}
 	} catch (err) {
 		console.log({ err })
-		return null
+		return { done: false, recipientsArr, tokenIdsArr, tokenAmountsInWeiArr }
 	}
 }

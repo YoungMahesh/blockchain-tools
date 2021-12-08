@@ -1,17 +1,16 @@
 import { ethers } from "ethers"
 import { getErc20Contract } from "../common/erc20"
-import { getErc721Contract } from "../api/erc721"
+import { getErc721Contract } from "../common/erc721"
 import { getLockerContract, getSigner } from "../common/web3Provider"
 
 export const getTokenInfo = async (_tokenType: string, _tokenAddress: string, _amountInWei: ethers.BigNumber) => {
 	try {
-		const signer = getSigner()
 		if (_tokenType === 'eth') {
 			const tokenAmount2 = ethers.utils.formatUnits(_amountInWei, 18)
 			return { tokenName: '', tokenSymbol: '', tokenAmount2 }
 		}
 		else if (_tokenType === 'erc20') {
-			const erc20Contract = getErc20Contract(_tokenAddress, signer)
+			const erc20Contract = getErc20Contract(_tokenAddress)
 			const promisesArr = [
 				erc20Contract.name(), erc20Contract.symbol(),
 				erc20Contract.decimals()
@@ -21,7 +20,7 @@ export const getTokenInfo = async (_tokenType: string, _tokenAddress: string, _a
 			return { tokenName, tokenSymbol, tokenAmount2 }
 		}
 		else if (_tokenType === 'erc721') {
-			const erc721Contract = getErc721Contract(_tokenAddress, signer)
+			const erc721Contract = getErc721Contract(_tokenAddress)
 			const promisesArr = [
 				erc721Contract.name(), erc721Contract.symbol()
 			]
@@ -34,41 +33,6 @@ export const getTokenInfo = async (_tokenType: string, _tokenAddress: string, _a
 	} catch (err) {
 		console.log(err)
 		return { tokenName: 'unknown', tokenSymbol: 'unknown', tokenAmount: '0' }
-	}
-}
-
-
-
-export const approveErc20ForLocker = async (_tokenAddress: string, _amountInWei: ethers.BigNumber) => {
-	try {
-		const signer = getSigner()
-		const chainId = await signer.getChainId()
-		const erc20Contract = getErc20Contract(_tokenAddress, signer)
-		const lockerContract = getLockerContract(signer, chainId)
-		const lockerContractAddr = lockerContract.address
-		const txn = await erc20Contract.approve(lockerContractAddr, _amountInWei)
-		await txn.wait(1)
-		return true
-	} catch (err) {
-		console.log(err)
-		return false
-	}
-}
-
-export const lockErc20Tokens = async (_tokenType: string,
-	_tokenAddress: string, _tokenId: string, _tokenAmountInWei: string, _unlockTime: string) => {
-	try {
-		const signer = getSigner()
-		const chainId = await signer.getChainId()
-		const lockerContract = getLockerContract(signer, chainId)
-		console.log(_tokenType, _tokenAddress, _tokenId, _tokenAmountInWei, _unlockTime)
-		const txn = await lockerContract.createLocker(
-			_tokenType, _tokenAddress, _tokenId,
-			_tokenAmountInWei, _unlockTime)
-		return { isLocked: true, hash: txn.hash }
-	} catch (err) {
-		console.log(err)
-		return { isLocked: false, hash: '' }
 	}
 }
 
@@ -136,3 +100,24 @@ export const getUserLockers = async () => {
 	}
 }
 
+
+export const transferTokensToLocker = async (_tokenType: string,
+	_tokenAddress: string, _tokenId: ethers.BigNumber, _tokenAmountInWei: ethers.BigNumber, _unlockDate: Date) => {
+	try {
+		const signer = getSigner()
+		const chainId = await signer.getChainId()
+		const lockerContract = getLockerContract(signer, chainId)
+		// console.log(_tokenType, _tokenAddress, _tokenId, _tokenAmountInWei, _unlockTime)
+		const _unlockTime = Math.floor(_unlockDate.getTime() / 1000).toString()
+		const txn = await lockerContract.createLocker(
+			_tokenType, _tokenAddress, _tokenId,
+			_tokenAmountInWei, _unlockTime, {
+			value: _tokenType === 'eth' ? _tokenAmountInWei : '0'
+		})
+		await txn.wait(1)
+		return { isLocked: true, hash: txn.hash }
+	} catch (err) {
+		console.log(err)
+		return { isLocked: false, hash: '' }
+	}
+}

@@ -3,18 +3,19 @@ import {
   TextField, Box,
   Button, Stack, LinearProgress
 } from '@mui/material'
-import { getMultiSenderAddress, getSigner } from '../backend/common/web3Provider'
+import { getMultiSenderAddress } from '../backend/api/multisender'
 import { btnTextTable, messagesTable, processRecipientData } from '../backend/api/utils'
 import { Send as SendIcon } from '@mui/icons-material'
 import { useEffect, useState } from 'react'
-import { convertAmountsToWei, getErc20Approval, transferErc20 } from '../backend/common/erc20'
+import { getErc20Approval, getErc20Decimals, getTotalSumOfBignumbers } from '../backend/common/erc20'
 import TxnLink from '../components/TxnLink'
-import { getErc721Approval, transferErc721 } from '../backend/api/erc721'
-import { getErc1155Approval, transferErc1155 } from '../backend/api/erc1155'
+import { getErc721Approval } from '../backend/common/erc721'
+import { getErc1155Approval } from '../backend/common/erc1155'
 import TokenTypeSelector from '../components/TokenTypeSelector'
 import useStore from '../backend/zustand/store'
 import AlertMessages from '../components/AlertMessages'
 import { transferToMultiSender } from '../backend/api/multisender'
+
 
 export default function Home() {
 
@@ -40,74 +41,48 @@ export default function Home() {
 
   useEffect(() => { setTxnHash('') }, [tokenType])
 
-  const handleTokenTransfer = () => {
+  const handleTokenTransfer = async () => {
     setMessage1('')
     setTxnHash('')
-    if (tokenType === 'eth') handleEthTransfer()
-    else if (tokenType === 'erc20') handleErc20Transfer()
-    else if (tokenType === 'erc721') handleErc721Transfer()
-    else if (tokenType === 'erc1155') handleErc1155Transfer()
-  }
 
-  const handleEthTransfer = async () => {
     try {
-      const data1 = processRecipientData(recipientData, 'eth')
-      if (data1 === null) {
-        setMessage1(messagesTable.INVALID_DATA)
-        return
+      let decimals = 0
+      if (tokenType === 'eth') decimals = 18
+      else if (tokenType === 'erc20') {
+        const decimals1 = await getErc20Decimals(tokenAddress)
+        if (decimals1 === -1) {
+          setMessage1(messagesTable.INVALID_TOKENADDRESS)
+          return
+        }
+        decimals = decimals1
       }
-
-      const { recipients, tokenAmounts } = data1
-      const data2 = await convertAmountsToWei('eth', tokenAddress, tokenAmounts)
-      const { amountsInWeiArr } = data2
-      if (amountsInWeiArr.length === 0) {
-        setMessage1(messagesTable.INVALID_DATA)
-        setBtnText(btnTextTable.SEND)
-        return
-      }
-
-      setBtnText(btnTextTable.SENDING)
-      const { isTransferred, hash } = await transferToMultiSender('eth', '', recipients, [], amountsInWeiArr)
-      if (!isTransferred) {
-        setMessage1(messagesTable.TRANSFER_PROBLEM)
-        setBtnText(btnTextTable.SEND)
-        return
-      }
-      setTxnHash(hash)
-      setBtnText(btnTextTable.SEND)
-    } catch (err) {
-      console.log(err)
-      setMessage1(messagesTable.TRANSFER_PROBLEM)
-      setBtnText(btnTextTable.SEND)
-    }
-  }
-
-  const handleErc20Transfer = async () => {
-    try {
-      const data1 = processRecipientData(recipientData, 'erc20')
-      if (data1 === null) {
+      const { done, recipientsArr, tokenIdsArr, tokenAmountsInWeiArr } = processRecipientData(recipientData, tokenType, decimals)
+      if (!done) {
         setMessage1(messagesTable.INVALID_DATA)
         return
       }
 
       setBtnText(btnTextTable.APPROVING)
-      const { recipients, tokenAmounts } = data1
-      const data2 = await convertAmountsToWei('erc20', tokenAddress, tokenAmounts)
-      const { amountsInWeiArr } = data2
-      if (amountsInWeiArr.length === 0) {
-        setMessage1(messagesTable.INVALID_DATA)
-        setBtnText(btnTextTable.SEND)
-        return
+      const totalAmountInWei = getTotalSumOfBignumbers(tokenAmountsInWeiArr)
+      const multiSenderAddr = getMultiSenderAddress(chainId)
+      let isApproved = true
+      if (tokenType === 'erc20') {
+        isApproved = await getErc20Approval(tokenAddress, multiSenderAddr, totalAmountInWei)
       }
-      const isApproved = await getErc20Approval(tokenAddress, amountsInWeiArr)
+      else if (tokenType === 'erc721') {
+        isApproved = await getErc721Approval(tokenAddress, multiSenderAddr)
+      }
+      else if (tokenType === 'erc1155') {
+        isApproved = await getErc1155Approval(tokenAddress, multiSenderAddr)
+      }
       if (!isApproved) {
         setMessage1(messagesTable.APPROVAL_PROBLEM)
         setBtnText(btnTextTable.SEND)
         return
       }
-
       setBtnText(btnTextTable.SENDING)
-      const { isTransferred, hash } = await transferToMultiSender('erc20', tokenAddress, recipients, [], amountsInWeiArr)
+      // console.log({ tokenType, tokenAddress, recipientsArr, tokenIdsArr, tokenAmountsInWeiArr })
+      const { isTransferred, hash } = await transferToMultiSender(tokenType, tokenAddress, recipientsArr, tokenIdsArr, tokenAmountsInWeiArr)
       if (!isTransferred) {
         setMessage1(messagesTable.TRANSFER_PROBLEM)
         setBtnText(btnTextTable.SEND)
@@ -122,73 +97,6 @@ export default function Home() {
     }
   }
 
-  const handleErc721Transfer = async () => {
-    try {
-      const signer = getSigner()
-      const data1 = processRecipientData(recipientData, 'erc721')
-      if (data1 === null) {
-        setMessage1(messagesTable.INVALID_DATA)
-        return
-      }
-
-      setBtnText(btnTextTable.APPROVING)
-      const { recipients, tokenIds } = data1
-      const isApproved = await getErc721Approval(signer, tokenAddress)
-      if (!isApproved) {
-        setMessage1(messagesTable.APPROVAL_PROBLEM)
-        setBtnText(btnTextTable.SEND)
-        return
-      }
-
-      setBtnText(btnTextTable.SENDING)
-      const { isTransferred, hash } = await transferErc721(signer, tokenAddress, recipients, tokenIds)
-      if (!isTransferred) {
-        setMessage1(messagesTable.TRANSFER_PROBLEM)
-        setBtnText(btnTextTable.SEND)
-        return
-      }
-      setTxnHash(hash)
-      setBtnText(btnTextTable.SEND)
-    } catch (err) {
-      console.log(err)
-      setMessage1(messagesTable.TRANSFER_PROBLEM)
-      setBtnText(btnTextTable.SEND)
-    }
-  }
-
-  const handleErc1155Transfer = async () => {
-    try {
-      const signer = getSigner()
-      const data1 = processRecipientData(recipientData, 'erc1155')
-      if (data1 === null) {
-        setMessage1(messagesTable.INVALID_DATA)
-        return
-      }
-
-      setBtnText(btnTextTable.APPROVING)
-      const { recipients, tokenIds, tokenAmounts } = data1
-      const isApproved = await getErc1155Approval(signer, tokenAddress)
-      if (!isApproved) {
-        setMessage1(messagesTable.APPROVAL_PROBLEM)
-        setBtnText(btnTextTable.SEND)
-        return
-      }
-
-      setBtnText(btnTextTable.SENDING)
-      const { isTransferred, hash } = await transferErc1155(signer, tokenAddress, recipients, tokenIds, tokenAmounts)
-      if (!isTransferred) {
-        setMessage1(messagesTable.TRANSFER_PROBLEM)
-        setBtnText(btnTextTable.SEND)
-        return
-      }
-      setTxnHash(hash)
-      setBtnText(btnTextTable.SEND)
-    } catch (err) {
-      console.log(err)
-      setMessage1(messagesTable.TRANSFER_PROBLEM)
-      setBtnText(btnTextTable.SEND)
-    }
-  }
 
   return (
     <div>

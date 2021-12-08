@@ -3,25 +3,22 @@ import {
 	TextField, Box, FormControl, FormLabel,
 	Button, Stack, LinearProgress
 } from '@mui/material'
-import { BN, convertEthToWei, getLockerContractAddr, ZERO_ADDRESS } from '../backend/common/web3Provider'
+import { BN, getLockerContractAddr, ZERO_ADDRESS } from '../backend/common/web3Provider'
 import { btnTextTable, messagesTable } from '../backend/api/utils'
 import { Send as SendIcon } from '@mui/icons-material'
 import { useEffect, useState } from 'react'
-import { convertAmountsToWei } from '../backend/common/erc20'
-import TxnLink from '../components/TxnLink'
-import DateTimePicker from '@mui/lab/DateTimePicker';
-import MobileDateTimePicker from '@mui/lab/MobileDateTimePicker';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import { approveErc20ForLocker } from '../backend/locker/erc20Lock'
-import { approveErc721ForLocker } from '../backend/common/erc721'
-import { approveErc1155ForLocker } from '../backend/common/erc1155'
-import { transferTokensToLocker } from '../backend/locker/lockerWeb3'
+import MobileDateTimePicker from '@mui/lab/MobileDateTimePicker'
+import AdapterDateFns from '@mui/lab/AdapterDateFns'
+import LocalizationProvider from '@mui/lab/LocalizationProvider'
+import { getErc721Approval } from '../backend/common/erc721'
+import { getErc1155Approval } from '../backend/common/erc1155'
+import { transferTokensToLocker } from '../backend/api/locker'
 import TokenTypeSelector from '../components/TokenTypeSelector'
 import AlertMessages from '../components/AlertMessages'
 import useStore from '../backend/zustand/store'
 import { useRouter } from 'next/router'
-
+import { ethers } from 'ethers'
+import { getErc20Decimals, getErc20Approval } from '../backend/common/erc20'
 
 export default function Locker() {
 	const router = useRouter()
@@ -30,7 +27,6 @@ export default function Locker() {
 	const chainIdMsg = useStore(state => state.chainIdMsg)
 	const setChainIdMsg = useStore(state => state.setChainIdMsg)
 
-	const wallet = useStore(state => state.wallet)
 	const walletMsg = useStore(state => state.walletMsg)
 
 	const [tokenType, setTokenType] = useState('erc20')
@@ -48,52 +44,38 @@ export default function Locker() {
 	}, [chainId])
 
 
-	const handleLocking = () => {
-		if (tokenType === 'eth') handleEthLock()
-		else if (tokenType === 'erc20') handleErc20Lock()
-		else if (tokenType === 'erc721') handleErc721Lock()
-		else if (tokenType === 'erc1155') handleErc1155Lock()
-	}
+	const handleLocking = async () => {
 
-	const handleEthLock = async () => {
 		setMessage1('')
 		try {
-			const amountInWei = convertEthToWei(lockAmount)
-			if (amountInWei === BN('0')) {
-				setMessage1(messagesTable.INVALID_DATA)
-				return
+
+			let decimals = 0
+			if (tokenType === 'eth') decimals = 18
+			if (tokenType === 'erc20') {
+				decimals = await getErc20Decimals(tokenAddress)
+				if (decimals === -1) {
+					setMessage1(messagesTable.INVALID_TOKENADDRESS)
+					setBtnText(btnTextTable.LOCK)
+					return
+				}
 			}
 
-			setBtnText(btnTextTable.LOCKING)
-			const { isLocked, hash } = await transferTokensToLocker(
-				'eth', ZERO_ADDRESS, BN('0'), amountInWei, unlockDate
-			)
-			if (!isLocked) {
-				setMessage1(messagesTable.LOCK_PROBLEM)
-				setBtnText(btnTextTable.LOCK)
-				return
-			}
-			router.push('/mylocks')
-		} catch (err) {
-			console.log(err)
-			setMessage1(messagesTable.LOCK_PROBLEM)
-			setBtnText(btnTextTable.LOCK)
-		}
-	}
-
-	const handleErc20Lock = async () => {
-		setMessage1('')
-		try {
 			setBtnText(btnTextTable.APPROVING)
-			const { amountsInWeiArr } = await convertAmountsToWei('erc20', tokenAddress, [lockAmount])
-			if (amountsInWeiArr.length === 0) {
-				setMessage1(messagesTable.INVALID_DATA)
-				setBtnText(btnTextTable.LOCK)
-				return
+			const lockAmount1 = (tokenType === 'erc721') ? '1' : lockAmount
+			const amountInWei = ethers.utils.parseUnits(lockAmount1, decimals)
+			const lockerAddr = getLockerContractAddr(chainId)
+			let isApproved = true
+			if (tokenType === 'erc20') {
+				isApproved = await getErc20Approval(tokenAddress, lockerAddr, amountInWei)
 			}
-			const amountInWei = amountsInWeiArr[0]
-
-			const isApproved = await approveErc20ForLocker(tokenAddress, amountsInWeiArr[0])
+			else if (tokenType === 'erc721') {
+				isApproved = await getErc721Approval(tokenAddress, lockerAddr)
+			}
+			else if (tokenType === 'erc1155') {
+				console.log('before exe')
+				isApproved = await getErc1155Approval(tokenAddress, lockerAddr)
+				console.log('after exe')
+			}
 			if (!isApproved) {
 				setMessage1(messagesTable.APPROVAL_PROBLEM)
 				setBtnText(btnTextTable.LOCK)
@@ -101,9 +83,14 @@ export default function Locker() {
 			}
 
 			setBtnText(btnTextTable.LOCKING)
+			const tokenId1 = (tokenType === 'erc721' || tokenType === 'erc1155') ? BN(tokenId) : BN('0')
+			const tokenAddress1 = (tokenType === 'eth') ? ZERO_ADDRESS : tokenAddress
+			const amountInWei1 = (tokenType === 'erc721') ? BN('1') : amountInWei
+			console.log({ tokenType, tokenAddress1, tokenId1, amountInWei1, unlockDate })
 			const { isLocked, hash } = await transferTokensToLocker(
-				'erc20', tokenAddress, BN('0'), amountInWei, unlockDate
+				tokenType, tokenAddress1, tokenId1, amountInWei1, unlockDate
 			)
+
 			if (!isLocked) {
 				setMessage1(messagesTable.LOCK_PROBLEM)
 				setBtnText(btnTextTable.LOCK)
@@ -116,65 +103,6 @@ export default function Locker() {
 			setBtnText(btnTextTable.LOCK)
 		}
 	}
-
-	const handleErc721Lock = async () => {
-		setMessage1('')
-		try {
-
-			setBtnText(btnTextTable.APPROVING)
-			const isApproved = await approveErc721ForLocker(tokenAddress)
-			if (!isApproved) {
-				setMessage1(messagesTable.APPROVAL_PROBLEM)
-				setBtnText(btnTextTable.LOCK)
-				return
-			}
-
-			setBtnText(btnTextTable.LOCKING)
-			const { isLocked, hash } = await transferTokensToLocker(
-				'erc721', tokenAddress, BN(tokenId), BN('1'), unlockDate
-			)
-			if (!isLocked) {
-				setMessage1(messagesTable.LOCK_PROBLEM)
-				setBtnText(btnTextTable.LOCK)
-				return
-			}
-			router.push('/mylocks')
-		} catch (err) {
-			console.log(err)
-			setMessage1(messagesTable.LOCK_PROBLEM)
-			setBtnText(btnTextTable.LOCK)
-		}
-	}
-
-	const handleErc1155Lock = async () => {
-		setMessage1('')
-		try {
-
-			setBtnText(btnTextTable.APPROVING)
-			const isApproved = await approveErc1155ForLocker(tokenAddress)
-			if (!isApproved) {
-				setMessage1(messagesTable.APPROVAL_PROBLEM)
-				setBtnText(btnTextTable.LOCK)
-				return
-			}
-
-			setBtnText(btnTextTable.LOCKING)
-			const { isLocked, hash } = await transferTokensToLocker(
-				'erc1155', tokenAddress, BN(tokenId), BN(lockAmount), unlockDate
-			)
-			if (!isLocked) {
-				setMessage1(messagesTable.LOCK_PROBLEM)
-				setBtnText(btnTextTable.LOCK)
-				return
-			}
-			router.push('/mylocks')
-		} catch (err) {
-			console.log(err)
-			setMessage1(messagesTable.LOCK_PROBLEM)
-			setBtnText(btnTextTable.LOCK)
-		}
-	}
-
 
 
 	return (

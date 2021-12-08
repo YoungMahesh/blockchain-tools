@@ -3,7 +3,7 @@ import { ethers } from 'ethers'
 import { useEffect, useState } from 'react'
 import { messagesTable } from '../backend/api/utils'
 import { getLockerContract, getLockerContractAddr, getSigner } from '../backend/common/web3Provider'
-import { getUserLockers, LockerInfo2 } from '../backend/locker/erc20Lock'
+import { getUserLockers, LockerInfo2 } from '../backend/api/locker'
 import useStore from '../backend/zustand/store'
 import AlertMessages from '../components/AlertMessages'
 import Head from 'next/head'
@@ -212,7 +212,6 @@ export default function MyLocks() {
 				< meta name="description" content="Lock ERC20, ERC721, ERC1155 Tokens" />
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
-			<AlertMessages message1={message1} />
 
 			{!(chainIdMsg === messagesTable.NOT_INSTALLED
 				|| chainIdMsg === messagesTable.NOT_SUPPORTED
@@ -246,6 +245,9 @@ export default function MyLocks() {
 					</Box>
 				</Stack>
 			}
+
+			<AlertMessages message1={message1} />
+
 		</>
 	)
 }

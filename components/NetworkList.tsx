@@ -29,8 +29,8 @@ export default function SelectedListItem() {
 						{ networkName: 'Polygon Mainnet', networkId: 137 },
 						{ networkName: 'Harmony One', networkId: 1666600000 },
 						{ networkName: 'Fantom Opera', networkId: 250 },
-					].map(obj1 => (
-						<ListItemButton
+					].map((obj1, idx) => (
+						<ListItemButton key={idx}
 							selected={chainId === obj1.networkId}
 							onClick={(event) => handleListItemClick(event, obj1.networkId)}
 						>
@@ -50,8 +50,8 @@ export default function SelectedListItem() {
 						{ networkName: 'Polygon Testnet', networkId: 80001 },
 						{ networkName: 'Harmony Testnet', networkId: 1666700000 },
 						{ networkName: 'Fantom Testnet', networkId: 4002 },
-					].map(obj1 => (
-						<ListItemButton
+					].map((obj1, idx) => (
+						<ListItemButton key={idx}
 							selected={chainId === obj1.networkId}
 							onClick={(event) => handleListItemClick(event, obj1.networkId)}
 						>

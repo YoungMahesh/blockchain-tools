@@ -1,74 +1,53 @@
 import { ethers } from "ethers"
-import { getMultiSenderAddress, getMultiSenderContract, getSigner } from "./web3Provider"
+import { BN, getSigner } from "./web3Provider"
 
 const erc20Abi = [
-	'function name() public view virtual override returns (string memory)',
-	'function symbol() public view virtual override returns (string memory)',
-	'function decimals() public view virtual override returns (uint8)',
-	'function approve(address spender, uint256 amount) external returns (bool)',
-	'function decimals() public view virtual override returns (uint8)'
+	'function name() public view returns (string memory)',
+	'function symbol() public view returns (string memory)',
+	'function decimals() public view returns (uint8)',
+	'function allowance(address owner, address spender) external view returns (uint256)',
+	'function approve(address spender, uint256 amount) external returns (bool)'
 ]
 
-export const getErc20Contract = (tokenAddr: string, signer: ethers.Signer) => {
+export const getErc20Contract = (tokenAddr: string) => {
+	const signer = getSigner()
 	return new ethers.Contract(tokenAddr, erc20Abi, signer)
 }
 
-export const convertAmountsToWei = async (tokenType: string, tokenAddr: string, amountsArr: string[]) => {
+export const getErc20Decimals = async (tokenAddress: string) => {
 	try {
-		const amountsInWeiArr: ethers.BigNumber[] = []
-		if (tokenType === 'erc20') {
-			const signer = getSigner()
-			const erc20Contract = getErc20Contract(tokenAddr, signer)
-			const decimals = await erc20Contract.decimals()
-			for (let i = 0; i < amountsArr.length; i++) {
-				amountsInWeiArr[i] = ethers.utils.parseUnits(amountsArr[i], decimals)
-			}
-		}
-		else if (tokenType === 'eth') {
-			for (let i = 0; i < amountsArr.length; i++) {
-				amountsInWeiArr[i] = ethers.utils.parseUnits(amountsArr[i], 18)
-			}
-		}
-		return { amountsInWeiArr }
+		const erc20Contract = getErc20Contract(tokenAddress)
+		const decimals = await erc20Contract.decimals()
+		return decimals
 	} catch (err) {
-		console.log(err)
-		return { amountsInWeiArr: [] }
+		return -1
 	}
 }
 
+export const getTotalSumOfBignumbers = (array: ethers.BigNumber[]) => {
+	let totalAmount = BN('0')
+	for (let i = 0; i < array.length; i++) {
+		totalAmount = totalAmount.add(array[i])
+	}
+	return totalAmount
+}
 
 
-export const getErc20Approval = async (tokenAddr: string, amountsInWeiArr: ethers.BigNumber[]) => {
+export const getErc20Approval = async (tokenAddr: string, operator: string, amountInWei: ethers.BigNumber) => {
 	try {
 		const signer = getSigner()
-		const currChain = await signer.getChainId()
-		const erc20Contract = getErc20Contract(tokenAddr, signer)
-		const multiSenderAddr = getMultiSenderAddress(currChain)
-		let totalAmountInWei = ethers.BigNumber.from('0')
-		for (let i = 0; i < amountsInWeiArr.length; i++) {
-			totalAmountInWei = totalAmountInWei.add(amountsInWeiArr[i])
-		}
-		console.log(multiSenderAddr, totalAmountInWei)
-		const txn = await erc20Contract.approve(multiSenderAddr, totalAmountInWei)
+		const currUser = await signer.getAddress()
+		const erc20Contract = getErc20Contract(tokenAddr)
+
+		const allowance: ethers.BigNumber = await erc20Contract.allowance(currUser, operator)
+		if (allowance.gte(amountInWei)) return true
+
+		const txn = await erc20Contract.approve(operator, amountInWei)
 		await txn.wait(1)
 		return true
 	} catch (err) {
 		console.log(err)
 		return false
-	}
-}
-
-export const transferErc20 = async (tokenAddr: string, recipientsArr: string[], amountsInWeiArr: string[]) => {
-	try {
-		const signer = await getSigner()
-		const currChain = await signer.getChainId()
-		const multiSenderContract = getMultiSenderContract(signer, currChain)
-		const txn = await multiSenderContract.transferERC20(tokenAddr, recipientsArr, amountsInWeiArr)
-		await txn.wait()
-		return { isTransferred: true, hash: txn.hash }
-	} catch (err) {
-		console.log(err)
-		return { isTransferred: false, hash: '' }
 	}
 }
 
