@@ -48,10 +48,20 @@ module.exports = {
       url: `https://rpc-mumbai.maticvigil.com`,
       chainId: 80001,
       accounts
+    },
+    polygon: {
+      url: 'https://polygon-rpc.com',
+      chainId: 137,
+      accounts
+    },
+    harmony: {
+      url: 'https://api.harmony.one/',
+      chainId: 1666600000,
+      accounts
     }
   },
   solidity: '0.8.2',
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY
+    apiKey: process.env.POLYGONSCAN_API_KEY
   }
 }

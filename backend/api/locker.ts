@@ -6,8 +6,14 @@ import LockerMetadata from '../../artifacts/contracts/locker/LockerV3.sol/Locker
 
 
 export const getLockerContractAddr = (_chainId: number) => {
-	if (_chainId === 4002) return '0x9d45e915946C7d1c2061901dbb5A7Cd6d9Db7E00'
 	if (_chainId === 4) return '0x1dc2Be267B50fe5FD54514ae70d8E3b78382c3f9'
+	if (_chainId === 4002) return '0x9d45e915946C7d1c2061901dbb5A7Cd6d9Db7E00'
+	if (_chainId === 80001) return '0x2B76A8a00045512E73BE23734ee4Eefd92A82A50'
+	if (_chainId === 1666700000) return '0x845e5c70aaaddb44522fd98ce78743176b4715c6'
+
+	if (_chainId === 1666600000) return '0xcf92007f46ca54c79b24cb249104b4342fb2d0ce'
+	if (_chainId === 137) return '0x8301Ad72523aDAf2d00D69A9edBEbc40E43698Cb'
+	if (_chainId === 250) return '0x53f636873C01AeF4c631625f83C86bE104E5895c'
 	return ''
 }
 

@@ -12,6 +12,10 @@ export const getFaucetAddress = (_chainId: number) => {
 	if (_chainId === 4002) return '0xf399c967BC29110E469661c7d7C2C2F0B1Fe69A1'
 	if (_chainId === 1666700000) return '0xf4910d212D6d6A5be64806e718dA038BC2392f0b'
 	if (_chainId === 80001) return '0xf4910d212D6d6A5be64806e718dA038BC2392f0b'
+
+	if (_chainId === 1666600000) return '0x53f636873c01aef4c631625f83c86be104e5895c'
+	if (_chainId === 137) return '0x7e82C1f42dB7D3E31725841719Ef674831CDE045'
+	if (_chainId === 250) return '0xf4910d212D6d6A5be64806e718dA038BC2392f0b'
 	return ''
 }
 export const getFaucetContract = (signer: ethers.Signer, _chainId: number) => {
@@ -41,6 +45,22 @@ export const getFaucetTokensAddr = (_chainId: number) => {
 		erc721: '0x738454f114610fb2B8493670EfD52f8b26432B4D',
 		erc1155: '0x037B599F6B74820557f13457D96f6c4A3664d576'
 	}
+
+	if (_chainId === 1666600000) return {
+		erc20: '0x704Da5aD22F366134E8E58c7FD2b28F3DAf323d5',
+		erc721: '0x397b5C855959e8C95C33Af2E72f232a632aaaAc4',
+		erc1155: '0x17c7a82ff85382371b849b5B4548953c70ec7BA6'
+	}
+	if (_chainId === 250) return {
+		erc20: '0xb0010f1c3c469af1e4a93475a9b21ac06b736c8c',
+		erc721: '0x738454f114610fb2b8493670efd52f8b26432b4d',
+		erc1155: '0x037b599f6b74820557f13457d96f6c4a3664d576'
+	}
+	if (_chainId === 137) return {
+		erc20: '0xcf22d1c05eb783582bd191f3cc6e8f3de9777a29',
+		erc721: '0xc3eee84aa2208ef650d62f388c3a293ad37ad85a',
+		erc1155: '0x2e27ae75078506544449ddb144e070e09e6a96d2'
+	}
 	return { erc20: '', erc721: '', erc1155: '' }
 }
 export const getEtherFaucetInfo = (_chainId: number) => {
@@ -60,6 +80,7 @@ export const getEtherFaucetInfo = (_chainId: number) => {
 		ethName: 'Harmony One',
 		faucetLink: 'https://faucet.pops.one/'
 	}
+
 	return { ethName: '', faucetLink: '' }
 }
 export const getFaucetErc20Details = (_chainId: number) => {

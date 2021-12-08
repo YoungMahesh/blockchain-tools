@@ -140,7 +140,7 @@ export default function FaucetToken({ chainId, tokenType, setMessage1 }) {
 							<Button onClick={() => window.open(`${getTokenUrlPrefix(chainId)}${tokenAddress}`)} size='medium'>View Details</Button>
 						</>
 					}
-					{(tokenType === 'eth') &&
+					{(tokenType === 'eth' && faucetLink1.length > 0) &&
 						<Button onClick={() => window.open(faucetLink1)} size='medium'>VISIT</Button>
 					}
 				</CardActions>

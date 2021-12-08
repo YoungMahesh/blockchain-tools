@@ -10,6 +10,12 @@ const multiSenderV2Abi = [
 export const getMultiSenderAddress = (_chainId: number) => {
 	if (_chainId === 4) return '0x349b745Aef5085099cbb8111e52Aba512aF8a607'
 	if (_chainId === 4002) return '0x2d37Fba57dEFe1088cfF56D148E028db5d6c467C'
+	if (_chainId === 80001) return '0x3D456aEaF3cD00677d8Da7B1f561f8c7F7e44751'
+	if (_chainId === 1666700000) return '0x3d456aeaf3cd00677d8da7b1f561f8c7f7e44751'
+
+	if (_chainId === 1666600000) return '0xd7fe786f7adcef5deb4b73bc62468757800e9efa'
+	if (_chainId === 137) return '0xe44C39A323DC488CF7cc72a20e42A36ad155E515'
+	if (_chainId === 250) return '0xe4671844Fcb3cA9A80A1224B6f9A0A6c2Ba2a7d5'
 	return ''
 }
 export const getMultiSenderContract = (currChain: number) => {
