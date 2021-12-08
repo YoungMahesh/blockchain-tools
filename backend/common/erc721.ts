@@ -1,5 +1,6 @@
 import { ethers } from "ethers"
-import { getLockerContract, getSigner } from "./web3Provider"
+import { getSigner } from "./web3Provider"
+import { getLockerContract } from '../api/locker'
 
 const erc721Abi = [
 	'function name() public view returns (string memory)',
