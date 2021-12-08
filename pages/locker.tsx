@@ -3,7 +3,7 @@ import {
 	TextField, Box, FormControl, FormLabel,
 	Button, Stack, LinearProgress
 } from '@mui/material'
-import { BN, getLockerContractAddr, ZERO_ADDRESS } from '../backend/common/web3Provider'
+import { BN, ZERO_ADDRESS } from '../backend/common/web3Provider'
 import { btnTextTable, messagesTable } from '../backend/api/utils'
 import { Send as SendIcon } from '@mui/icons-material'
 import { useEffect, useState } from 'react'
@@ -12,7 +12,7 @@ import AdapterDateFns from '@mui/lab/AdapterDateFns'
 import LocalizationProvider from '@mui/lab/LocalizationProvider'
 import { getErc721Approval } from '../backend/common/erc721'
 import { getErc1155Approval } from '../backend/common/erc1155'
-import { transferTokensToLocker } from '../backend/api/locker'
+import { transferTokensToLocker, getLockerContractAddr } from '../backend/api/locker'
 import TokenTypeSelector from '../components/TokenTypeSelector'
 import AlertMessages from '../components/AlertMessages'
 import useStore from '../backend/zustand/store'

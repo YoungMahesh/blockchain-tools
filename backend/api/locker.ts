@@ -1,7 +1,20 @@
 import { ethers } from "ethers"
 import { getErc20Contract } from "../common/erc20"
 import { getErc721Contract } from "../common/erc721"
-import { getLockerContract, getSigner } from "../common/web3Provider"
+import { getSigner } from "../common/web3Provider"
+import LockerMetadata from '../../artifacts/contracts/locker/LockerV3.sol/LockerV3.json'
+
+
+export const getLockerContractAddr = (_chainId: number) => {
+	if (_chainId === 4002) return '0x9d45e915946C7d1c2061901dbb5A7Cd6d9Db7E00'
+	if (_chainId === 4) return '0x1dc2Be267B50fe5FD54514ae70d8E3b78382c3f9'
+	return ''
+}
+
+export const getLockerContract = (signer: ethers.Signer, _chainId: number) => {
+	const lockerAddress = getLockerContractAddr(_chainId)
+	return new ethers.Contract(lockerAddress, LockerMetadata.abi, signer)
+}
 
 export const getTokenInfo = async (_tokenType: string, _tokenAddress: string, _amountInWei: ethers.BigNumber) => {
 	try {
@@ -77,7 +90,6 @@ export const getUserLockers = async () => {
 			promisesArr.push(lockerContract.getLockerInfo(lockerIdsArr[i]))
 		}
 		const userLockersInfoArr: LockerInfo[] = await Promise.all(promisesArr)
-		console.log(userLockersInfoArr)
 
 		const promisesArr2 = []
 		for (let i = 0; i < userLockersInfoArr.length; i++) {

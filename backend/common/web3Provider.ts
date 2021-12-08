@@ -1,5 +1,4 @@
 import { ethers } from 'ethers'
-import LockerMetadata from '../../artifacts/contracts/locker/LockerV3.sol/LockerV3.json'
 import { messagesTable } from '../api/utils'
 
 declare global {
@@ -44,18 +43,6 @@ export const handleAccountChanged = (accounts: string[],
 		setWallet('')
 		setWalletMsg(messagesTable.METAMASK_LOCKED)
 	}
-}
-
-
-
-export const getLockerContractAddr = (_chainId: number) => {
-	if (_chainId === 4002) return '0x9d45e915946C7d1c2061901dbb5A7Cd6d9Db7E00'
-	return ''
-}
-
-export const getLockerContract = (signer: ethers.Signer, _chainId: number) => {
-	const lockerAddress = getLockerContractAddr(_chainId)
-	return new ethers.Contract(lockerAddress, LockerMetadata.abi, signer)
 }
 
 
