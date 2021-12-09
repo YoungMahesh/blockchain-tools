@@ -4,7 +4,7 @@ import {
   Button, Stack, LinearProgress
 } from '@mui/material'
 import { getMultiSenderAddress } from '../backend/api/multisender'
-import { btnTextTable, messagesTable, processRecipientData } from '../backend/api/utils'
+import { btnTextTable, messagesTable, multisenderTable, processRecipientData } from '../backend/api/utils'
 import { Send as SendIcon } from '@mui/icons-material'
 import { useEffect, useState } from 'react'
 import { getErc20Approval, getErc20Decimals, getTotalSumOfBignumbers } from '../backend/common/erc20'
@@ -107,8 +107,7 @@ export default function Home() {
       </Head>
 
       <Box>
-        <Stack mx='auto' spacing={3}
-          maxWidth='400px'>
+        <Stack mx='auto' spacing={3}>
 
           <TokenTypeSelector
             tokenType={tokenType} setTokenType={setTokenType} showEth={true}
@@ -128,11 +127,32 @@ export default function Home() {
           <TextField
             fullWidth
             id="standard-multiline-static"
-            label="Recipients"
+            label={(() => {
+              if (tokenType === 'eth' || tokenType === 'erc20') {
+                return multisenderTable.REC_AMT_TXT
+              }
+              else if (tokenType === 'erc721') {
+                return multisenderTable.REC_ID_TXT
+              }
+              else if (tokenType === 'erc1155') {
+                return multisenderTable.REC_ID_AMT_TXT
+              }
+            })()}
             multiline
             rows={4}
             // defaultValue="Default Value"
             variant="standard"
+            placeholder={(() => {
+              if (tokenType === 'eth' || tokenType === 'erc20') {
+                return multisenderTable.REC_AMT_VAL
+              }
+              else if (tokenType === 'erc721') {
+                return multisenderTable.REC_ID_VAL
+              }
+              else if (tokenType === 'erc1155') {
+                return multisenderTable.REC_ID_AMT_VAL
+              }
+            })()}
             value={recipientData}
             onChange={e => setRecipientData(e.target.value)}
           />

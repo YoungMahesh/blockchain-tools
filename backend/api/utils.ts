@@ -24,6 +24,18 @@ export const btnTextTable = {
 	GET_ERC1155: 'Get 1000 Tokens'
 }
 
+export const multisenderTable = {
+	REC_AMT_TXT: 'Recipient,Amount',
+	REC_AMT_VAL: `0xd47e77851537557d22eaB0A9179D69C99D98A8be,18.02
+0xeEa2269aac3D0F614Ad9813Aa8243898E2EeE2e1,0.03`,
+	REC_ID_TXT: 'Recipient,TokenId',
+	REC_ID_VAL: `0xd47e77851537557d22eaB0A9179D69C99D98A8be,2
+0xeEa2269aac3D0F614Ad9813Aa8243898E2EeE2e1,3`,
+	REC_ID_AMT_TXT: 'Recipient,TokenId,Amount',
+	REC_ID_AMT_VAL: `0xd47e77851537557d22eaB0A9179D69C99D98A8be,2,11
+0xeEa2269aac3D0F614Ad9813Aa8243898E2EeE2e1,3,13`
+}
+
 export const processRecipientData = (recipientData: string, tokenType: string, decimals: number) => {
 	const recipientsArr: string[] = []
 	const tokenIdsArr: ethers.BigNumber[] = []
