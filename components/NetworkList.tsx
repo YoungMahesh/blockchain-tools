@@ -4,6 +4,7 @@ import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import ListSubheader from '@mui/material/ListSubheader';
 import Divider from '@mui/material/Divider';
 import InboxIcon from '@mui/icons-material/Inbox';
 import useStore from '../backend/zustand/store'
@@ -23,7 +24,14 @@ export default function SelectedListItem() {
 
 	return (
 		<Box sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-			<List component="nav" aria-label="main mailbox folders">
+
+			<List component="nav" aria-label="main mailbox folders"
+				subheader={
+					<ListSubheader component="div" id="nested-list-subheader">
+						Supported Networks
+					</ListSubheader>
+				}
+			>
 				{
 					[
 						{ networkName: 'Polygon Mainnet', networkId: 137 },

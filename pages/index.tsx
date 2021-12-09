@@ -15,9 +15,12 @@ import TokenTypeSelector from '../components/TokenTypeSelector'
 import useStore from '../backend/zustand/store'
 import AlertMessages from '../components/AlertMessages'
 import { transferToMultiSender } from '../backend/api/multisender'
-
-
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 export default function Home() {
+  const theme = useTheme();
+  const aboveMedium = useMediaQuery(theme.breakpoints.up('md'));
+  const aboveLarge = useMediaQuery(theme.breakpoints.up('lg'));
 
   const chainId = useStore(state => state.chainId)
   const chainIdMsg = useStore(state => state.chainIdMsg)
@@ -106,84 +109,83 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Box>
-        <Stack mx='auto' spacing={3}>
+      <Stack mx='auto' spacing={3} minWidth={aboveLarge ? '600px' : '400px'}>
 
-          <TokenTypeSelector
-            tokenType={tokenType} setTokenType={setTokenType} showEth={true}
-          />
+        <TokenTypeSelector
+          tokenType={tokenType} setTokenType={setTokenType} showEth={true}
+        />
 
-          {(tokenType !== 'eth') &&
-            <TextField
-              fullWidth
-              id="standard-basic"
-              label="Token Address"
-              variant="standard"
-              value={tokenAddress}
-              onChange={e => setTokenAddress(e.target.value)}
-            />
-          }
-
+        {(tokenType !== 'eth') &&
           <TextField
             fullWidth
-            id="standard-multiline-static"
-            label={(() => {
-              if (tokenType === 'eth' || tokenType === 'erc20') {
-                return multisenderTable.REC_AMT_TXT
-              }
-              else if (tokenType === 'erc721') {
-                return multisenderTable.REC_ID_TXT
-              }
-              else if (tokenType === 'erc1155') {
-                return multisenderTable.REC_ID_AMT_TXT
-              }
-            })()}
-            multiline
-            rows={4}
-            // defaultValue="Default Value"
+            id="standard-basic"
+            label="Token Address"
             variant="standard"
-            placeholder={(() => {
-              if (tokenType === 'eth' || tokenType === 'erc20') {
-                return multisenderTable.REC_AMT_VAL
-              }
-              else if (tokenType === 'erc721') {
-                return multisenderTable.REC_ID_VAL
-              }
-              else if (tokenType === 'erc1155') {
-                return multisenderTable.REC_ID_AMT_VAL
-              }
-            })()}
-            value={recipientData}
-            onChange={e => setRecipientData(e.target.value)}
+            value={tokenAddress}
+            onChange={e => setTokenAddress(e.target.value)}
           />
+        }
 
-          <Button onClick={handleTokenTransfer}
-            disabled={(
-              chainIdMsg === messagesTable.NOT_INSTALLED
-              || chainIdMsg === messagesTable.NOT_SUPPORTED
-              || walletMsg === messagesTable.METAMASK_LOCKED
-              || btnText === btnTextTable.APPROVING
-              || btnText === btnTextTable.SENDING
-            )}
-            variant="contained" endIcon={<SendIcon />}>
-            {btnText}
-          </Button>
-          {
-            (btnText === btnTextTable.APPROVING || btnText === btnTextTable.SENDING) &&
-            <LinearProgress />
-          }
+        <TextField
+          fullWidth
+          id="standard-multiline-static"
+          label={(() => {
+            if (tokenType === 'eth' || tokenType === 'erc20') {
+              return multisenderTable.REC_AMT_TXT
+            }
+            else if (tokenType === 'erc721') {
+              return multisenderTable.REC_ID_TXT
+            }
+            else if (tokenType === 'erc1155') {
+              return multisenderTable.REC_ID_AMT_TXT
+            }
+          })()}
+          multiline
+          rows={4}
+          // defaultValue="Default Value"
+          variant="standard"
+          placeholder={(() => {
+            if (tokenType === 'eth' || tokenType === 'erc20') {
+              return multisenderTable.REC_AMT_VAL
+            }
+            else if (tokenType === 'erc721') {
+              return multisenderTable.REC_ID_VAL
+            }
+            else if (tokenType === 'erc1155') {
+              return multisenderTable.REC_ID_AMT_VAL
+            }
+          })()}
+          value={recipientData}
+          onChange={e => setRecipientData(e.target.value)}
+        />
 
-          <AlertMessages message1={message1} />
+        <Button onClick={handleTokenTransfer}
+          disabled={(
+            chainIdMsg === messagesTable.NOT_INSTALLED
+            || chainIdMsg === messagesTable.NOT_SUPPORTED
+            || walletMsg === messagesTable.METAMASK_LOCKED
+            || btnText === btnTextTable.APPROVING
+            || btnText === btnTextTable.SENDING
+          )}
+          variant="contained" endIcon={<SendIcon />}>
+          {btnText}
+        </Button>
+        {
+          (btnText === btnTextTable.APPROVING || btnText === btnTextTable.SENDING) &&
+          <LinearProgress />
+        }
 
-          {
-            (txnHash.length > 0) &&
-            <TxnLink
-              chainId={chainId}
-              txnHash={txnHash}
-            />
-          }
-        </Stack>
-      </Box>
+        <AlertMessages message1={message1} />
+
+        {
+          (txnHash.length > 0) &&
+          <TxnLink
+            chainId={chainId}
+            txnHash={txnHash}
+          />
+        }
+      </Stack>
+
     </div>
   )
 }

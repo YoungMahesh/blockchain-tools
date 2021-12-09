@@ -113,80 +113,77 @@ export default function Locker() {
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 
-			<Box>
-				<Stack mx='auto' spacing={3}
-					maxWidth='400px'>
+			<Stack mx='auto' spacing={3}
+				maxWidth='400px'>
 
-					<TokenTypeSelector
-						tokenType={tokenType} setTokenType={setTokenType} showEth={true}
+				<TokenTypeSelector
+					tokenType={tokenType} setTokenType={setTokenType} showEth={true}
+				/>
+				{
+					(tokenType === 'erc20' || tokenType === 'erc721' || tokenType === 'erc1155') &&
+					<TextField
+						fullWidth
+						id="standard-basic"
+						label="Token Address"
+						variant="standard"
+						value={tokenAddress}
+						onChange={e => setTokenAddress(e.target.value)}
 					/>
-					{
-						(tokenType === 'erc20' || tokenType === 'erc721' || tokenType === 'erc1155') &&
-						<TextField
-							fullWidth
-							id="standard-basic"
-							label="Token Address"
-							variant="standard"
-							value={tokenAddress}
-							onChange={e => setTokenAddress(e.target.value)}
+				}
+
+				{
+					(tokenType === 'erc721' || tokenType === 'erc1155') &&
+					<TextField
+						id="standard-basic"
+						label="Token Id"
+						variant="standard"
+						value={tokenId}
+						onChange={e => setTokenId(e.target.value)}
+					/>
+				}
+
+				{
+					(tokenType === 'eth' || tokenType === 'erc20' || tokenType === 'erc1155') &&
+					<TextField
+						id="standard-basic"
+						label="Lock Amount"
+						variant="standard"
+						value={lockAmount}
+						onChange={e => setLockAmount(e.target.value)}
+					/>
+				}
+
+				<FormControl component="fieldset">
+
+					<FormLabel component="legend">Unlock Date: </FormLabel>
+					<LocalizationProvider dateAdapter={AdapterDateFns}>
+						<MobileDateTimePicker
+							renderInput={(params) => <TextField {...params} />}
+							value={unlockDate}
+							onChange={setUnlockDate}
 						/>
-					}
+					</LocalizationProvider>
+				</FormControl>
 
-					{
-						(tokenType === 'erc721' || tokenType === 'erc1155') &&
-						<TextField
-							id="standard-basic"
-							label="Token Id"
-							variant="standard"
-							value={tokenId}
-							onChange={e => setTokenId(e.target.value)}
-						/>
-					}
+				<Button onClick={handleLocking}
+					disabled={(
+						chainIdMsg === messagesTable.NOT_INSTALLED
+						|| chainIdMsg === messagesTable.NOT_SUPPORTED
+						|| walletMsg === messagesTable.METAMASK_LOCKED
+						|| btnText === btnTextTable.APPROVING
+						|| btnText === btnTextTable.LOCKING
+					)}
+					variant="contained" endIcon={<SendIcon />}>
+					{btnText}
+				</Button>
+				{
+					(btnText === btnTextTable.APPROVING || btnText === btnTextTable.SENDING) &&
+					<LinearProgress />
+				}
 
-					{
-						(tokenType === 'eth' || tokenType === 'erc20' || tokenType === 'erc1155') &&
-						<TextField
-							id="standard-basic"
-							label="Lock Amount"
-							variant="standard"
-							value={lockAmount}
-							onChange={e => setLockAmount(e.target.value)}
-						/>
-					}
+				<AlertMessages message1={message1} />
 
-					<FormControl component="fieldset">
-
-						<FormLabel component="legend">Unlock Date: </FormLabel>
-						<LocalizationProvider dateAdapter={AdapterDateFns}>
-							<MobileDateTimePicker
-								renderInput={(params) => <TextField {...params} />}
-								value={unlockDate}
-								onChange={setUnlockDate}
-							/>
-						</LocalizationProvider>
-					</FormControl>
-
-					<Button onClick={handleLocking}
-						disabled={(
-							chainIdMsg === messagesTable.NOT_INSTALLED
-							|| chainIdMsg === messagesTable.NOT_SUPPORTED
-							|| walletMsg === messagesTable.METAMASK_LOCKED
-							|| btnText === btnTextTable.APPROVING
-							|| btnText === btnTextTable.LOCKING
-						)}
-						variant="contained" endIcon={<SendIcon />}>
-						{btnText}
-					</Button>
-					{
-						(btnText === btnTextTable.APPROVING || btnText === btnTextTable.SENDING) &&
-						<LinearProgress />
-					}
-
-					<AlertMessages message1={message1} />
-
-				</Stack>
-
-			</Box>
+			</Stack>
 		</div>
 	)
 }
