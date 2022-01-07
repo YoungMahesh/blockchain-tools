@@ -4,7 +4,8 @@
 	- Verify contracts on Etherscan
 
 - Extra
-	- Add multi-chain support
+	- Upload CSV option in multi-sender
+	- Divide transactions in batch of 500 transfers for multisender
 	- Create current-info page which will show - current wallet-address and chainId
 	- Add to Metamask buttons for faucet tokens
 	- Frontend Testing library

@@ -15,10 +15,9 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 })
 
 // npx hardhat deploy --network fantomTestnet --name "MultiSender"
-task('deploy', 'Deploy Contract')
-  .addParam('name', 'Contract Name')
+task('deployLocker', 'Deploy Contract')
   .setAction(async (taskArgs, hre) => {
-    const Contract = await hre.ethers.getContractFactory(taskArgs.name)
+    const Contract = await hre.ethers.getContractFactory('LockerV4')
     const contract = await Contract.deploy()
     await contract.deployed();
     console.log("Contract deployed to:", contract.address);

@@ -2,7 +2,7 @@ import { ethers } from "ethers"
 import { getErc20Contract } from "../common/erc20"
 import { getErc721Contract } from "../common/erc721"
 import { getSigner } from "../common/web3Provider"
-import LockerMetadata from '../../artifacts/contracts/locker/LockerV3.sol/LockerV3.json'
+import LockerMetadata from '../../artifacts/contracts/locker/LockerV4.sol/LockerV4.json'
 
 
 export const getLockerContractAddr = (_chainId: number) => {
