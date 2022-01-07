@@ -1,4 +1,7 @@
-import { ethers } from "ethers"
+import { ethers, Contract } from "ethers"
+import FaucetMetadata from '../../artifacts/contracts/faucet/FaucetV2.sol/FaucetV2.json'
+import { faucetAddr137, faucetAddr1666600000, faucetAddr1666700000, faucetAddr250, faucetAddr4, faucetAddr4002, faucetAddr80001, provider137, provider1666600000, provider1666700000, provider250, provider4, provider4002, provider80001 } from "../common/contractAddr"
+import { getSigner } from "../common/web3Provider"
 
 const faucetAbi = [
 	'function get300Erc20Tokens() external',
@@ -18,9 +21,39 @@ export const getFaucetAddress = (_chainId: number) => {
 	if (_chainId === 250) return '0xf4910d212D6d6A5be64806e718dA038BC2392f0b'
 	return ''
 }
-export const getFaucetContract = (signer: ethers.Signer, _chainId: number) => {
-	const faucetContractAddr = getFaucetAddress(_chainId)
-	return new ethers.Contract(faucetContractAddr, faucetAbi, signer)
+
+export const getFaucetContract = (chainId: number, isWrite: boolean): Contract => {
+	const abi1 = FaucetMetadata.abi
+
+	if (chainId === 4) {
+		if (isWrite) return new Contract(faucetAddr4, abi1, getSigner())
+		else return new Contract(faucetAddr4, abi1, provider4)
+	}
+	else if (chainId === 4002) {
+		if (isWrite) return new Contract(faucetAddr4002, abi1, getSigner())
+		else return new Contract(faucetAddr4002, abi1, provider4002)
+	}
+	else if (chainId === 1666700000) {
+		if (isWrite) return new Contract(faucetAddr1666700000, abi1, getSigner())
+		return new Contract(faucetAddr1666700000, abi1, provider1666700000)
+	}
+	else if (chainId === 80001) {
+		if (isWrite) return new Contract(faucetAddr80001, abi1, getSigner())
+		return new Contract(faucetAddr80001, abi1, provider80001)
+	}
+	else if (chainId === 137) {
+		if (isWrite) return new Contract(faucetAddr137, abi1, getSigner())
+		return new Contract(faucetAddr137, abi1, provider137)
+	}
+	else if (chainId === 1666600000) {
+		if (isWrite) return new Contract(faucetAddr1666600000, abi1, getSigner())
+		else return new Contract(faucetAddr1666600000, abi1, provider1666600000)
+	}
+	else if (chainId === 250) {
+		if (isWrite) return new Contract(faucetAddr250, abi1, getSigner())
+		else return new Contract(faucetAddr250, abi1, provider250)
+	}
+	return new Contract('', abi1, getSigner())
 }
 
 

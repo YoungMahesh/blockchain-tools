@@ -5,7 +5,7 @@ import {
 } from '@mui/material'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { getEtherFaucetInfo, getFaucetContract, getFaucetErc20Details, getFaucetErc721Details, getFaucetTokensAddr } from '../backend/api/faucet'
-import { getSigner, getTokenUrlPrefix } from '../backend/common/web3Provider'
+import { getTokenUrlPrefix } from '../backend/common/web3Provider'
 import { btnTextTable } from '../backend/api/utils';
 
 export default function FaucetToken({ chainId, tokenType, setMessage1 }) {
@@ -62,16 +62,13 @@ export default function FaucetToken({ chainId, tokenType, setMessage1 }) {
 	const getTokens = async () => {
 		setMessage1('')
 		try {
-			const signer = getSigner()
-			const faucetContract = getFaucetContract(signer, chainId)
+			const faucetContract = getFaucetContract(chainId, true)
 			if (tokenType === 'erc20') {
-				faucetContract.get300Erc20Tokens()
+				await faucetContract.get300Erc20Tokens()
 			}
 			else if (tokenType === 'erc721') {
 				const txn = await faucetContract.get3Erc721Tokens()
 				const txn2 = await txn.wait()
-				// console.log(txn)
-				// console.log(txn2)
 				let tokenIdsTransferred = ''
 				for (let i = 0; i < txn2.events.length; i++) {
 					if (txn2.events[i].event === 'Transfer') {
