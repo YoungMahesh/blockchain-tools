@@ -20,6 +20,10 @@ export const faucetAddr80001 = '0xf4910d212D6d6A5be64806e718dA038BC2392f0b'
 
 
 
+// songbird
+export const provider19 = new JsonRpcProvider('https://songbird.towolabs.com/rpc')
+export const multiSenderAddr19 = '0x008E90580998256b2DdBa26f942B20d137df62b9'
+
 
 // polygon mainnet
 export const provider137 = new JsonRpcProvider('https://polygon-rpc.com')

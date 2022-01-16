@@ -23,6 +23,14 @@ task('deployLocker', 'Deploy Contract')
     console.log("Contract deployed to:", contract.address);
   })
 
+task('deployMultiSender')
+  .setAction(async (taskArgs, hre) => {
+    const MultiSender = await hre.ethers.getContractFactory('MultiSenderV2')
+    const multiSender = await MultiSender.deploy()
+    await multiSender.deployed()
+    console.log('Contract deployed to: ', multiSender.address)
+  })
+
 // npx hardhat flatten ./contracts/tokens/Devyani.sol > ./contracts/Devyani.sol
 
 const accounts = [process.env.PRIVATE_KEY_0]
@@ -56,6 +64,11 @@ module.exports = {
     harmony: {
       url: 'https://api.harmony.one/',
       chainId: 1666600000,
+      accounts
+    },
+    songbird: {
+      url: 'https://songbird.towolabs.com/rpc',
+      chainId: 19,
       accounts
     }
   },

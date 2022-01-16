@@ -52,6 +52,7 @@ export const getExplorerUrls = (_chainId: number) => {
 	if (_chainId === 4002) return 'https://testnet.ftmscan.com/tx/'
 	if (_chainId === 4) return 'https://rinkeby.etherscan.io/tx/'
 
+	if (_chainId === 19) return 'https://songbird-explorer.flare.network/tx/'
 	if (_chainId === 1666600000) return 'https://explorer.harmony.one/tx/'
 	if (_chainId === 137) return 'https://polygonscan.com/tx/'
 	if (_chainId === 250) return 'https://ftmscan.com/tx/'
@@ -63,6 +64,7 @@ export const getTokenUrlPrefix = (_chainId: number) => {
 	if (_chainId === 4002) return 'https://testnet.ftmscan.com/token/'
 	if (_chainId === 4) return 'https://rinkeby.etherscan.io/token/'
 
+	if (_chainId === 19) return 'https://songbird-explorer.flare.network/token/'
 	if (_chainId === 1666600000) return 'https://explorer.harmony.one/address/'
 	if (_chainId === 137) return 'https://polygonscan.com/token/'
 	if (_chainId === 250) return 'https://ftmscan.com/token/'
