@@ -1,11 +1,9 @@
-import SideNavigation from "./SideNavigation"
+import SideNavigation from './SideNavigation'
 
 export default function Layout({ children }) {
-	return (
-		<>
-			<SideNavigation>
-				{children}
-			</SideNavigation>
-		</>
-	)
+  return (
+    <>
+      <SideNavigation>{children}</SideNavigation>
+    </>
+  )
 }

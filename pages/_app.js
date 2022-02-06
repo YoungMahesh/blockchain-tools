@@ -6,10 +6,9 @@ import '@fontsource/roboto/700.css'
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 import Layout from '../components/Layout'
 
-
 const theme = createTheme({
   palette: {
-    mode: 'light',
+    mode: 'light'
   }
 })
 
