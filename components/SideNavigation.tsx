@@ -3,6 +3,7 @@ import {
 	IconButton, List, ListItem, ListItemIcon, ListItemText,
 	Toolbar, Typography, Button
 } from '@mui/material'
+import AutorenewIcon from '@mui/icons-material/Autorenew';
 import { Diamond as DiamondIcon, Menu as MenuIcon, Lock as LockIcon, Send as SendIcon } from '@mui/icons-material'
 import { ReactElement, ReactNode, useEffect, useState } from 'react'
 import Link from 'next/link'
@@ -58,7 +59,8 @@ export default function SideNavigation(props: Props) {
 					{ title: 'MultiSender', path: '/', icon: 'sendIcon' },
 					{ title: 'Locker', path: '/locker', icon: 'lockIcon' },
 					{ title: 'My Locks', path: '/mylocks', icon: 'lockIcon' },
-					{ title: 'Faucet', path: '/faucet', icon: 'diamondIcon' }
+					{ title: 'Faucet', path: '/faucet', icon: 'diamondIcon' },
+					{ title: 'Converter', path: '/converter', icon: 'autoRenewIcon' }
 				].map((obj1, index) => (
 					<Link href={obj1.path} key={obj1.title}>
 						<a>
@@ -67,6 +69,7 @@ export default function SideNavigation(props: Props) {
 									{obj1.icon === 'lockIcon' && <LockIcon />}
 									{obj1.icon === 'sendIcon' && <SendIcon />}
 									{obj1.icon === 'diamondIcon' && <DiamondIcon />}
+									{obj1.icon === 'autoRenewIcon' && <AutorenewIcon />}
 								</ListItemIcon>
 								<ListItemText primary={obj1.title} />
 							</ListItem>
