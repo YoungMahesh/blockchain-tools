@@ -1,18 +1,21 @@
 import Head from 'next/head'
-import { Box, Stack } from '@mui/material'
+import type { ReactElement } from 'react'
+import Layout from '../components/common/Layout'
 import { getFaucetAddress } from '../backend/api/faucet'
 import { messagesTable } from '../backend/api/utils'
 import { useEffect, useState } from 'react'
+import Stack from '@mui/material/Stack'
 import FaucetToken from '../components/FaucetToken'
 import TokenTypeSelector from '../components/TokenTypeSelector'
 import useStore from '../backend/zustand/store'
 import AlertMessages from '../components/AlertMessages'
+import useStore0 from '../components/common/store0'
 
 export default function Faucet() {
   const chainId = useStore((state) => state.chainId)
   const chainIdMsg = useStore((state) => state.chainIdMsg)
   const setChainIdMsg = useStore((state) => state.setChainIdMsg)
-
+  const setHideNetworks = useStore0((state) => state.setHideNetworks)
   const walletMsg = useStore((state) => state.walletMsg)
 
   const [tokenType, setTokenType] = useState('erc20')
@@ -23,6 +26,10 @@ export default function Faucet() {
       setChainIdMsg(messagesTable.NOT_SUPPORTED)
     else setChainIdMsg('')
   }, [chainId])
+
+  useEffect(() => {
+    setHideNetworks(false)
+  }, [])
 
   return (
     <div>
@@ -55,4 +62,8 @@ export default function Faucet() {
       </Stack>
     </div>
   )
+}
+
+Faucet.getLayout = function getLayout(page: ReactElement) {
+  return <Layout>{page}</Layout>
 }

@@ -1,20 +1,18 @@
 import Head from 'next/head'
-import {
-  TextField,
-  Box,
-  FormControl,
-  FormLabel,
-  Button,
-  Stack,
-  LinearProgress
-} from '@mui/material'
+import type { ReactElement } from 'react'
+import TextField from '@mui/material/TextField'
+import FormControl from '@mui/material/FormControl'
+import FormLabel from '@mui/material/FormLabel'
+import Button from '@mui/material/Button'
+import Stack from '@mui/material/Stack'
+import LinearProgress from '@mui/material/LinearProgress'
+import MobileDateTimePicker from '@mui/lab/MobileDateTimePicker'
+import AdapterDateFns from '@mui/lab/AdapterDateFns'
+import LocalizationProvider from '@mui/lab/LocalizationProvider'
 import { BN, ZERO_ADDRESS } from '../backend/common/web3Provider'
 import { btnTextTable, messagesTable } from '../backend/api/utils'
 import { Send as SendIcon } from '@mui/icons-material'
 import { useEffect, useState } from 'react'
-import MobileDateTimePicker from '@mui/lab/MobileDateTimePicker'
-import AdapterDateFns from '@mui/lab/AdapterDateFns'
-import LocalizationProvider from '@mui/lab/LocalizationProvider'
 import { getErc721Approval } from '../backend/common/erc721'
 import { getErc1155Approval } from '../backend/common/erc1155'
 import {
@@ -27,6 +25,8 @@ import useStore from '../backend/zustand/store'
 import { useRouter } from 'next/router'
 import { ethers } from 'ethers'
 import { getErc20Decimals, getErc20Approval } from '../backend/common/erc20'
+import Layout from '../components/common/Layout'
+import useStore0 from '../components/common/store0'
 
 export default function Locker() {
   const router = useRouter()
@@ -45,6 +45,11 @@ export default function Locker() {
 
   const [btnText, setBtnText] = useState(btnTextTable.LOCK)
   const [message1, setMessage1] = useState('')
+
+  const setHideNetworks = useStore0((state) => state.setHideNetworks)
+  useEffect(() => {
+    setHideNetworks(false)
+  }, [])
 
   useEffect(() => {
     if (getLockerContractAddr(chainId) === '')
@@ -206,4 +211,8 @@ export default function Locker() {
       </Stack>
     </div>
   )
+}
+
+Locker.getLayout = function getLayout(page: ReactElement) {
+  return <Layout>{page}</Layout>
 }

@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import { utils } from 'ethers'
-import { useState } from 'react'
+import { ReactElement, useEffect, useState } from 'react'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
@@ -8,9 +8,13 @@ import TextField from '@mui/material/TextField'
 import Stack from '@mui/material/Stack'
 import Paper1 from '../components/common/Paper1'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
+import Layout from '../components/common/Layout'
+import useStore0 from '../components/common/store0'
 const { formatUnits, parseUnits } = utils
 
 export default function Converter() {
+  const setHideNetworks = useStore0((state) => state.setHideNetworks)
+
   const [amt1, setAmt1] = useState('')
   const [dec1, setDec1] = useState('')
   const [amt11, setAmt11] = useState('')
@@ -18,6 +22,10 @@ export default function Converter() {
   const [amt2, setAmt2] = useState('')
   const [dec2, setDec2] = useState('')
   const [amt21, setAmt21] = useState('')
+
+  useEffect(() => {
+    setHideNetworks(true)
+  }, [])
 
   const convertTo18Dec = () => {
     try {
@@ -40,7 +48,14 @@ export default function Converter() {
   }
 
   return (
-    <Box>
+    <Box
+      sx={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        width: '100%',
+        justifyContent: 'space-around'
+      }}
+    >
       <Head>
         <title>Converter</title>
         <meta name="description" content="Convert to and from 18 decimals" />
@@ -67,7 +82,7 @@ export default function Converter() {
           <Button variant="contained" onClick={convertTo18Dec}>
             Convert
           </Button>
-          <Typography>
+          <Typography sx={{ maxWidth: '300px', overflow: 'scroll' }}>
             Result: {amt11}{' '}
             <ContentCopyIcon
               onClick={() => {
@@ -100,7 +115,7 @@ export default function Converter() {
           <Button variant="contained" onClick={convertFrom18Dec}>
             Convert
           </Button>
-          <Typography>
+          <Typography sx={{ maxWidth: '300px', overflow: 'scroll' }}>
             Result: {amt21}{' '}
             <ContentCopyIcon
               onClick={() => {
@@ -114,4 +129,8 @@ export default function Converter() {
       </Paper1>
     </Box>
   )
+}
+
+Converter.getLayout = function getLayout(page: ReactElement) {
+  return <Layout>{page}</Layout>
 }

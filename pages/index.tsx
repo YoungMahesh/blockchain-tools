@@ -1,5 +1,13 @@
+import { useEffect, useState } from 'react'
 import Head from 'next/head'
-import { TextField, Box, Button, Stack, LinearProgress } from '@mui/material'
+import type { ReactElement } from 'react'
+import TextField from '@mui/material/TextField'
+import Button from '@mui/material/Button'
+import Stack from '@mui/material/Stack'
+import LinearProgress from '@mui/material/LinearProgress'
+import SendIcon from '@mui/icons-material/Send'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import useTheme from '@mui/material/styles/useTheme'
 import { getMultiSenderAddress } from '../backend/api/multisender'
 import {
   btnTextTable,
@@ -7,8 +15,6 @@ import {
   multisenderTable,
   processRecipientData
 } from '../backend/api/utils'
-import { Send as SendIcon } from '@mui/icons-material'
-import { useEffect, useState } from 'react'
 import {
   getErc20Approval,
   getErc20Decimals,
@@ -21,11 +27,12 @@ import TokenTypeSelector from '../components/TokenTypeSelector'
 import useStore from '../backend/zustand/store'
 import AlertMessages from '../components/AlertMessages'
 import { transferToMultiSender } from '../backend/api/multisender'
-import useMediaQuery from '@mui/material/useMediaQuery'
-import { useTheme } from '@mui/material/styles'
+import Layout from '../components/common/Layout'
+import useStore0 from '../components/common/store0'
+
 export default function Home() {
   const theme = useTheme()
-  const aboveMedium = useMediaQuery(theme.breakpoints.up('md'))
+
   const aboveLarge = useMediaQuery(theme.breakpoints.up('lg'))
 
   const chainId = useStore((state) => state.chainId)
@@ -41,6 +48,11 @@ export default function Home() {
 
   const [message1, setMessage1] = useState('')
   const [txnHash, setTxnHash] = useState('')
+
+  const setHideNetworks = useStore0((state) => state.setHideNetworks)
+  useEffect(() => {
+    setHideNetworks(false)
+  }, [])
 
   useEffect(() => {
     if (getMultiSenderAddress(chainId) === '')
@@ -198,4 +210,8 @@ export default function Home() {
       </Stack>
     </div>
   )
+}
+
+Home.getLayout = function getLayout(page: ReactElement) {
+  return <Layout>{page}</Layout>
 }

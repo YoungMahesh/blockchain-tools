@@ -1,6 +1,12 @@
-import { Stack, Typography, Box, Button, CircularProgress } from '@mui/material'
-import { ethers } from 'ethers'
+import Head from 'next/head'
 import { useEffect, useState } from 'react'
+import type { ReactElement } from 'react'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import CircularProgress from '@mui/material/CircularProgress'
+import { ethers } from 'ethers'
 import { messagesTable } from '../backend/api/utils'
 import { getSigner } from '../backend/common/web3Provider'
 import {
@@ -11,7 +17,8 @@ import {
 } from '../backend/api/locker'
 import useStore from '../backend/zustand/store'
 import AlertMessages from '../components/AlertMessages'
-import Head from 'next/head'
+import Layout from '../components/common/Layout'
+import useStore0 from '../components/common/store0'
 
 export default function MyLocks() {
   const chainId = useStore((state) => state.chainId)
@@ -28,6 +35,11 @@ export default function MyLocks() {
   const [erc20Locks, setErc20Locks] = useState<LockerInfo2[]>([])
   const [erc721Locks, setErc721Locks] = useState<LockerInfo2[]>([])
   const [erc1155Locks, setErc1155Locks] = useState<LockerInfo2[]>([])
+
+  const setHideNetworks = useStore0((state) => state.setHideNetworks)
+  useEffect(() => {
+    setHideNetworks(false)
+  }, [])
 
   useEffect(() => {
     loadLockers()
@@ -356,4 +368,8 @@ export default function MyLocks() {
       <AlertMessages message1={message1} />
     </>
   )
+}
+
+MyLocks.getLayout = function getLayout(page: ReactElement) {
+  return <Layout>{page}</Layout>
 }
