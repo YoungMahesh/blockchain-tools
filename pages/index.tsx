@@ -7,7 +7,7 @@ import Stack from '@mui/material/Stack'
 import LinearProgress from '@mui/material/LinearProgress'
 import SendIcon from '@mui/icons-material/Send'
 import useMediaQuery from '@mui/material/useMediaQuery'
-import useTheme from '@mui/material/styles/useTheme'
+import { useTheme } from '@mui/material/styles'
 import { getMultiSenderAddress } from '../backend/api/multisender'
 import {
   btnTextTable,
