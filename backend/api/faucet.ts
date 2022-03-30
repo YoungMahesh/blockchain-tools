@@ -1,30 +1,13 @@
 import { ethers, Contract } from 'ethers'
 import FaucetMetadata from '../../artifacts/contracts/faucet/FaucetV2.sol/FaucetV2.json'
 import {
-  faucetAddr137,
-  faucetAddr1666600000,
-  faucetAddr1666700000,
-  faucetAddr250,
-  faucetAddr4,
-  faucetAddr4002,
-  faucetAddr80001,
-  provider137,
-  provider1666600000,
-  provider1666700000,
-  provider250,
-  provider4,
-  provider4002,
-  provider80001
-} from '../common/contractAddr'
+  abiInfo,
+  getServerInfo,
+  serverInfo
+} from '../common/1.contractAddr'
 import { getSigner } from '../common/web3Provider'
 
-const faucetAbi = [
-  'function get300Erc20Tokens() external',
-  'function get3Erc721Tokens() external',
-  'function get1000Erc1155Tokens() external',
-  'event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)',
-  'event TransferSingle(address indexed operator, address indexed from, address indexed to, uint256 id, uint256 value)'
-]
+
 export const getFaucetAddress = (_chainId: number) => {
   if (_chainId === 4) return '0xBEAaaA4C1e57936781ceb1c7c5fC9599D3210C89'
   if (_chainId === 4002) return '0xf399c967BC29110E469661c7d7C2C2F0B1Fe69A1'
@@ -44,30 +27,11 @@ export const getFaucetContract = (
   isWrite: boolean
 ): Contract => {
   const abi1 = FaucetMetadata.abi
-
-  if (chainId === 4) {
-    if (isWrite) return new Contract(faucetAddr4, abi1, getSigner())
-    else return new Contract(faucetAddr4, abi1, provider4)
-  } else if (chainId === 4002) {
-    if (isWrite) return new Contract(faucetAddr4002, abi1, getSigner())
-    else return new Contract(faucetAddr4002, abi1, provider4002)
-  } else if (chainId === 1666700000) {
-    if (isWrite) return new Contract(faucetAddr1666700000, abi1, getSigner())
-    return new Contract(faucetAddr1666700000, abi1, provider1666700000)
-  } else if (chainId === 80001) {
-    if (isWrite) return new Contract(faucetAddr80001, abi1, getSigner())
-    return new Contract(faucetAddr80001, abi1, provider80001)
-  } else if (chainId === 137) {
-    if (isWrite) return new Contract(faucetAddr137, abi1, getSigner())
-    return new Contract(faucetAddr137, abi1, provider137)
-  } else if (chainId === 1666600000) {
-    if (isWrite) return new Contract(faucetAddr1666600000, abi1, getSigner())
-    else return new Contract(faucetAddr1666600000, abi1, provider1666600000)
-  } else if (chainId === 250) {
-    if (isWrite) return new Contract(faucetAddr250, abi1, getSigner())
-    else return new Contract(faucetAddr250, abi1, provider250)
-  }
-  return new Contract('', abi1, getSigner())
+  const {contracts, network} = getServerInfo(chainId)
+  const {faucetAddr,} = contracts
+  const {faucetAbi} = abiInfo
+  if(serverInfo[chainId] && isWrite) return new Contract(faucetAddr, faucetAbi, getSigner())
+  return new Contract(faucetAddr, faucetAbi, network.provider)
 }
 
 export const getFaucetTokensAddr = (_chainId: number) => {
