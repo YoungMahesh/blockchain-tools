@@ -79,3 +79,8 @@ export const processRecipientData = (
     return { done: false, recipientsArr, tokenIdsArr, tokenAmountsInWeiArr }
   }
 }
+
+
+export const currTimeInSec = () => {
+  return Math.floor(Date.now() / 1000)
+}

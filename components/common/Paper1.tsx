@@ -1,10 +1,6 @@
 import Paper from '@mui/material/Paper'
 
-interface PropsList {
-  children: any
-}
-
-export default function Paper1({ children }: PropsList) {
+export default function Paper1({ children, styles, }: { children: any; styles?: any }) {
   return (
     <Paper
       sx={{
@@ -13,7 +9,8 @@ export default function Paper1({ children }: PropsList) {
         flexDirection: 'column',
         padding: '10px',
         margin: '10px',
-        height: 'fit-content'
+        height: 'fit-content',
+        ...styles
       }}
       elevation={4}
     >
