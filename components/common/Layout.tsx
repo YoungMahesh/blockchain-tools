@@ -31,7 +31,6 @@ export default function Layout({ children }) {
           }}
         >
           {children}
-          {!hideNetworks && <NetworkList />}
         </Box>
       </Box>
     </Box>

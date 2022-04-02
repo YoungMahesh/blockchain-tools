@@ -1,8 +1,20 @@
 import create from 'zustand'
 
-const useStore = create((set) => ({
-  bears: 0,
-  increasePopulation: () => set((state) => ({ bears: state.bears + 1 })),
+interface globalState {
+  chainId: number,
+  setChainId: (_chain: number) => void
+
+  chainIdMsg: string
+  setChainIdMsg: (_msg: string) => void
+
+  wallet: string,
+  setWallet: (_wallet: string) => void
+  walletMsg: string,
+  setWalletMsg: (_walletMsg: string) => void   
+}
+
+
+const useStore = create<globalState>((set) => ({
 
   chainId: -1,
   setChainId: (_chainId) => set((state) => ({ chainId: _chainId })),

@@ -1,6 +1,15 @@
 import { ethers } from 'ethers'
 import { BN } from '../common/web3Provider'
 
+export const chainIdsTable = {
+  HARMONY: 1666600000,
+  FANTOM: 250,
+  SONGBIRD: 19,
+  POLYGON: 137,
+  RINKEBY: 4,
+  FANTOM_TESTNET: 4002,
+}
+
 export const messagesTable = {
   NOT_SUPPORTED: 'Current Network is not supported.',
   NOT_INSTALLED: 'Metamask is not Installed',

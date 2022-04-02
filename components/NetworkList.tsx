@@ -9,7 +9,7 @@ import Divider from '@mui/material/Divider'
 import InboxIcon from '@mui/icons-material/Inbox'
 import useStore from '../backend/zustand/store'
 
-export default function SelectedListItem() {
+export default function NetworkList() {
   const chainId = useStore((state) => state.chainId)
 
   const handleListItemClick = async (

@@ -1,5 +1,4 @@
 import AppBar from '@mui/material/AppBar'
-import Box from '@mui/material/Box'
 import CssBaseline from '@mui/material/CssBaseline'
 import IconButton from '@mui/material/IconButton'
 import Toolbar from '@mui/material/Toolbar'
@@ -10,6 +9,12 @@ import { ReactElement, ReactNode, useEffect, useState } from 'react'
 import useStore from '../../backend/zustand/store'
 import { loadWeb3 } from '../../backend/common/web3Provider'
 import useStore0 from './store0'
+import Box from '@mui/material/Box'
+import InputLabel from '@mui/material/InputLabel'
+import MenuItem from '@mui/material/MenuItem'
+import FormControl from '@mui/material/FormControl'
+import Select, { SelectChangeEvent } from '@mui/material/Select'
+import { chainIdsTable } from '../../backend/api/utils'
 
 const drawerWidth = 240
 
@@ -22,6 +27,7 @@ export default function Header(props: Props) {
   const setMobileOpen = useStore0((state) => state.setMobileOpen)
   const [wallet2, setWallet2] = useState('Connect Wallet')
 
+  const chainId = useStore((s) => s.chainId)
   const setChainId = useStore((state) => state.setChainId)
   const setChainIdMsg = useStore((state) => state.setChainIdMsg)
 
@@ -57,10 +63,6 @@ export default function Header(props: Props) {
       <CssBaseline />
       <AppBar
         position="fixed"
-        sx={{
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          ml: { sm: `${drawerWidth}px` }
-        }}
       >
         <Toolbar>
           <IconButton
@@ -83,13 +85,38 @@ export default function Header(props: Props) {
             <Typography variant="h6" noWrap component="div">
               BlockChain Tools (Beta)
             </Typography>
-            <Button
-              onClick={connectToWallet}
-              variant="contained"
-              sx={{ background: '#293241' }}
-            >
-              {wallet2}
-            </Button>
+
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Box sx={{ minWidth: 120 }}>
+                <FormControl fullWidth>
+                  <InputLabel id="demo-simple-select-label">Network</InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={chainId}
+                    label="Age"
+                    onChange={(e) => {
+                      if (typeof e.target.value === 'number')
+                        setChainId(e.target.value)
+                    }}
+                  >
+                    <MenuItem value={chainIdsTable.POLYGON}>Polygon</MenuItem>
+                    <MenuItem value={chainIdsTable.HARMONY}>Harmony</MenuItem>
+                    <MenuItem value={chainIdsTable.FANTOM_TESTNET}>
+                      Fantom Testnet
+                    </MenuItem>
+                    <MenuItem value={chainIdsTable.RINKEBY}>Rinkeby</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
+              <Button
+                onClick={connectToWallet}
+                variant="contained"
+                sx={{ background: '#293241' }}
+              >
+                {wallet2}
+              </Button>
+            </Box>
           </Box>
         </Toolbar>
       </AppBar>
