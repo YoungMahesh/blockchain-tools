@@ -29,6 +29,7 @@ import AlertMessages from '../components/AlertMessages'
 import { transferToMultiSender } from '../backend/api/multisender'
 import Layout from '../components/common/Layout'
 import useStore0 from '../components/common/store0'
+import Header from '../components/common/Header'
 
 export default function Home() {
   const theme = useTheme()
@@ -140,6 +141,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
+      <Header title="MultiSender"  harmony songbird polygon fantom fantomTestnet />
       <Stack mx="auto" spacing={3} minWidth={aboveLarge ? '600px' : '400px'}>
         <TokenTypeSelector
           tokenType={tokenType}
@@ -172,7 +174,6 @@ export default function Home() {
           })()}
           multiline
           rows={4}
-          // defaultValue="Default Value"
           variant="standard"
           placeholder={(() => {
             if (tokenType === 'eth' || tokenType === 'erc20') {

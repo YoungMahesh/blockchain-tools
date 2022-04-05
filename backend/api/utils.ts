@@ -93,3 +93,7 @@ export const processRecipientData = (
 export const currTimeInSec = () => {
   return Math.floor(Date.now() / 1000)
 }
+
+export const toHex = (_num: number) => {
+  return '0x' + _num.toString(16)
+}

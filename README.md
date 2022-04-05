@@ -7,7 +7,9 @@
 	- Create current-info page which will show - current wallet-address and chainId
 	- Add to Metamask buttons for faucet tokens
 	- Add ERC20, ERC721 and ERC1155 Generator and Minter
-
+	- Create faucet contract, where people can provide adress and amount to create a faucet of their own token
+	- Create a homepage which will provide information about DAO
+	- Laucn DAO
 
 
 - Bookmarks

@@ -179,7 +179,7 @@ export default function Layout({ children }: { children: any }) {
             { title: 'MultiSender', path: '/', icon: 'sendIcon' },
             { title: 'Locker', path: '/locker', icon: 'lockIcon' },
             { title: 'My Locks', path: '/mylocks', icon: 'lockIcon' },
-            { title: 'Faucet', path: '/faucet', icon: 'diamondIcon' },
+            // { title: 'Faucet', path: '/faucet', icon: 'diamondIcon' },
             { title: 'Converter', path: '/converter', icon: 'autoRenewIcon' }
           ].map((obj1, index) => (
             <Link href={obj1.path} key={obj1.title}>
@@ -188,7 +188,7 @@ export default function Layout({ children }: { children: any }) {
                   <ListItemIcon>
                     {obj1.icon === 'lockIcon' && <LockIcon />}
                     {obj1.icon === 'sendIcon' && <SendIcon />}
-                    {obj1.icon === 'diamondIcon' && <DiamondIcon />}
+                    {/* {obj1.icon === 'diamondIcon' && <DiamondIcon />} */}
                     {obj1.icon === 'autoRenewIcon' && <AutorenewIcon />}
                   </ListItemIcon>
                   <ListItemText primary={obj1.title} />
