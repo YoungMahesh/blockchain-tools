@@ -25,7 +25,7 @@ import LockIcon from '@mui/icons-material/Lock'
 import SendIcon from '@mui/icons-material/Send'
 import useStore from '../../backend/zustand/store'
 import { loadWeb3 } from '../../backend/common/web3Provider'
-import { ToastContainer, toast } from 'react-toastify'
+import { ToastContainer } from 'react-toastify'
 
 const drawerWidth = 240
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
@@ -177,10 +177,10 @@ export default function Layout({ children }: { children: any }) {
         <Divider />
         <List>
           {[
-            { title: 'MultiSender', path: '/', icon: 'sendIcon' },
+            { title: 'Home', path: '/', icon: 'diamondIcon' },
+            { title: 'MultiSender', path: '/multisender', icon: 'sendIcon' },
             { title: 'Locker', path: '/locker', icon: 'lockIcon' },
             { title: 'My Locks', path: '/mylocks', icon: 'lockIcon' },
-            // { title: 'Faucet', path: '/faucet', icon: 'diamondIcon' },
             { title: 'Converter', path: '/converter', icon: 'autoRenewIcon' }
           ].map((obj1, index) => (
             <Link href={obj1.path} key={obj1.title}>
@@ -189,7 +189,7 @@ export default function Layout({ children }: { children: any }) {
                   <ListItemIcon>
                     {obj1.icon === 'lockIcon' && <LockIcon />}
                     {obj1.icon === 'sendIcon' && <SendIcon />}
-                    {/* {obj1.icon === 'diamondIcon' && <DiamondIcon />} */}
+                    {obj1.icon === 'diamondIcon' && <DiamondIcon />}
                     {obj1.icon === 'autoRenewIcon' && <AutorenewIcon />}
                   </ListItemIcon>
                   <ListItemText primary={obj1.title} />
