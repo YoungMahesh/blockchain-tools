@@ -27,6 +27,7 @@ import { ethers } from 'ethers'
 import { getErc20Decimals, getErc20Approval } from '../backend/common/erc20'
 import Layout from '../components/common/Layout'
 import useStore0 from '../components/common/store0'
+import Header from '../components/common/Header'
 
 export default function Locker() {
   const router = useRouter()
@@ -137,6 +138,8 @@ export default function Locker() {
         <meta name="description" content="Lock ERC20, ERC721, ERC1155 Tokens" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+
+      <Header title="Locker" fantomTestnet />
 
       <Stack mx="auto" spacing={3} maxWidth="400px">
         <TokenTypeSelector

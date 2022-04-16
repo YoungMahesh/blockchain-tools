@@ -1,5 +1,8 @@
 - Wishlist
 
+  - Footer: to check open-source code and telegram username for help
+  - Locker: put locker and my-locks in the same page
+  - Homepage: providing descripition and future plans of website
   - Frontend Testing library
   - Converter - Convert from and to 18 decimal number
   - Upload CSV option in multi-sender
@@ -20,6 +23,6 @@
 
 ```bash
 npx husky-init && npm install
-npm install --save-dev pretty-quick
+npm install --save-dev pretty-quick   # runs prettier on your changed files
 npx husky set .husky/pre-commit "npx pretty-quick --staged"
 ```

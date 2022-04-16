@@ -7,7 +7,7 @@ import FormLabel from '@mui/material/FormLabel'
 import { chainIdsTable, toHex } from '../../backend/api/utils'
 import useStore from '../../backend/zustand/store'
 import { useEffect } from 'react'
-
+import { toast } from 'react-toastify'
 export default function Header({
   title,
   harmony,
@@ -37,6 +37,7 @@ export default function Header({
       window.ethereum.on('chainChanged', window.location.reload())
     } catch (err) {
       console.log(err)
+      toast.error(`Network is not present in your metamask`)
     }
   }
 

@@ -25,6 +25,7 @@ import LockIcon from '@mui/icons-material/Lock'
 import SendIcon from '@mui/icons-material/Send'
 import useStore from '../../backend/zustand/store'
 import { loadWeb3 } from '../../backend/common/web3Provider'
+import { ToastContainer, toast } from 'react-toastify'
 
 const drawerWidth = 240
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
@@ -210,6 +211,7 @@ export default function Layout({ children }: { children: any }) {
           {children}
         </Box>
       </Main>
+      <ToastContainer />
     </Box>
   )
 }
