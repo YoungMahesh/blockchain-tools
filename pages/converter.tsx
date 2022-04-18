@@ -9,12 +9,6 @@ import UnixTime from '../components/converter/UnixTime'
 import Ipfs from '../components/converter/Ipfs'
 
 export default function Converter() {
-  const setHideNetworks = useStore0((state) => state.setHideNetworks)
-
-  useEffect(() => {
-    setHideNetworks(true)
-  }, [])
-
   return (
     <>
       <Head>

@@ -18,6 +18,8 @@ contract FaucetFactory {
 
     mapping(address => Faucet) public FaucetTable;
 
+    // Update: Multiple people can create multiple faucets of the same tokens
+    // faucet will have name, user can get desired amount from anyone of the faucet
     function createFaucent(
         address _erc20Addr,
         uint256 _depositAmt,

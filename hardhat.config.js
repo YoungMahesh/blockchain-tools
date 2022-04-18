@@ -31,7 +31,8 @@ task('deployMultiSender').setAction(async (taskArgs, hre) => {
 
 // npx hardhat flatten ./contracts/tokens/Devyani.sol > ./contracts/Devyani.sol
 
-const accounts = [process.env.PRIVATE_KEY_0]
+const { PRIVATE_KEY_0, FTMSCAN_KEY } = process.env
+const accounts = [PRIVATE_KEY_0]
 module.exports = {
   networks: {
     rinkeby: {
@@ -39,7 +40,7 @@ module.exports = {
       chainId: 4,
       accounts
     },
-    fantomTestnet: {
+    ftmTestnet: {
       url: `https://rpc.testnet.fantom.network/`,
       chainId: 4002,
       accounts
@@ -72,6 +73,22 @@ module.exports = {
   },
   solidity: '0.8.7',
   etherscan: {
-    apiKey: process.env.POLYGONSCAN_API_KEY
+    apiKey: {
+      mainnet: 'YOUR_ETHERSCAN_API_KEY',
+      ropsten: 'YOUR_ETHERSCAN_API_KEY',
+      rinkeby: 'YOUR_ETHERSCAN_API_KEY',
+      // binance smart chain
+      bsc: 'YOUR_BSCSCAN_API_KEY',
+      bscTestnet: 'YOUR_BSCSCAN_API_KEY',
+      // fantom mainnet
+      opera: FTMSCAN_KEY,
+      ftmTestnet: FTMSCAN_KEY,
+      // polygon
+      polygon: 'YOUR_POLYGONSCAN_API_KEY',
+      polygonMumbai: 'YOUR_POLYGONSCAN_API_KEY',
+      // harmony
+      harmony: 'YOUR_HARMONY_API_KEY',
+      harmonyTest: 'YOUR_HARMONY_API_KEY'
+    }
   }
 }
