@@ -32,7 +32,7 @@ export default function UnixTime() {
   }
 
   return (
-    <Paper1 styles={{ marginTop: '40px' }}>
+    <Paper1>
       <Typography align="center" variant="h6">
         Unix Time
       </Typography>
@@ -47,8 +47,7 @@ export default function UnixTime() {
             sx={{
               display: 'flex',
               flexWrap: 'wrap',
-              alignItems: 'center',
-              justifyContent: 'space-between'
+              alignItems: 'center'
             }}
           >
             <Typography>Select Date: </Typography>
@@ -68,8 +67,7 @@ export default function UnixTime() {
           <Box
             sx={{
               display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between'
+              alignItems: 'center'
             }}
           >
             <Typography>
@@ -93,8 +91,7 @@ export default function UnixTime() {
             sx={{
               display: 'flex',
               flexWrap: 'wrap',
-              alignItems: 'center',
-              justifyContent: 'space-between'
+              alignItems: 'center'
             }}
           >
             <Typography>Unix Seconds: </Typography>

@@ -6,6 +6,7 @@ import Layout from '../components/common/Layout'
 import useStore0 from '../components/common/store0'
 import Decimals from '../components/converter/Decimals'
 import UnixTime from '../components/converter/UnixTime'
+import Ipfs from '../components/converter/Ipfs'
 
 export default function Converter() {
   const setHideNetworks = useStore0((state) => state.setHideNetworks)
@@ -23,8 +24,8 @@ export default function Converter() {
       </Head>
 
       <Decimals />
-
       <UnixTime />
+      <Ipfs />
     </>
   )
 }
