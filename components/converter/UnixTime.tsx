@@ -32,7 +32,10 @@ export default function UnixTime() {
   }
 
   return (
-    <Box sx={{ marginTop: '40px' }}>
+    <Paper1 styles={{ marginTop: '40px' }}>
+      <Typography align="center" variant="h6">
+        Unix Time
+      </Typography>
       <Paper1>
         <Typography>Current Unix_Time: {currTimeInSec()}</Typography>
       </Paper1>
@@ -62,7 +65,13 @@ export default function UnixTime() {
           </Box>
 
           <Typography>Selected Time: {date0.toString()}</Typography>
-          <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between'
+            }}
+          >
             <Typography>
               Selected Time In Unix Seconds: {selectedSec}
             </Typography>
@@ -100,6 +109,6 @@ export default function UnixTime() {
           <Typography>Date: {date1.toString()}</Typography>
         </Stack>
       </Paper1>
-    </Box>
+    </Paper1>
   )
 }
