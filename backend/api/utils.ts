@@ -7,7 +7,7 @@ export const chainIdsTable = {
   SONGBIRD: 19,
   POLYGON: 137,
   RINKEBY: 4,
-  FANTOM_TESTNET: 4002,
+  FANTOM_TESTNET: 4002
 }
 
 export const messagesTable = {
@@ -88,7 +88,6 @@ export const processRecipientData = (
     return { done: false, recipientsArr, tokenIdsArr, tokenAmountsInWeiArr }
   }
 }
-
 
 export const currTimeInSec = () => {
   return Math.floor(Date.now() / 1000)

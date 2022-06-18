@@ -1,21 +1,19 @@
 import create from 'zustand'
 
 interface globalState {
-  chainId: number,
+  chainId: number
   setChainId: (_chain: number) => void
 
   chainIdMsg: string
   setChainIdMsg: (_msg: string) => void
 
-  wallet: string,
+  wallet: string
   setWallet: (_wallet: string) => void
-  walletMsg: string,
-  setWalletMsg: (_walletMsg: string) => void   
+  walletMsg: string
+  setWalletMsg: (_walletMsg: string) => void
 }
 
-
 const useStore = create<globalState>((set) => ({
-
   chainId: -1,
   setChainId: (_chainId) => set((state) => ({ chainId: _chainId })),
   chainIdMsg: '',

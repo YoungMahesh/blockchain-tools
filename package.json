@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "npx prettier --write pages/ components/ backend",
     "prepare": "husky install"
   },
   "dependencies": {
@@ -16,6 +16,7 @@
     "@mui/icons-material": "^5.2.0",
     "@mui/lab": "^5.0.0-alpha.58",
     "@mui/material": "^5.2.1",
+    "@mui/x-date-pickers": "^5.0.0-alpha.6",
     "@openzeppelin/contracts": "^4.4.0",
     "date-fns": "^2.27.0",
     "dotenv": "^10.0.0",

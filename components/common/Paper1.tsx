@@ -1,6 +1,12 @@
 import Paper from '@mui/material/Paper'
 
-export default function Paper1({ children, styles, }: { children: any; styles?: any }) {
+export default function Paper1({
+  children,
+  styles
+}: {
+  children: any
+  styles?: any
+}) {
   return (
     <Paper
       sx={{

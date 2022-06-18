@@ -1,12 +1,7 @@
 import { ethers, Contract } from 'ethers'
 import FaucetMetadata from '../../artifacts/contracts/faucet/FaucetV2.sol/FaucetV2.json'
-import {
-  abiInfo,
-  getServerInfo,
-  serverInfo
-} from '../common/1.contractAddr'
+import { abiInfo, getServerInfo, serverInfo } from '../common/1.contractAddr'
 import { getSigner } from '../common/web3Provider'
-
 
 export const getFaucetAddress = (_chainId: number) => {
   if (_chainId === 4) return '0xBEAaaA4C1e57936781ceb1c7c5fC9599D3210C89'
@@ -27,10 +22,11 @@ export const getFaucetContract = (
   isWrite: boolean
 ): Contract => {
   const abi1 = FaucetMetadata.abi
-  const {contracts, network} = getServerInfo(chainId)
-  const {faucetAddr,} = contracts
-  const {faucetAbi} = abiInfo
-  if(serverInfo[chainId] && isWrite) return new Contract(faucetAddr, faucetAbi, getSigner())
+  const { contracts, network } = getServerInfo(chainId)
+  const { faucetAddr } = contracts
+  const { faucetAbi } = abiInfo
+  if (serverInfo[chainId] && isWrite)
+    return new Contract(faucetAddr, faucetAbi, getSigner())
   return new Contract(faucetAddr, faucetAbi, network.provider)
 }
 

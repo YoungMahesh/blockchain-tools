@@ -45,9 +45,27 @@ export default function Home() {
             </Link>
           </Paper1>
           <Paper1 styles={{ width: 'fit-content' }}>
-            <Link href="/locker">
-              <a>Locker</a>
+            <Link href="/converter">
+              <a>Converter</a>
             </Link>
+          </Paper1>
+          <Paper1 styles={{ width: 'fit-content' }}>
+            <a
+              target="_blank"
+              rel="noreferrer"
+              href="https://locker.blockchaintools.app/"
+            >
+              Locker
+            </a>
+          </Paper1>
+          <Paper1 styles={{ width: 'fit-content' }}>
+            <a
+              target="_blank"
+              rel="noreferrer"
+              href="https://erc20.blockchaintools.app/"
+            >
+              ERC20 Generator
+            </a>
           </Paper1>
         </Box>
         <Footer />
