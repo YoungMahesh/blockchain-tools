@@ -45,9 +45,13 @@ export default function Home() {
             </Link>
           </Paper1>
           <Paper1 styles={{ width: 'fit-content' }}>
-            <Link href="/converter">
-              <a>Converter</a>
-            </Link>
+            <a
+              target="_blank"
+              rel="noreferrer"
+              href="https://converter.blockchaintools.app/"
+            >
+              Converter
+            </a>
           </Paper1>
           <Paper1 styles={{ width: 'fit-content' }}>
             <a

@@ -1,19 +1,15 @@
 - Wishlist
 
-  - Footer: to check open-source code and telegram username for help
-  - Locker: put locker and my-locks in the same page
   - Homepage: providing descripition and future plans of website
   - Frontend Testing library
-  - Converter - Convert from and to 18 decimal number
   - Upload CSV option in multi-sender
   - Divide transactions in batch of 500 transfers for multisender
-  - Set max lock time for locker
   - Create current-info page which will show - current wallet-address and chainId
   - Add to Metamask buttons for faucet tokens
   - Add ERC20, ERC721 and ERC1155 Generator and Minter
   - Create faucet contract, where people can provide adress and amount to create a faucet of their own token
   - Create a homepage which will provide information about DAO
-  - Laucn DAO
+  - Launch DAO
 
 - Bookmarks
   - https://chainlist.org/
